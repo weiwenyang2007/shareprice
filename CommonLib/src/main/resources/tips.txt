@@ -1,0 +1,73 @@
+还是都用postgresql存储所有数据吧，包括指标 (WSFCONFIG.indicatorDBType=SQL), 这样数据都安全了。
+postgrest的数据放在 root@P310S:/mnt/5a538d29-2608-4ba0-985a-0f143703ef5c/postgresql/data#
+
+结合ubuntu 系统安装的wildfl，postgresql和DockerCompose的dc_cassandra.yaml 才能玩起来。
+docker的cassandra的data放在/mnt/5a538d29-2608-4ba0-985a-0f143703ef5c/cassandra
+使用docker exec -it xxx bash 登陆cassandra
+
+==================install wildfly,postgresql,cassandra in docker composer========================
+cd ./EasyStoGu/DockerCompose
+docker-compose -f dc_cassandra.yaml up -d
+docker-compose -f dc_cassandra.yaml down
+
+==================install wildfly,postgresql in ubuntu-20.04 host ===============================
+0. install wildfly: https://dev.to/orestispantazos/install-and-configure-wildfly-jboss-on-ubuntu-20-04-lts-266f
+   install postsql: https://www.digitalocean.com/community/tutorials/how-to-install-postgresql-on-ubuntu-20-04-quickstart
+   optional if indicator type is sql:
+   install cassandra: 
+   
+   must enlarge the xms xmx for jboss: /opt/wildfly/bin/standalone.conf
+   wildfly log folder: /opt/wildfly/standalone/log
+   					   /opt/wildfly/standalone/deployments
+   
+   postgresql folder: /etc/postgresql/12/main/
+   					  /var/log/postgresql
+   
+   su postgres
+   psql
+   ALTER USER postgres PASSWORD 'postgres';
+   
+   add hostname postgres.easystogu.cn to /etc/hosts
+   add hostname easystogu-portal to /etc/hosts
+   add hostname jboss.easystogu.cn to /etc/hosts
+   
+   deploy easystogu.ear to wildfly/deployments
+   ear package and log folder: /opt/wildfly/standalone/
+   base url: http://localhost:8080/eweb/
+   had better to use fqdn to access the eweb and portal, to avoid the CORS issue: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+   base url: http://jboss.easystogu.cn:8080/eweb/
+   
+   set the correct getEasyStoGuServerUrl in eweb common.js
+   
+   start spring boot app: refer to /home/eyaweiw/github/EasyStoGu/PortalApp/src/main/resources/easystogu-portal.service
+   base url: http://localhost:8081/portal/home/
+			 http://localhost:8081/portal/health
+   server log folder: /home/eyaweiw/github/EasyStoGu/PortalApp/src/main/resources/serverlog
+   
+   start spring boot app: refer to /home/eyaweiw/github/EasyStoGu/ScheduledApp/src/main/resources/easystogu-scheduled.service
+   base url: http://localhost:8082/health
+   server log folder: ???
+   
+   
+1. Init sql table and view
+2. Init wsfconfig data
+   should change the zone to office
+3. add the company info from properties: 
+   http://localhost:8081/portal/home/UpdateCompanyFromFileToDB
+   
+   and download today's stockprice:
+   http://localhost:8081/portal/home/DownloadStockPrice
+4. add the history stock price: 
+   http://localhost:8081/portal/home/updateStockPriceHistoryOverAllRunner/2000-01-01_2022-02-15
+5. run the sanity checking (also include the indicator and daily statistics re-count from 2000-01-01)
+   http://localhost:8081/portal/home/DataBaseSanityCheck
+   ttp://localhost:8081/portal/home/DataBaseSanityHistoryStatisticsCheck/2000-01-01_2022-02-15
+6. History Analyse Report Count All Check Point   
+   http://localhost:8081/portal/home/HistoryAnalyseReport
+7. History Daily Selection
+   http://localhost:8081/portal/home/HistoryDailySelectionRunner
+  
+Daily over all runner:   
+   http://localhost:8081/portal/home/DailyOverAllRunner   
+Data Base Sanity Check    
+   http://localhost:8081/portal/home/DataBaseSanityCheck

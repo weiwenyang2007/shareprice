@@ -1,0 +1,50 @@
+version: '3.4'
+
+networks:
+  easystogu_network:
+    driver: bridge
+
+services:
+  postgresql:
+    image: eyaweiw.cn:5000/bitnami/postgresql:14
+    hostname: postgres.easystogu.cn
+    volumes:  
+      - ./postgresql/initdb:/docker-entrypoint-initdb.d
+      - /mnt/5a538d29-2608-4ba0-985a-0f143703ef5c/postgresql/data:/bitnami/postgresql
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_DATABASE=easystogu    
+    networks:
+      - easystogu_network  
+
+  cassandra:
+    image: eyaweiw.cn:5000/bitnami/cassandra:4.0.0
+    hostname: cassandra.easystogu.cn
+    volumes:  
+      - ./cassandra/init-scripts:/docker-entrypoint-initdb.d
+      - /mnt/5a538d29-2608-4ba0-985a-0f143703ef5c/cassandra/data:/bitnami/cassandra/data
+    networks:
+      - easystogu_network
+      
+  wildfly:
+    image: eyaweiw.cn:5000/bitnami/wildfly:26
+    hostname: wildfly
+    ports:
+      - "8080:8080"
+    volumes:  
+      - /mnt/5a538d29-2608-4ba0-985a-0f143703ef5c/wildfly/standalone/deployments:/opt/bitnami/wildfly/standalone/deployments
+      - /mnt/5a538d29-2608-4ba0-985a-0f143703ef5c/wildfly/standalone/log:/opt/bitnami/wildfly/standalone/log
+    environment:
+      - WILDFLY_USERNAME=easystogu
+      - WILDFLY_PASSWORD=easystogu
+      - "JAVA_OPTS=-server -Xms1024m -Xmx1024m -XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=512m"
+    networks:
+      - easystogu_network
+    depends_on:
+      - postgresql
+      - cassandra
+    links:
+      - "postgresql:postgres.easystogu.cn"    
+      - "cassandra:cassandra.easystogu.cn"
+     

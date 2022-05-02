@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/DataAccessModule/DBAccessFacde/easystogu-DBAccessFacde.iml" filepath="$PROJECT_DIR$/DataAccessModule/DBAccessFacde/easystogu-DBAccessFacde.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DataAccessModule/easystogu-DataAccessModule.iml" filepath="$PROJECT_DIR$/DataAccessModule/easystogu-DataAccessModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DataCollectModule/easystogu-DataCollectModule.iml" filepath="$PROJECT_DIR$/DataCollectModule/easystogu-DataCollectModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AI/easystogu-ai.iml" filepath="$PROJECT_DIR$/AI/easystogu-ai.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Analyse/easystogu-analyse.iml" filepath="$PROJECT_DIR$/Analyse/easystogu-analyse.iml" />
+      <module fileurl="file://$PROJECT_DIR$/App/easystogu-app.iml" filepath="$PROJECT_DIR$/App/easystogu-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Cache/easystogu-cache.iml" filepath="$PROJECT_DIR$/Cache/easystogu-cache.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DataAccessModule/CassandraLib/easystogu-cassandralib.iml" filepath="$PROJECT_DIR$/DataAccessModule/CassandraLib/easystogu-cassandralib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CommonLib/easystogu-commonlib.iml" filepath="$PROJECT_DIR$/CommonLib/easystogu-commonlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DataAccessModule/DatabaseIF/easystogu-databaseif.iml" filepath="$PROJECT_DIR$/DataAccessModule/DatabaseIF/easystogu-databaseif.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DataAccessModule/DatabaseLib/easystogu-databaselib.iml" filepath="$PROJECT_DIR$/DataAccessModule/DatabaseLib/easystogu-databaselib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DatabaseReplicate/easystogu-databasereplicate.iml" filepath="$PROJECT_DIR$/DatabaseReplicate/easystogu-databasereplicate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DataCollectModule/SinaDataCollect/easystogu-datacollect.iml" filepath="$PROJECT_DIR$/DataCollectModule/SinaDataCollect/easystogu-datacollect.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Docker/easystogu-docker.iml" filepath="$PROJECT_DIR$/Docker/easystogu-docker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DynamicCompiler/easystogu-dynamiccompiler.iml" filepath="$PROJECT_DIR$/DynamicCompiler/easystogu-dynamiccompiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DataCollectModule/EasyMoneyCollect/easystogu-easymoneycollect.iml" filepath="$PROJECT_DIR$/DataCollectModule/EasyMoneyCollect/easystogu-easymoneycollect.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EWeb/easystogu-eweb.iml" filepath="$PROJECT_DIR$/EWeb/easystogu-eweb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Indicator/easystogu-indicator.iml" filepath="$PROJECT_DIR$/Indicator/easystogu-indicator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Parent/easystogu-parent.iml" filepath="$PROJECT_DIR$/Parent/easystogu-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Portal/easystogu-portal.iml" filepath="$PROJECT_DIR$/Portal/easystogu-portal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easystogu-project.iml" filepath="$PROJECT_DIR$/easystogu-project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Scheduled/easystogu-scheduled.iml" filepath="$PROJECT_DIR$/Scheduled/easystogu-scheduled.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TrendMode/easystogu-trendmode.iml" filepath="$PROJECT_DIR$/TrendMode/easystogu-trendmode.iml" />
+    </modules>
+  </component>
+</project>

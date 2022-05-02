@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:cxf="http://cxf.apache.org/core" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd 
+        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<!-- Enable @Autowired -->
+	<context:annotation-config />
+	<context:component-scan base-package="org.easystogu.portal" />
+
+	<!-- WS Service -->
+	<bean id="portalServiceHomeEndPoint" class="org.easystogu.portal.HomeEndPoint">
+	</bean>
+	<jaxrs:server id="cxfrsservice_HomeEndPoint" address="/home">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServiceHomeEndPoint" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServicePriceEndPointV0" class="org.easystogu.portal.PriceEndPointV0">
+	</bean>
+	<jaxrs:server id="cxfrsservice_PriceEndPointV0" address="/pricev0">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServicePriceEndPointV0" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServicePriceEndPointV1" class="org.easystogu.portal.PriceEndPointV1">
+	</bean>
+	<jaxrs:server id="cxfrsservice_PriceEndPointV1" address="/pricev1">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServicePriceEndPointV1" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServicePriceEndPointV2" class="org.easystogu.portal.PriceEndPointV2">
+	</bean>
+	<jaxrs:server id="cxfrsservice_PriceEndPointV2" address="/pricev2">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServicePriceEndPointV2" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServicePriceEndPointV3" class="org.easystogu.portal.PriceEndPointV3">
+	</bean>
+	<jaxrs:server id="cxfrsservice_PriceEndPointV3" address="/pricev3">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServicePriceEndPointV3" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServiceIndicatorEndPointV0" class="org.easystogu.portal.IndicatorEndPointV0">
+	</bean>
+	<jaxrs:server id="cxfrsservice_IndicatorEndPointV0"
+		address="/indv0">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServiceIndicatorEndPointV0" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServiceIndicatorEndPointV1" class="org.easystogu.portal.IndicatorEndPointV1">
+	</bean>
+	<jaxrs:server id="cxfrsservice_IndicatorEndPointV1"
+		address="/indv1">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServiceIndicatorEndPointV1" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServiceIndicatorEndPointV2" class="org.easystogu.portal.IndicatorEndPointV2">
+	</bean>
+	<jaxrs:server id="cxfrsservice_IndicatorEndPointV2"
+		address="/indv2">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServiceIndicatorEndPointV2" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServiceIndicatorEndPointV3" class="org.easystogu.portal.IndicatorEndPointV3">
+	</bean>
+	<jaxrs:server id="cxfrsservice_IndicatorEndPointV3"
+		address="/indv3">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServiceIndicatorEndPointV3" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServiceCompanyInfoEndPoint" class="org.easystogu.portal.CompanyInfoEndPoint">
+	</bean>
+	<jaxrs:server id="cxfrsservice_CompanyInfoEndPoint"
+		address="/company">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServiceCompanyInfoEndPoint" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServiceTrendModeEndPoint" class="org.easystogu.portal.TrendModeEndPoint">
+	</bean>
+	<jaxrs:server id="cxfrsservice_TrendModeEndPoint" address="/trendmode">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServiceTrendModeEndPoint" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalStatisticsEndPoint" class="org.easystogu.portal.CheckPointStatisticsEndPoint">
+	</bean>
+	<jaxrs:server id="cxfrsservice_StatisticsEndPoint"
+		address="/statistics">
+		<jaxrs:serviceBeans>
+			<ref bean="portalStatisticsEndPoint" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServiceViewEndPoint" class="org.easystogu.portal.ViewEndPoint">
+	</bean>
+	<jaxrs:server id="cxfrsservice_ViewEndPoint" address="/view">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServiceViewEndPoint" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServiceFavoritesEndPoint" class="org.easystogu.portal.FavoritesEndPoint">
+	</bean>
+	<jaxrs:server id="cxfrsservice_FavoritesEndPoint" address="/favorites">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServiceFavoritesEndPoint" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalXXXYuanStockStatisticsEndPoint" class="org.easystogu.portal.XXXYuanStockStatisticsEndPoint">
+	</bean>
+	<jaxrs:server id="cxfrsservice_XXXYuanStockStatisticsEndPoint"
+		address="/xxxyuan">
+		<jaxrs:serviceBeans>
+			<ref bean="portalXXXYuanStockStatisticsEndPoint" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServiceReportEndPoint" class="org.easystogu.portal.ReportEndPoint">
+	</bean>
+	<jaxrs:server id="cxfrsservice_ReportEndPoint" address="/report">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServiceReportEndPoint" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+	<bean id="portalServiceTestEndPoint" class="org.easystogu.portal.TestControler">
+	</bean>
+	<jaxrs:server id="cxfrsservice_TestControler" address="/">
+		<jaxrs:serviceBeans>
+			<ref bean="portalServiceTestEndPoint" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+</beans>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="easystogu-databaselib" />
+        <module name="easystogu-cassandralib" />
+        <module name="easystogu-eweb" />
+        <module name="easystogu-analyse" />
+        <module name="easystogu-dynamiccompiler" />
+        <module name="easystogu-scheduled" />
+        <module name="easystogu-easymoneycollect" />
+        <module name="easystogu-portal" />
+        <module name="easystogu-cache" />
+        <module name="easystogu-datacollect" />
+        <module name="easystogu-indicator" />
+        <module name="easystogu-commonlib" />
+        <module name="easystogu-databasereplicate" />
+        <module name="easystogu-trendmode" />
+        <module name="easystogu-docker" />
+        <module name="easystogu-ai" />
+        <module name="easystogu-databaseif" />
+        <module name="easystogu-app" />
+        <module name="easystogu-DBAccessFacde" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="easystogu-ai" target="1.8" />
+      <module name="easystogu-analyse" target="1.8" />
+      <module name="easystogu-app" target="1.8" />
+      <module name="easystogu-cache" target="1.8" />
+      <module name="easystogu-cassandralib" target="1.8" />
+      <module name="easystogu-commonlib" target="1.8" />
+      <module name="easystogu-DataAccessModule" target="1.8" />
+      <module name="easystogu-databaseif" target="1.8" />
+      <module name="easystogu-databaselib" target="1.8" />
+      <module name="easystogu-databasereplicate" target="1.8" />
+      <module name="easystogu-datacollect" target="1.8" />
+      <module name="easystogu-DataCollectModule" target="1.8" />
+      <module name="easystogu-DBAccessFacde" target="1.8" />
+      <module name="easystogu-docker" target="1.8" />
+      <module name="easystogu-dynamiccompiler" target="1.8" />
+      <module name="easystogu-easymoneycollect" target="1.8" />
+      <module name="easystogu-eweb" target="1.8" />
+      <module name="easystogu-indicator" target="1.8" />
+      <module name="easystogu-parent" target="1.8" />
+      <module name="easystogu-portal" target="1.8" />
+      <module name="easystogu-project" target="1.8" />
+      <module name="easystogu-scheduled" target="1.8" />
+      <module name="easystogu-trendmode" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

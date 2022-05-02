@@ -1,0 +1,1004 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "openstockæ��ä¾›APIè°ƒç”¨ï¼ŒæŸ¥è¯¢è‚¡ç¥¨ä»·æ ¼ï¼ŒæŸ¥è¯¢æŒ‡æ ‡æ•°æ�®ï¼ŒæŸ¥è¯¢æŒ‡æ ‡ç»Ÿè®¡ï¼Œæ¨¡æ‹Ÿè‚¡ç¥¨èµ°åŠ¿ï¼ŒKçº¿å›¾ä¸‹è½½ç­‰ã€‚",
+    "version": "1.0.0",
+    "title": "OpenStock",
+    "termsOfService": "http://192.168.1.12:8080",
+    "contact": {
+      "email": "éª‘ç‰›ä¸Šå±±"
+    },
+    "license": {
+      "name": "N/A ",
+      "url": "N/A"
+    }
+  },
+  "host": "192.168.1.12:8080",
+  "basePath": "/portal",
+  "tags": [
+    {
+      "name": "price",
+      "description": "Stock Price",
+      "externalDocs": {
+        "description": "Stock Price",
+        "url": "http://192.168.1.12:8080"
+      }
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/pricev0/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "StockPrice"
+        ],
+        "summary": "é�žå¤�æ�ƒè‚¡ç¥¨ä»·æ ¼",
+        "description": "é�žå¤�æ�ƒè‚¡ç¥¨ä»·æ ¼",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/pricev1/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "StockPrice"
+        ],
+        "summary": "å‰�å¤�æ�ƒè‚¡ç¥¨ä»·æ ¼",
+        "description": "å‰�å¤�æ�ƒè‚¡ç¥¨ä»·æ ¼",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/pricev3/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "StockPrice"
+        ],
+        "summary": "è‚¡ç¥¨ä»·æ ¼æ¨¡æ‹Ÿ",
+        "description": "è‚¡ç¥¨ä»·æ ¼æ¨¡æ‹Ÿ",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "nDays",
+            "description": "Nä¸ªæ—¥æœŸå�ˆå¹¶",
+            "required": false
+          },
+          {
+            "in": "body",
+            "name": "trendModeName",
+            "description": "æ¨¡æ‹Ÿçš„è¶‹åŠ¿",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv0/macd/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "é�žå¤�æ�ƒMACDæŒ‡æ ‡",
+        "description": "é�žå¤�æ�ƒMACDæŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv0/kdj/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "é�žå¤�æ�ƒKDJæŒ‡æ ‡",
+        "description": "é�žå¤�æ�ƒKDJæŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv0/boll/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "é�žå¤�æ�ƒå¸ƒæž—æŒ‡æ ‡",
+        "description": "é�žå¤�æ�ƒå¸ƒæž—æŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv0/shenxian/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "é�žå¤�æ�ƒç¥žä»™å¤§è¶‹åŠ¿æŒ‡æ ‡",
+        "description": "é�žå¤�æ�ƒç¥žä»™å¤§è¶‹åŠ¿æŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv0/shenxianSell/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "é�žå¤�æ�ƒç¥žä»™å¤§è¶‹åŠ¿ä¹°å�–æŒ‡æ ‡",
+        "description": "é�žå¤�æ�ƒç¥žä»™å¤§è¶‹åŠ¿ä¹°å�–æŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv0/luzao/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "é�žå¤�æ�ƒé²�å…†å¤§è¶‹åŠ¿æŒ‡æ ‡",
+        "description": "é�žå¤�æ�ƒé²�å…†å¤§è¶‹åŠ¿æŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv0/qsdd/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "é�žå¤�æ�ƒè¶‹åŠ¿é¡¶åº•æŒ‡æ ‡",
+        "description": "é�žå¤�æ�ƒè¶‹åŠ¿é¡¶åº•æŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv0/wr/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "é�žå¤�æ�ƒå¨�å»‰æŒ‡æ ‡",
+        "description": "é�žå¤�æ�ƒå¨�å»‰æŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv0/ddx/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "èµ„é‡‘æµ�DDXæŒ‡æ ‡",
+        "description": "èµ„é‡‘æµ�DDXæŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv1/macd/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "å‰�å¤�æ�ƒMACDæŒ‡æ ‡",
+        "description": "å‰�å¤�æ�ƒMACDæŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv1/kdj/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "å‰�å¤�æ�ƒKDJæŒ‡æ ‡",
+        "description": "å‰�å¤�æ�ƒKDJæŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv1/boll/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "å‰�å¤�æ�ƒå¸ƒæž—æŒ‡æ ‡",
+        "description": "å‰�å¤�æ�ƒå¸ƒæž—æŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv1/shenxian/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "å‰�å¤�æ�ƒç¥žä»™å¤§è¶‹åŠ¿æŒ‡æ ‡",
+        "description": "å‰�å¤�æ�ƒç¥žä»™å¤§è¶‹åŠ¿æŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv1/shenxianSell/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "å‰�å¤�æ�ƒç¥žä»™å¤§è¶‹åŠ¿ä¹°å�–æŒ‡æ ‡",
+        "description": "å‰�å¤�æ�ƒç¥žä»™å¤§è¶‹åŠ¿ä¹°å�–æŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv1/luzao/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "å‰�å¤�æ�ƒé²�å…†å¤§è¶‹åŠ¿æŒ‡æ ‡",
+        "description": "å‰�å¤�æ�ƒé²�å…†å¤§è¶‹åŠ¿æŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv1/qsdd/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "å‰�å¤�æ�ƒè¶‹åŠ¿é¡¶åº•æŒ‡æ ‡",
+        "description": "å‰�å¤�æ�ƒè¶‹åŠ¿é¡¶åº•æŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv1/wr/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "å‰�å¤�æ�ƒå¨�å»‰æŒ‡æ ‡",
+        "description": "å‰�å¤�æ�ƒå¨�å»‰æŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/indv1/ddx/{stockId}/{date}": {
+      "get": {
+        "tags": [
+          "Indicator"
+        ],
+        "summary": "èµ„é‡‘æµ�DDXæŒ‡æ ‡",
+        "description": "èµ„é‡‘æµ�DDXæŒ‡æ ‡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸ(ä¾‹å¦‚2017-01-03)æˆ–è€…æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/company/{stockId}": {
+      "get": {
+        "tags": [
+          "Company"
+        ],
+        "summary": "ä¸Šå¸‚å…¬å�¸åŸºæœ¬ä¿¡æ�¯",
+        "description": "ä¸Šå¸‚å…¬å�¸åŸºæœ¬ä¿¡æ�¯",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "stockId",
+            "description": "6ä½�æ•°çš„è‚¡ç¥¨ä»£ç �",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/company/name={name}": {
+      "get": {
+        "tags": [
+          "Company"
+        ],
+        "summary": "ä¸Šå¸‚å…¬å�¸åŸºæœ¬ä¿¡æ�¯",
+        "description": "ä¸Šå¸‚å…¬å�¸åŸºæœ¬ä¿¡æ�¯",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "description": "è‚¡ç¥¨å��ç§°",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/statistics/luzao/trend/{date}": {
+      "get": {
+        "tags": [
+          "Statistics"
+        ],
+        "summary": "é²�å…†å¤§è¶‹åŠ¿ç»Ÿè®¡",
+        "description": "é²�å…†å¤§è¶‹åŠ¿ç»Ÿè®¡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/statistics/luzao/gordon/{date}": {
+      "get": {
+        "tags": [
+          "Statistics"
+        ],
+        "summary": "é²�å…†å¤§é‡‘å�‰ç»Ÿè®¡",
+        "description": "é²�å…†å¤§é‡‘å�‰ç»Ÿè®¡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/statistics/qsdd/{date}": {
+      "get": {
+        "tags": [
+          "Statistics"
+        ],
+        "summary": "è¶‹åŠ¿é¡¶åº•ç»Ÿè®¡",
+        "description": "è¶‹åŠ¿é¡¶åº•ç»Ÿè®¡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/statistics/shenxian/{date}": {
+      "get": {
+        "tags": [
+          "Statistics"
+        ],
+        "summary": "ç¥žä»™å¤§è¶‹åŠ¿ç»Ÿè®¡",
+        "description": "ç¥žä»™å¤§è¶‹åŠ¿ç»Ÿè®¡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/statistics/macd/{date}": {
+      "get": {
+        "tags": [
+          "Statistics"
+        ],
+        "summary": "MACDç»Ÿè®¡",
+        "description": "MACDç»Ÿè®¡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    },
+    "/statistics/wr/{date}": {
+      "get": {
+        "tags": [
+          "Statistics"
+        ],
+        "summary": "å¨�å»‰æŒ‡æ ‡ç»Ÿè®¡",
+        "description": "å¨�å»‰æŒ‡æ ‡ç»Ÿè®¡",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "date",
+            "description": "æ—¥æœŸåŒºé—´(ä¾‹å¦‚2017-01-03_2017-02-23)",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "æˆ�åŠŸè¿”å›ž"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ApiResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

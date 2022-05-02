@@ -1,0 +1,108 @@
+﻿﻿
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="js/reactjs_0.13.0/JSXTransformer.js"></script>
+<script type="text/javascript" src="js/reactjs_0.13.0/react.js"></script>
+<script type="text/javascript" src="js/jquery_1.8.2/jquery.min.js"></script>
+<script type="text/javascript" src="js/easystogu/requestStatisticsData.js"></script>
+<script type="text/javascript" src="js/easystogu/common.js"></script>
+<script type="text/javascript" src="js/easystogu/createChart.js"></script>
+<script type="text/javascript" src="js/3pp/moment.min.js"></script>
+<style type="text/css">
+${
+demo
+.css
+}
+</style>
+
+<script type="text/jsx">
+    var ParmForm = React.createClass({
+       getInitialState: function() {
+       return {
+          stockId: "999999",
+          indicator: "qsdd",
+          version: "v1",
+          dateFrom: moment().subtract(2000, 'days').format("YYYY-MM-DD"),
+          dateTo: moment().format("YYYY-MM-DD"),
+      };
+    },
+    
+    handleChange: function(e) {
+       var newState = {};
+       newState[e.target.name] = e.target.value;
+       this.setState(newState);
+    },
+
+    handleClick: function() {
+       var data = {
+          stockId : this.state.stockId,
+          indicator : this.state.indicator,
+          version: this.state.version, 
+          dateFrom : this.state.dateFrom,
+          dateTo : this.state.dateTo,
+      };
+      
+      indicator = data.indicator;
+      dateFrom = data.dateFrom;
+      dateTo = data.dateTo;
+      stockId = data.stockId;
+      
+      if(data.indicator == "shenxian"){ 
+         loadShenXianStatistics(data.version, data.stockId, data.dateFrom, data.dateTo);
+      }else if(data.indicator == "luzaoTrend"){ 
+         loadLuZaoTrendStatistics(data.version, data.stockId, data.dateFrom, data.dateTo);  
+      }else if(data.indicator == "luzaoGordon"){ 
+         loadLuZaoGordonStatistics(data.version, data.stockId, data.dateFrom, data.dateTo);  
+      }else if(data.indicator == "qsdd"){ 
+         loadQsddStatistics(data.version, data.stockId, data.dateFrom, data.dateTo);
+      }else if(data.indicator == "macd"){ 
+         loadMacdStatistics(data.version, data.stockId, data.dateFrom, data.dateTo);
+      }else if(data.indicator == "wr"){ 
+         loadWRStatistics(data.version, data.stockId, data.dateFrom, data.dateTo);
+      }
+    },
+    
+    render: function(){
+		      return (<div>
+		                <input type="text" value={this.state.stockId} name='stockId' maxLength="6" onChange={this.handleChange} />&nbsp;&nbsp;
+		                  
+		                <select name='indicator' onChange={this.handleChange}>
+                        <option value='qsdd'>qsdd</option>
+                        <option value='luzaoTrend'>luzaoTrend</option>
+                        <option value='luzaoGordon'>luzaoGordon</option>
+                        <option value='shenxian'>shenxian</option>
+                        <option value='macd'>macd</option>
+                        <option value='wr'>wr</option>
+                        </select>&nbsp;&nbsp;
+
+		                <select name='version' onChange={this.handleChange}>
+                              <option value='v0'>v0-不复权</option>
+                              <option value='v1' defaultValue>v1-前复权</option>
+                              <option value='v2'>v2-后复权</option>
+                        </select>&nbsp;&nbsp;
+
+		                <input type="text" value={this.state.dateFrom} name='dateFrom' maxLength="10" onChange={this.handleChange} />&nbsp;&nbsp;
+		                <input type="text" value={this.state.dateTo} name='dateTo' maxLength="10" onChange={this.handleChange} />&nbsp;&nbsp;
+		                  
+                        <input type="submit" value="Submit" onClick={this.handleClick} />
+		              </div>
+		              );
+		     }         
+    });
+    
+    React.render(<ParmForm />,
+    document.getElementById("containerForm")
+    );
+</script>
+</head>
+<body>
+	<script src="js/highstock_4.2.1/highstock.js"></script>
+	<script src="js/highstock_4.2.1/modules/exporting.js"></script>
+	<div>
+		<div id="containerForm"></div>
+		<div id="container" style="height: 100%; min-width: 100%; position:fixed;"></div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,1 @@
+docker build -t eyaweiw.cn:5000/bitnami/postgresql:14 .
