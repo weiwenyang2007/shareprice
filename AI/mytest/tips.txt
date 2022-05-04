@@ -1,0 +1,90 @@
+docker run -it --gpus=all -v /home/eyaweiw/github/shareprice/AI/mytest/:/workspace --net=host --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" eyaweiw.cn:5000/cuda101-cudnn7-ubuntu1804-python36-tfgpu150-keras231:1.0.3
+
+cd workspace
+python TF_LSTM_Predict_StockPrice.py
+
+
+
+=======================min-max的标准化数据=================
+#计算股价的min-max的标准化数据，导出到文件: 603999_price.csv
+easystogu=# select max(open) as open, max(high) as high, max(close) as close, max(low) as low from stockprice where stockid='603999' and date>='2018-01-01';
+ open | high | close | low
+------+------+-------+------
+ 8.74 |  8.9 |  8.87 | 8.24
+
+
+easystogu=# select min(open) as open, min(high) as high, min(close) as close, min(low) as low from stockprice where stockid='603999' and date>='2018-01-01';
+ open | high | close | low
+------+------+-------+------
+ 4.06 | 4.18 |  4.09 | 3.94
+ 
+easystogu=# select max(volume) as max_volume, min(volume) as min_volume from stockprice where stockid='603999' and date>='2018-01-01';
+ max_volume | min_volume
+------------+------------
+     686392 |       8002
+	 
+copy (select date, (open-4.06)/(8.74-4.06) as open, (high-4.18)/(8.9-4.18) as high, (close-4.09)/(8.87-4.09) as close, (low-3.94)/(8.24-3.94) as low, (close-lastclose)/(8.87-4.09) as change, (volume-8002)/(686392.0-8002.0) as volume  from stockprice where stockid='603999' and date>='2018-01-01' order by date) to '/tmp/603999_price.csv' WITH DELIMITER ',' CSV HEADER;
+
+
+#计算h1,h2,h3 神仙指数
+easystogu=# select min(h1) as h1, min(h2) as h2, min(h3) as h3 from ind_shenxian where stockid='603999' and date>='2018-01-01';
+  h1   |  h2   |  h3
+-------+-------+-------
+ 4.206 | 4.637 | 5.024
+
+easystogu=# select max(h1) as h1, max(h2) as h2, max(h3) as h3 from ind_shenxian where stockid='603999' and date>='2018-01-01';
+  h1   |  h2   |  h3
+-------+-------+------
+ 8.236 | 7.813 | 8.915
+ 
+copy (select (h1-4.206)/(8.236-4.206) as h1, (h2-4.637)/(7.813-4.637) as h2, (h3-5.024)/(8.915-5.024)as h3 from ind_shenxian where stockid='603999' and date>='2018-01-01' order by date) to '/tmp/603999_shenxian.csv' WITH DELIMITER ',' CSV HEADER;
+
+
+#计算macd
+easystogu=# select min(dea) as dea, min(dif) as dif, min(macd) as macd from ind_macd where stockid='603999' and date>='2018-01-01';                                 dea   |  dif   |  macd
+--------+--------+--------
+ -0.355 | -0.399 | -0.484
+
+easystogu=# select max(dea) as dea, max(dif) as dif, max(macd) as macd from ind_macd where stockid='603999' and date>='2018-01-01';
+  dea  |  dif  | macd
+-------+-------+-------
+ 0.353 | 0.384 | 0.419
+
+copy (select (dea-(-0.355))/(0.353-(-0.355)) as dea, (dif-(-0.399))/(0.384-(-0.399)) as dif, (macd-(-0.484))/(0.419-(-0.484))as macd from ind_macd where stockid='603999' and date>='2018-01-01' order by date) to '/tmp/603999_macd.csv' WITH DELIMITER ',' CSV HEADER;
+
+#计算kdj
+easystogu=# select max(k) as k, max(d) as d, max(j) as j from ind_kdj where stockid='603999' and date>='2018-01-01';
+   k    |   d    |    j
+--------+--------+---------
+ 89.116 | 83.577 | 119.567
+
+easystogu=# select min(k) as k, min(d) as d, min(j) as j from ind_kdj where stockid='603999' and date>='2018-01-01';
+   k   |  d   |    j
+-------+------+---------
+ 5.456 | 8.65 | -15.847
+
+easystogu=# copy (select (k-5.456)/(89.116-5.456) as k, (d-8.65)/(83.577-8.65) as d, (j-(-15.847))/(119.567-(-15.847))as j from ind_kdj where stockid='603999' and date>='2018-01-01' order by date) to '/tmp/603999_kdj.csv' WITH DELIMITER ',' CSV HEADER;
+
+#计算qsdd
+easystogu=# select max(shoterm) as shoterm, max(midterm) as midterm, max(lonterm) as lonterm from ind_qsdd where stockid='603999' and date>='2018-01-01';          shoterm | midterm | lonterm
+---------+---------+---------
+     100 |  92.986 |  83.748
+
+easystogu=# select min(shoterm) as shoterm, min(midterm) as midterm, min(lonterm) as lonterm from ind_qsdd where stockid='603999' and date>='2018-01-01';
+ shoterm | midterm | lonterm
+---------+---------+---------
+       0 |    3.03 |   6.647
+
+copy (select (shoterm-0)/(100-0) as shoterm, (midterm-3.03)/(92.986-3.03) as midterm, (lonterm-6.647)/(83.748-6.647)as lonterm from ind_qsdd where stockid='603999' and date>='2018-01-01' order by date) to '/tmp/603999_qsdd.csv' WITH DELIMITER ',' CSV HEADER;
+
+#计算威廉wr
+easystogu=# select max(shoterm) as shoterm, max(midterm) as midterm, max(lonterm) as lonterm from ind_wr where stockid='603999' and date>='2018-01-01';            shoterm | midterm | lonterm
+---------+---------+---------
+     100 |     100 |     100
+
+easystogu=# select min(shoterm) as shoterm, min(midterm) as midterm, min(lonterm) as lonterm from ind_wr where stockid='603999' and date>='2018-01-01';            shoterm | midterm | lonterm
+---------+---------+---------
+       0 |       0 |       0
+
+copy (select (shoterm/100.0) as shoterm, (midterm/100.0) as midterm, (lonterm/100.0) as lonterm from ind_qsdd where stockid='603999' and date>='2018-01-01' order by date) to '/tmp/603999_wr.csv' WITH DELIMITER ',' CSV HEADER;
+

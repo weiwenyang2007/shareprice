@@ -151,8 +151,8 @@ def prediction(time_step=time_step_number):
         print("The accuracy of this predict:",acc)
         #以折线图表示结果
         plt.figure()
-        plt.plot(list(range(len(test_predict))), test_predict, color='b',)#blue
-        plt.plot(list(range(len(test_y))), test_y,  color='r')#red
+        plt.plot(list(range(len(test_predict))), test_predict, color = 'blue', label = 'Predicted Stock Price')#blue
+        plt.plot(list(range(len(test_y))), test_y,  color = 'red', label = 'Real Stock Price')#red
         plt.show()
 
 prediction()

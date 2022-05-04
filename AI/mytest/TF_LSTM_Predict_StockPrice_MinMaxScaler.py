@@ -5,26 +5,31 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+minMaxSc = MinMaxScaler(feature_range = (0, 1))
 
-import tensorflow as tf
+#import tensorflow as tf
 #If you have this error after an upgrade to TensorFlow 2.0, 
 #you can still use 1.X API by replacing:
-#import tensorflow.compat.v1 as tf
-#tf.disable_v2_behavior()
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
 rnn_unit=50         #隐层神经元的个数 hidden layer num of features
-lstm_layers=2       #隐层层数 
-input_size=26		#输入参数数据维度,本算法只能支持一维输出
-output_size=1		#输出结果维度
+lstm_layers=2       #隐层层数(本算法只支持2) 
+input_size=21		#输入参数数据维度
+output_size=1		#输出结果维度,本算法只能支持一维输出
 lr=0.0006         #学习率
 #——————————————————导入数据——————————————————————
-f=open('./checkPointData/002352_stockCheckPoint.csv')
+f=open('./exampleData/600036_stockPrice.csv')
 df=pd.read_csv(f)     #读入股票数据
-data=df.iloc[:,1:(1 + input_size + output_size)].values  #跳过前面两项 为输入参数
 
-train_begin_index=2256 #训练数据开始
-train_end_index=6999 #训练数据结束
-test_begin_index=7000 #测试数据开始
+#行数据:跳过第一行(header)和最后一行(since there is no predict label, or predict label is 0)  
+#列数据:跳过第一列(date)和后面数据(不是预测output的列)，截取中间输入和输出为参数
+data=df.iloc[1:-1,1:(1 + input_size + output_size)].values  
+
+train_begin_index=200 #训练数据开始
+train_end_index=int(len(data)*3/4) #训练数据结束
+test_begin_index=int(len(data)*3/4) #测试数据开始
 train_times=100 #训练次数
 time_step_number=20 #20
 batch_size_number=60 #60
@@ -33,19 +38,18 @@ batch_size_number=60 #60
 def get_train_data(batch_size=batch_size_number,time_step=time_step_number,train_begin=train_begin_index,train_end=train_end_index):
     batch_index=[]
     data_train=data[train_begin:train_end]
-	
+    
     #normalized_train_data=(data_train-np.mean(data_train,axis=0))/np.std(data_train,axis=0)  #标准化
-    normalized_train_data=data_train
-	
+    normalized_train_data=minMaxSc.fit_transform(data_train)
+
     train_x,train_y=[],[]   #训练集
     for i in range(len(normalized_train_data)-time_step):
        if i % batch_size==0:
            batch_index.append(i)
        x=normalized_train_data[i:i+time_step,:input_size]
-       y=normalized_train_data[i:i+time_step,input_size,np.newaxis]
+       y=normalized_train_data[i:i+time_step,input_size,np.newaxis] # i:i+time_step,input_size,np.newaxis
        train_x.append(x.tolist())
        train_y.append(y.tolist())
-   
     batch_index.append((len(normalized_train_data)-time_step))
     return batch_index,train_x,train_y
 
@@ -53,24 +57,24 @@ def get_train_data(batch_size=batch_size_number,time_step=time_step_number,train
 #获取测试集
 def get_test_data(time_step=time_step_number,test_begin=test_begin_index):
     data_test=data[test_begin:]
-    mean=np.mean(data_test,axis=0)
-    std=np.std(data_test,axis=0)
     
+    #mean=np.mean(data_test,axis=0)
+    #std=np.std(data_test,axis=0)
     #normalized_test_data=(data_test-mean)/std  #标准化
-    normalized_test_data=data_test
+    data_test=data_test.reshape(-1,1)
+    normalized_test_data=minMaxSc.transform(data_test)
 
     size=(len(normalized_test_data)+time_step-1)//time_step  #有size个sample
     test_x,test_y=[],[]
     for i in range(size-1):
-        x=normalized_test_data[i*time_step:(i+1)*time_step,:input_size]
-        y=normalized_test_data[i*time_step:(i+1)*time_step,input_size:]
-        test_x.append(x.tolist())
-        test_y.extend(y)
-        test_x.append((normalized_test_data[(i+1)*time_step:,:input_size]).tolist())
-        test_y.extend((normalized_test_data[(i+1)*time_step:,input_size:]).tolist())
-
-    return mean,std,test_x,test_y
-
+       x=normalized_test_data[i*time_step:(i+1)*time_step,:input_size]
+       y=normalized_test_data[i*time_step:(i+1)*time_step,input_size:]
+       test_x.append(x.tolist())
+       test_y.extend(y)
+    test_x.append((normalized_test_data[(i+1)*time_step:,:input_size]).tolist())
+    test_y.extend((normalized_test_data[(i+1)*time_step:,input_size:]).tolist())
+    #return mean,std,test_x,test_y
+    return test_x,test_y
 
 #——————————————————定义神经网络变量——————————————————
 #输入层、输出层权重,偏置、dropout参数
@@ -128,7 +132,7 @@ def train_lstm(batch_size=batch_size_number,time_step=time_step_number,train_beg
             for step in range(len(batch_index)-1):
                 _,loss_=sess.run([train_op,loss],feed_dict={X:train_x[batch_index[step]:batch_index[step+1]],Y:train_y[batch_index[step]:batch_index[step+1]],keep_prob:0.5})
             print("Number of iterations:",i," loss:",loss_)
-        print("model_save: ",saver.save(sess,'model_save2\\modle.ckpt'))
+        print("model_save: ",saver.save(sess,'model_save2/modle.ckpt'))
         #I run the code on windows 10,so use  'model_save2\\modle.ckpt'
         #if you run it on Linux,please use  'model_save2/modle.ckpt'
         print("The train has finished")
@@ -137,7 +141,10 @@ train_lstm()
 #————————————————预测模型————————————————————
 def prediction(time_step=time_step_number):
     X=tf.placeholder(tf.float32, shape=[None,time_step,input_size])
-    mean,std,test_x,test_y=get_test_data(time_step)
+    
+    #mean,std,test_x,test_y=get_test_data(time_step)
+    test_x,test_y=get_test_data(time_step)
+
     with tf.variable_scope("sec_lstm",reuse=tf.AUTO_REUSE):
         pred,_=lstm(X)
     saver=tf.train.Saver(tf.global_variables())
@@ -147,17 +154,20 @@ def prediction(time_step=time_step_number):
         saver.restore(sess, module_file)
         test_predict=[]
         for step in range(len(test_x)-1):
-            prob=sess.run(pred,feed_dict={X:[test_x[step]],keep_prob:1})
-            predict=prob.reshape((-1))
-            test_predict.extend(predict)
-        test_y=np.array(test_y)*std[input_size]+mean[input_size]
-        test_predict=np.array(test_predict)*std[input_size]+mean[input_size]
+          prob=sess.run(pred,feed_dict={X:[test_x[step]],keep_prob:1})
+          predict=prob.reshape((-1))
+          test_predict.extend(predict)
+        
+        #test_y=np.array(test_y)*std[input_size]+mean[input_size]
+        #test_predict=np.array(test_predict)*std[input_size]+mean[input_size]
+        test_predict=minMaxSc.inverse_transform(test_predict)
+
         acc=np.average(np.abs(test_predict-test_y[:len(test_predict)])/test_y[:len(test_predict)])  #偏差程度
         print("The accuracy of this predict:",acc)
         #以折线图表示结果
         plt.figure()
-        plt.plot(list(range(len(test_predict))), test_predict, color='b',)
-        plt.plot(list(range(len(test_y))), test_y,  color='r')
+        plt.plot(list(range(len(test_predict))), test_predict, color = 'blue', label = 'Predicted Stock Price')#blue
+        plt.plot(list(range(len(test_y))), test_y,  color = 'red', label = 'Real Stock Price')#red
         plt.show()
 
 prediction()
