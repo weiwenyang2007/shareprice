@@ -36,10 +36,10 @@ public class LstmPredictStockPriceDataPrepare {
   protected static Map<String, Double> minMap = new HashMap<String,Double>();
   protected static Map<String, Double> maxMap = new HashMap<String,Double>();
 
-  private static String filePath = "C:/Users/eyaweiw/github/shareprice/AI/mytest/exampleData/";
+  private static String filePath = "/home/eyaweiw/github/shareprice/AI/mytest/exampleData/";
   private static String csvHeader = "date,open,close,low,high,volume,change,h1,h2,h3,dea,dif,macd,k,d,j,qsddS,qsddM,qsddL,wrS,wrM,wrL,label1";
 
-  private static void prepareStockSimpleDateForLstm(String stockId) {
+  public static String prepareStockSimpleDateForLstm(String stockId) {
     String startDate= "2018-01-01";
     String endDate= "2022-05-01";
     List<StockPriceVO> spList = qianFuQuanStockPriceTableHelper.getStockPriceByIdAndBetweenDate(stockId, startDate, endDate);
@@ -133,6 +133,7 @@ public class LstmPredictStockPriceDataPrepare {
     // write to csv file
     String fileName = filePath + stockId + "_stockPrice.csv";
     CSVFileHelper.write(fileName, csvHeader.split(","), contents);
+    return contents.toString();
   }
 
   private static void countMinMaxMap(String key, double[][] array, int index) {
@@ -174,13 +175,13 @@ public class LstmPredictStockPriceDataPrepare {
     sb.append("," + (wrvo.lonTerm - minMap.get("wrL"))/(maxMap.get("wrL") - minMap.get("wrL")));
     
     //output
-    sb.append("," + spvo.nextClose);// label1
+    sb.append("," + (spvo.nextClose - minMap.get("close"))/(maxMap.get("close") - minMap.get("close")));// label1
     // sb.append("," + vo.nextHigh);// label2
     return sb.toString();
   }
 
   public static void main(String[] args) {
-    prepareStockSimpleDateForLstm("600036");
+    prepareStockSimpleDateForLstm("603999");
   }
 
 }

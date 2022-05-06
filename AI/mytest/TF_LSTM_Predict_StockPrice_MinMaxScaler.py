@@ -20,17 +20,17 @@ input_size=21		#输入参数数据维度
 output_size=1		#输出结果维度,本算法只能支持一维输出
 lr=0.0006         #学习率
 #——————————————————导入数据——————————————————————
-f=open('./exampleData/600036_stockPrice.csv')
+f=open('./exampleData/603999_stockPrice.csv')
 df=pd.read_csv(f)     #读入股票数据
 
 #行数据:跳过第一行(header)和最后一行(since there is no predict label, or predict label is 0)  
 #列数据:跳过第一列(date)和后面数据(不是预测output的列)，截取中间输入和输出为参数
 data=df.iloc[1:-1,1:(1 + input_size + output_size)].values  
 
-train_begin_index=200 #训练数据开始
-train_end_index=int(len(data)*3/4) #训练数据结束
-test_begin_index=int(len(data)*3/4) #测试数据开始
-train_times=100 #训练次数
+train_begin_index=0 #训练数据开始
+train_end_index=1000 #训练数据结束
+test_begin_index=1000 #测试数据开始
+train_times=500 #训练次数
 time_step_number=20 #20
 batch_size_number=60 #60
 
@@ -40,7 +40,8 @@ def get_train_data(batch_size=batch_size_number,time_step=time_step_number,train
     data_train=data[train_begin:train_end]
     
     #normalized_train_data=(data_train-np.mean(data_train,axis=0))/np.std(data_train,axis=0)  #标准化
-    normalized_train_data=minMaxSc.fit_transform(data_train)
+    #normalized_train_data=minMaxSc.fit_transform(data_train)
+    normalized_train_data=data_train
 
     train_x,train_y=[],[]   #训练集
     for i in range(len(normalized_train_data)-time_step):
@@ -61,8 +62,9 @@ def get_test_data(time_step=time_step_number,test_begin=test_begin_index):
     #mean=np.mean(data_test,axis=0)
     #std=np.std(data_test,axis=0)
     #normalized_test_data=(data_test-mean)/std  #标准化
-    data_test=data_test.reshape(-1,1)
-    normalized_test_data=minMaxSc.transform(data_test)
+    #data_test=data_test.reshape(-1,1)
+    #normalized_test_data=minMaxSc.transform(data_test)
+    normalized_test_data=data_test
 
     size=(len(normalized_test_data)+time_step-1)//time_step  #有size个sample
     test_x,test_y=[],[]
@@ -160,7 +162,10 @@ def prediction(time_step=time_step_number):
         
         #test_y=np.array(test_y)*std[input_size]+mean[input_size]
         #test_predict=np.array(test_predict)*std[input_size]+mean[input_size]
-        test_predict=minMaxSc.inverse_transform(test_predict)
+        #test_predict=minMaxSc.inverse_transform(test_predict)
+
+        test_y=np.array(test_y)
+        test_predict=np.array(test_predict)
 
         acc=np.average(np.abs(test_predict-test_y[:len(test_predict)])/test_y[:len(test_predict)])  #偏差程度
         print("The accuracy of this predict:",acc)

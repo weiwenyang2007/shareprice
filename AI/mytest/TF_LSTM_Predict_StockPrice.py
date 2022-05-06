@@ -18,7 +18,7 @@ input_size=21		#输入参数数据维度
 output_size=1		#输出结果维度,本算法只能支持一维输出
 lr=0.0006         #学习率
 #——————————————————导入数据——————————————————————
-f=open('./exampleData/600036_stockPrice.csv')
+f=open('./exampleData/603999_stockPrice.csv')
 df=pd.read_csv(f)     #读入股票数据
 
 #行数据:跳过第一行(header)和最后一行(since there is no predict label, or predict label is 0)  
