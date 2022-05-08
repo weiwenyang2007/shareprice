@@ -28,11 +28,11 @@ df=pd.read_csv(f)     #读入股票数据
 data=df.iloc[1:-1,1:(1 + input_size + output_size)].values  
 
 train_begin_index=0 #训练数据开始
-train_end_index=1000 #训练数据结束
-test_begin_index=1000 #测试数据开始
-train_times=500 #训练次数
+train_end_index=900 #训练数据结束
+test_begin_index=900 #测试数据开始
+train_times=100 #训练次数
 time_step_number=20 #20
-batch_size_number=60 #60
+batch_size_number=50 #60
 
 #获取训练集
 def get_train_data(batch_size=batch_size_number,time_step=time_step_number,train_begin=train_begin_index,train_end=train_end_index):
@@ -52,6 +52,8 @@ def get_train_data(batch_size=batch_size_number,time_step=time_step_number,train
        train_x.append(x.tolist())
        train_y.append(y.tolist())
     batch_index.append((len(normalized_train_data)-time_step))
+
+    print("train x:"+str(len(train_x))+",y:"+str(len(train_y)))
     return batch_index,train_x,train_y
 
 
@@ -76,6 +78,7 @@ def get_test_data(time_step=time_step_number,test_begin=test_begin_index):
     test_x.append((normalized_test_data[(i+1)*time_step:,:input_size]).tolist())
     test_y.extend((normalized_test_data[(i+1)*time_step:,input_size:]).tolist())
     #return mean,std,test_x,test_y
+    print("test x:"+str(len(test_x))+", y:"+str(len(test_y)))
     return test_x,test_y
 
 #——————————————————定义神经网络变量——————————————————
