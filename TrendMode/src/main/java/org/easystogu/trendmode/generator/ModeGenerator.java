@@ -20,7 +20,7 @@ public class ModeGenerator {
 	private ConfigurationService config = DBConfigurationService.getInstance();
 	private CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
 	private StockPriceTableHelper stockPriceTable = QianFuQuanStockPriceTableHelper.getInstance();
-	private String trendModeJsonFilePath = "C:/Users/eyaweiw/github/EasyStoGu/Portal/src/main/resources/TrendMode/";//config.getString("trendmode.json.file.path");
+	private String trendModeJsonFilePath = "/home/eyaweiw/github/shareprice/Portal/src/main/resources/TrendMode/";//config.getString("trendmode.json.file.path");
 
 	// select range prices for one stock and return json str
 	public TrendModeVO generateTrendMode(String name, String description, String stockId, String dateStart,
@@ -111,9 +111,11 @@ public class ModeGenerator {
 		saveToFile(generateTrendMode("HengPan4Zhou", "横盘四周突破", "000049", "2017-02-07", "2017-03-10"));
 		saveToFile(generateTrendMode("HengPan1Zhou", "横盘一周突破", "000423", "2017-03-10", "2017-03-17"));
 		saveToFile(generateTrendMode("HengPan2Zhou", "横盘两周突破", "002673", "2015-03-20", "2015-04-08"));
+		saveToFile(generateTrendMode("LuZaoPhaseII", "鲁兆持股阶段", "600547", "2018-09-19", "2018-10-25"));
 		*/
 		
-		saveToFile(generateTrendMode("LuZaoPhaseII", "鲁兆持股阶段", "600547", "2018-09-19", "2018-10-25"));
+		saveToFile(generateTrendMode("LuZaoPhaseII_002444", "鲁兆持股-升越良山~三山重叠", "002444", "2015-09-30", "2015-11-25"));
+		saveToFile(generateTrendMode("LuZaoPhaseIII_002444", "鲁兆加仓-山腰乘凉~三山重叠", "002444", "2015-11-03", "2015-11-25"));
 	}
 
 	public static void main(String[] args) {
