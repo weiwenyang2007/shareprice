@@ -30,6 +30,7 @@ import org.easystogu.runner.dynamic.taskIF.DynamicRunner;
 import org.easystogu.sina.runner.DailyStockPriceDownloadAndStoreDBRunner2;
 import org.easystogu.sina.runner.RealtimeDisplayStockPriceRunner;
 import org.easystogu.sina.runner.history.StockPriceHistoryOverAllRunner;
+import org.easystogu.trendmode.generator.ModeGenerator;
 import org.easystogu.utils.WeekdayUtil;
 
 public class HomeEndPoint {
@@ -409,8 +410,7 @@ public class HomeEndPoint {
   public String test() {
     Thread t = new Thread(new Runnable() {
       public void run() {
-        HistoryDailySelectionRunner runner = new HistoryDailySelectionRunner();
-        runner.runAllUsingMultipCpu();
+        ModeGenerator.main(null);
       }
     });
     t.start();
