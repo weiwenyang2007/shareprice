@@ -169,7 +169,8 @@ public class IndicatorEndPointV3 {
 	public String queryShenXianSellById(@PathParam("stockId") String stockIdParm,
 			@PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
-
+		//postBody is like:
+		//{"trendModeName":"Zhang2GeDian","nDays":"1","repeatTimes":"2"}
 		List<ShenXianUIVO> rtnList = queryShenXianSellById(stockIdParm, dateParm, postBody);
 		return gson.toJson(rtnList);
 	}
