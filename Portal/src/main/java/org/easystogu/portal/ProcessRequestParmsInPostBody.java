@@ -38,11 +38,30 @@ public class ProcessRequestParmsInPostBody {
 	@Autowired
 	protected TrendModeLoader trendModeLoader;
 
+	//根据trendMode预计算股价
+	public List<StockPriceVO> updateStockPriceAccordingToRequest(String stockId, String trendModeName, int repeatTimes, int nDays) {
+		List<StockPriceVO> spList = fetchAllPrices(stockId);
+		if(Strings.isEmpty(trendModeName) || "None".equals(trendModeName)){
+			return spList;
+		}
+		//
+		if (Strings.isNotEmpty(trendModeName)) {
+			spList = this.appendTrendModePrice(trendModeName, repeatTimes, spList);
+		}
+		//default nDays = 1
+		if (nDays > 1) {
+			spList = this.mergeNDaysPrice(nDays, spList);
+		}
+		return spList;
+	}
+
+	//根据trendMode预计算股价
 	public List<StockPriceVO> updateStockPriceAccordingToRequest(String stockId, String postBody) {
 
 		List<StockPriceVO> spList = fetchAllPrices(stockId);
-		if (Strings.isEmpty(postBody))
+		if (Strings.isEmpty(postBody)) {
 			return spList;
+		}
 
 		try {
 			JSONObject jsonParm = new JSONObject(postBody);
