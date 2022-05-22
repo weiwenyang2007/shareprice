@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.easystogu.analyse.FlagsAnalyseHelper;
+import org.easystogu.analyse.ShenXianSellAnalyseHelper;
 import org.easystogu.analyse.util.ProcessRequestParmsInPostBody;
 import org.easystogu.db.vo.table.BBIVO;
 import org.easystogu.db.vo.table.BollVO;
@@ -58,6 +59,8 @@ public class IndicatorEndPointV3 {
 	protected TrendModeLoader trendModeLoader;
 	@Autowired
 	FlagsAnalyseHelper flagsAnalyseHelper;
+	@Autowired
+	ShenXianSellAnalyseHelper shenXianSellAnalyseHelper;
 	
 	private Gson gson = new Gson();
 
@@ -215,11 +218,11 @@ public class IndicatorEndPointV3 {
 		}catch(org.json.JSONException e){
 			e.printStackTrace();
 		}
-		List<ShenXianUIVO> rtnList = queryShenXianSellById(stockIdParm, dateParm, jsonParm);
+		List<ShenXianUIVO> rtnList = shenXianSellAnalyseHelper.queryShenXianSellById(stockIdParm, dateParm, jsonParm);
 		return gson.toJson(rtnList);
 	}
 
-	public List<ShenXianUIVO> queryShenXianSellById(String stockIdParm, String dateParm, JSONObject jsonParm) {
+	public List<ShenXianUIVO> queryShenXianSellById_ToBeDelete(String stockIdParm, String dateParm, JSONObject jsonParm) {
 		List<ShenXianUIVO> sxList = new ArrayList<ShenXianUIVO>();
 		List<MacdVO> macdList = new ArrayList<MacdVO>();
 		List<BBIVO> bbiList = new ArrayList<BBIVO>();
