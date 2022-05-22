@@ -155,15 +155,17 @@ public class ShenXianSellAnalyseHelper {
         List<String> filterStockIdsByCP = checkPointList.stream()
                 .filter(cp ->  isSelectedCheckPoint(cp.getCheckPoint()))
                 .map(cp -> cp.getStockId())
-                .distinct()//filter out the duplicated stockIds
                 .collect(Collectors.toList());
 
 
+        //filter out the duplicated stockIds
+        List<String> selectStockIds = filterStockIdsByCP.stream().distinct().collect(Collectors.toList());
+
         //run for each stockId
-        filterStockIdsByCP.parallelStream().forEach(stockId
+        selectStockIds.parallelStream().forEach(stockId
                 -> {
             System.out.println("process "+ stockId);
-            List<ShenXianUIVO> shenXianUIVOList = queryShenXianSellById(stockId, curDate+"_"+startDate, jsonParm);
+            List<ShenXianUIVO> shenXianUIVOList = queryShenXianSellById(stockId, startDate+"_"+curDate, jsonParm);
             shenXianUIVOList.stream().forEach(svo -> {
                if(svo.getDuoFlagsText().contains("山腰乘凉")){
                    System.out.println("process result: " + svo.getStockId() + " has 山腰乘凉 @" + svo.getDate());
