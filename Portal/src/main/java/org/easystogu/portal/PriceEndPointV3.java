@@ -44,7 +44,6 @@ public class PriceEndPointV3 {
 			@PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<StockPriceVO> rtnSpList = new ArrayList<StockPriceVO>();
-		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, postBody);
 		JSONObject jsonParm = null;
 		try {
 			if (Strings.isNotEmpty(postBody)) {
@@ -53,6 +52,7 @@ public class PriceEndPointV3 {
 		}catch(org.json.JSONException e){
 			e.printStackTrace();
 		}
+		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, jsonParm);
 		for (StockPriceVO vo : spList) {
 			if (postParmsProcess.isStockDateSelected(jsonParm, dateParm, vo.date)) {
 				rtnSpList.add(vo);
