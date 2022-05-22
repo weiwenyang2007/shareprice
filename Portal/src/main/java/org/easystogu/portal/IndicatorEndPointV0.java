@@ -36,7 +36,7 @@ import org.easystogu.indicator.QSDDHelper;
 import org.easystogu.indicator.ShenXianHelper;
 import org.easystogu.indicator.WRHelper;
 import org.easystogu.indicator.runner.utils.StockPriceFetcher;
-import org.easystogu.portal.vo.ShenXianUIVO;
+import org.easystogu.analyse.vo.ShenXianUIVO;
 import org.easystogu.utils.Strings;
 
 import com.google.common.primitives.Doubles;

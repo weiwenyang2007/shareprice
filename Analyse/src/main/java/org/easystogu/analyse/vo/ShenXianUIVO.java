@@ -1,4 +1,4 @@
-package org.easystogu.portal.vo;
+package org.easystogu.analyse.vo;
 
 import org.apache.commons.lang.StringUtils;
 import org.easystogu.db.vo.table.ShenXianVO;

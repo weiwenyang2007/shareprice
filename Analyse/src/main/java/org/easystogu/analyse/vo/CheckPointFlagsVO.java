@@ -1,4 +1,4 @@
-package org.easystogu.portal.vo;
+package org.easystogu.analyse.vo;
 
 public class CheckPointFlagsVO {
 	public StringBuffer weekGordonTitle = new StringBuffer();

@@ -14,7 +14,7 @@ import org.easystogu.cache.ConfigurationServiceCache;
 import org.easystogu.cache.XXXYuanStockStatisticsCache;
 import org.easystogu.db.vo.view.StatisticsViewVO;
 import org.easystogu.portal.util.MergeNDaysStatisticsHelper;
-import org.easystogu.portal.vo.StatisticsVO;
+import org.easystogu.analyse.vo.StatisticsVO;
 import com.google.gson.Gson;
 
 public class XXXYuanStockStatisticsEndPoint {

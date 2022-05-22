@@ -6,8 +6,8 @@ import org.easystogu.db.vo.table.*;
 import org.easystogu.indicator.IND;
 import org.easystogu.indicator.MAHelper;
 import org.easystogu.log.LogHelper;
-import org.easystogu.portal.vo.CheckPointFlagsVO;
-import org.easystogu.portal.vo.ShenXianUIVO;
+import org.easystogu.analyse.vo.CheckPointFlagsVO;
+import org.easystogu.analyse.vo.ShenXianUIVO;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 

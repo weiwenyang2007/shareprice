@@ -31,7 +31,7 @@ import org.easystogu.indicator.ShenXianHelper;
 import org.easystogu.indicator.WRHelper;
 import org.easystogu.indicator.runner.utils.StockPriceFetcher;
 import org.easystogu.trendmode.TrendModeLoader;
-import org.easystogu.portal.vo.ShenXianUIVO;
+import org.easystogu.analyse.vo.ShenXianUIVO;
 import org.easystogu.utils.Strings;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

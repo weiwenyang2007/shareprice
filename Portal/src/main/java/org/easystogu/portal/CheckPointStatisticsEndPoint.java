@@ -15,7 +15,7 @@ import org.easystogu.cache.StockPriceCache;
 import org.easystogu.checkpoint.DailyCombineCheckPoint;
 import org.easystogu.config.Constants;
 import org.easystogu.db.vo.table.CheckPointDailyStatisticsVO;
-import org.easystogu.portal.vo.StatisticsVO;
+import org.easystogu.analyse.vo.StatisticsVO;
 import org.easystogu.utils.WeekdayUtil;
 import com.google.gson.Gson;
 
