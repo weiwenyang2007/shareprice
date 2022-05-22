@@ -16,7 +16,7 @@ import org.easystogu.config.DBConfigurationService;
 import org.easystogu.cache.ConfigurationServiceCache;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
-import org.easystogu.portal.init.TrendModeLoader;
+import org.easystogu.trendmode.TrendModeLoader;
 import org.easystogu.trendmode.vo.TrendModeVO;
 import org.easystogu.utils.Strings;
 import org.easystogu.utils.WeekdayUtil;

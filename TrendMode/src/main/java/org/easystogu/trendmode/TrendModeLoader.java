@@ -1,20 +1,14 @@
-package org.easystogu.portal.init;
+package org.easystogu.trendmode;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
+import net.sf.json.JSONObject;
 import org.easystogu.file.TextFileSourceHelper;
 import org.easystogu.trendmode.vo.SimplePriceVO;
 import org.easystogu.trendmode.vo.TrendModeVO;
 import org.springframework.stereotype.Component;
 
-import net.sf.json.JSONObject;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.*;
 
 @Component
 public class TrendModeLoader {

@@ -20,7 +20,7 @@ public class ModeGenerator {
 	private ConfigurationService config = DBConfigurationService.getInstance();
 	private CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
 	private StockPriceTableHelper stockPriceTable = QianFuQuanStockPriceTableHelper.getInstance();
-	private String trendModeJsonFilePath = "/home/eyaweiw/github/shareprice/Portal/src/main/resources/TrendMode/";//config.getString("trendmode.json.file.path");
+	private String trendModeJsonFilePath = "/home/<myName>/github/shareprice/TrendMode/src/main/resources/TrendMode/";//config.getString("trendmode.json.file.path");
 
 	// select range prices for one stock and return json str
 	public TrendModeVO generateTrendMode(String name, String description, String stockId, String dateStart,

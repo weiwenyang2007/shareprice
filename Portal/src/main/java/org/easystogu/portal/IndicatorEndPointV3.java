@@ -28,9 +28,10 @@ import org.easystogu.indicator.QSDDHelper;
 import org.easystogu.indicator.ShenXianHelper;
 import org.easystogu.indicator.WRHelper;
 import org.easystogu.indicator.runner.utils.StockPriceFetcher;
-import org.easystogu.portal.init.TrendModeLoader;
+import org.easystogu.trendmode.TrendModeLoader;
 import org.easystogu.portal.vo.ShenXianUIVO;
 import org.easystogu.utils.Strings;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.easystogu.cache.ConfigurationServiceCache;
 import com.google.common.primitives.Doubles;
@@ -169,19 +170,28 @@ public class IndicatorEndPointV3 {
 	public String queryShenXianSellById(@PathParam("stockId") String stockIdParm,
 			@PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
-		//postBody is like:
-		//{"trendModeName":"Zhang2GeDian","nDays":"1","repeatTimes":"2"}
-		List<ShenXianUIVO> rtnList = queryShenXianSellById(stockIdParm, dateParm, postBody);
+		//stockIdParm is like: 603999
+		//dateParm is like: 2016-11-29_2022-05-22
+		//postBody is like: {"trendModeName":"Zhang2GeDian","nDays":"1","repeatTimes":"2"}
+		JSONObject jsonParm = null;
+		try {
+			if (Strings.isNotEmpty(postBody)) {
+				jsonParm = new JSONObject(postBody);
+			}
+		}catch(JSONException e){
+			e.printStackTrace();
+		}
+		List<ShenXianUIVO> rtnList = queryShenXianSellById(stockIdParm, dateParm, jsonParm);
 		return gson.toJson(rtnList);
 	}
 
-	public List<ShenXianUIVO> queryShenXianSellById(String stockIdParm, String dateParm, String postBody) {
+	public List<ShenXianUIVO> queryShenXianSellById(String stockIdParm, String dateParm, JSONObject jsonParm) {
 		List<ShenXianUIVO> sxList = new ArrayList<ShenXianUIVO>();
 		List<MacdVO> macdList = new ArrayList<MacdVO>();
 		List<BBIVO> bbiList = new ArrayList<BBIVO>();
 		List<LuZaoVO> luzaoList = new ArrayList<LuZaoVO>();
 
-		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, postBody);
+		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, jsonParm);
 		List<Double> close = StockPriceFetcher.getClosePrice(spList);
 		List<Double> high = StockPriceFetcher.getHighPrice(spList);
 		List<Double> low = StockPriceFetcher.getLowPrice(spList);
@@ -190,7 +200,7 @@ public class IndicatorEndPointV3 {
 		double[][] shenXian = shenXianHelper.getShenXianSellPointList(Doubles.toArray(close), Doubles.toArray(high),
 				Doubles.toArray(low));
 		for (int i = 0; i < shenXian[0].length; i++) {
-			if (postParmsProcess.isStockDateSelected(postBody, dateParm, spList.get(i).date)) {
+			if (postParmsProcess.isStockDateSelected(jsonParm, dateParm, spList.get(i).date)) {
 				ShenXianUIVO vo = new ShenXianUIVO();
 				vo.setH1(Strings.convert2ScaleDecimal(shenXian[0][i]));
 				vo.setH2(Strings.convert2ScaleDecimal(shenXian[1][i]));
@@ -205,7 +215,7 @@ public class IndicatorEndPointV3 {
 		// macd
 		double[][] macd = macdHelper.getMACDList(Doubles.toArray(close));
 		for (int i = 0; i < macd[0].length; i++) {
-			if (postParmsProcess.isStockDateSelected(postBody, dateParm, spList.get(i).date)) {
+			if (postParmsProcess.isStockDateSelected(jsonParm, dateParm, spList.get(i).date)) {
 				MacdVO vo = new MacdVO();
 				vo.setDif(macd[0][i]);
 				vo.setDea(macd[1][i]);
@@ -219,7 +229,7 @@ public class IndicatorEndPointV3 {
 		// bbi
 		double[][] bbi = bbiHelper.getBBIList(Doubles.toArray(close));
 		for (int i = 0; i < bbi[0].length; i++) {
-			if (postParmsProcess.isStockDateSelected(postBody, dateParm, spList.get(i).date)) {
+			if (postParmsProcess.isStockDateSelected(jsonParm, dateParm, spList.get(i).date)) {
 				BBIVO vo = new BBIVO();
 				vo.setBbi(bbi[0][i]);
 				vo.setClose(bbi[1][i]);
@@ -232,7 +242,7 @@ public class IndicatorEndPointV3 {
 		// luzhao
 		double[][] lz = luzaoHelper.getLuZaoList(Doubles.toArray(close));
 		for (int i = 0; i < lz[0].length; i++) {
-			if (postParmsProcess.isStockDateSelected(postBody, dateParm, spList.get(i).date)) {
+			if (postParmsProcess.isStockDateSelected(jsonParm, dateParm, spList.get(i).date)) {
 				LuZaoVO vo = new LuZaoVO();
 				vo.setMa19(lz[0][i]);
 				vo.setMa43(lz[1][i]);

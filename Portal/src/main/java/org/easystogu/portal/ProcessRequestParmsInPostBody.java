@@ -9,7 +9,7 @@ import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.util.MergeNDaysPriceUtil;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
-import org.easystogu.portal.init.TrendModeLoader;
+import org.easystogu.trendmode.TrendModeLoader;
 import org.easystogu.sina.runner.history.HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner;
 import org.easystogu.trendmode.vo.SimplePriceVO;
 import org.easystogu.trendmode.vo.TrendModeVO;
@@ -17,8 +17,6 @@ import org.easystogu.utils.Strings;
 import org.easystogu.utils.WeekdayUtil;
 import org.easystogu.cache.StockIndicatorCache;
 import org.easystogu.config.Constants;
-import org.easystogu.cache.ConfigurationServiceCache;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,32 +37,13 @@ public class ProcessRequestParmsInPostBody {
 	protected TrendModeLoader trendModeLoader;
 
 	//根据trendMode预计算股价
-	public List<StockPriceVO> updateStockPriceAccordingToRequest(String stockId, String trendModeName, int repeatTimes, int nDays) {
-		List<StockPriceVO> spList = fetchAllPrices(stockId);
-		if(Strings.isEmpty(trendModeName) || "None".equals(trendModeName)){
-			return spList;
-		}
-		//
-		if (Strings.isNotEmpty(trendModeName)) {
-			spList = this.appendTrendModePrice(trendModeName, repeatTimes, spList);
-		}
-		//default nDays = 1
-		if (nDays > 1) {
-			spList = this.mergeNDaysPrice(nDays, spList);
-		}
-		return spList;
-	}
-
-	//根据trendMode预计算股价
-	public List<StockPriceVO> updateStockPriceAccordingToRequest(String stockId, String postBody) {
+	public List<StockPriceVO> updateStockPriceAccordingToRequest(String stockId, JSONObject jsonParm) {
 
 		List<StockPriceVO> spList = fetchAllPrices(stockId);
-		if (Strings.isEmpty(postBody)) {
+		if (jsonParm == null) {
 			return spList;
 		}
 
-		try {
-			JSONObject jsonParm = new JSONObject(postBody);
 			// parms has process priority, do not change the order
 			int repeatTimes = 1;
 			String repeatTimesParms = jsonParm.getString("repeatTimes");
@@ -81,11 +60,6 @@ public class ProcessRequestParmsInPostBody {
 			if (Strings.isNotEmpty(nDays) && Strings.isNumeric(nDays)) {
 				spList = this.mergeNDaysPrice(Integer.parseInt(nDays), spList);
 			}
-
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		// finally return the updated spList
 		return spList;
@@ -160,7 +134,7 @@ public class ProcessRequestParmsInPostBody {
 		return spList;
 	}
 
-	private String appendTrendModeDateToDateRange(String postBody, String date) {
+	private String appendTrendModeDateToDateRange(JSONObject jsonParm, String date) {
 		String fromDate = WeekdayUtil.currentDate();
 		String endDate = WeekdayUtil.currentDate();
 
@@ -171,10 +145,7 @@ public class ProcessRequestParmsInPostBody {
 			// if postBody contains the trendMode, then get the dateLengh from
 			// it
 			// and append the last date to dateRange
-			if (Strings.isNotEmpty(postBody)) {
-				try {
-					JSONObject jsonParm = new JSONObject(postBody);
-
+			if (jsonParm != null) {
 					int repeatTimes = 1;
 					String repeatTimesParms = jsonParm.getString("repeatTimes");
 					if (Strings.isNotEmpty(repeatTimesParms) && Strings.isNumeric(repeatTimesParms)) {
@@ -195,11 +166,6 @@ public class ProcessRequestParmsInPostBody {
 							return fromDate + "_" + newEndDate;
 						}
 					}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
 			}
 		}
 
@@ -207,9 +173,9 @@ public class ProcessRequestParmsInPostBody {
 		return date;
 	}
 
-	public boolean isStockDateSelected(String postBody, String date, String aDate) {
+	public boolean isStockDateSelected(JSONObject jsonParm, String date, String aDate) {
 
-		String newDate = this.appendTrendModeDateToDateRange(postBody, date);
+		String newDate = this.appendTrendModeDateToDateRange(jsonParm, date);
 
 		if (Pattern.matches(Constants.fromToRegex, newDate)) {
 			String date1 = newDate.split("_")[0];
