@@ -169,7 +169,13 @@ public class IndicatorEndPointV3 {
 	public String queryShenXianSellById(@PathParam("stockId") String stockIdParm,
 			@PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
-	
+		//postBody is like:
+		//{"trendModeName":"Zhang2GeDian","nDays":"1","repeatTimes":"2"}
+		List<ShenXianUIVO> rtnList = queryShenXianSellById(stockIdParm, dateParm, postBody);
+		return gson.toJson(rtnList);
+	}
+
+	public List<ShenXianUIVO> queryShenXianSellById(String stockIdParm, String dateParm, String postBody) {
 		List<ShenXianUIVO> sxList = new ArrayList<ShenXianUIVO>();
 		List<MacdVO> macdList = new ArrayList<MacdVO>();
 		List<BBIVO> bbiList = new ArrayList<BBIVO>();
@@ -236,8 +242,8 @@ public class IndicatorEndPointV3 {
 				luzaoList.add(vo);
 			}
 		}
-
-		return gson.toJson(flagsAnalyseHelper.shenXianBuySellFlagsAnalyse(spList, sxList, macdList, bbiList, luzaoList));
+		//
+		return flagsAnalyseHelper.shenXianBuySellFlagsAnalyse(spList, sxList, macdList, bbiList, luzaoList);
 	}
 
 	@POST
