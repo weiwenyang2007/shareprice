@@ -13,6 +13,7 @@
 	<context:annotation-config />
 	<context:component-scan base-package="org.easystogu.portal" />
 	<context:component-scan base-package="org.easystogu.trendmode" />
+	<context:component-scan base-package="org.easystogu.analyse" />
 
 	<!-- WS Service -->
 	<bean id="portalServiceHomeEndPoint" class="org.easystogu.portal.HomeEndPoint">
