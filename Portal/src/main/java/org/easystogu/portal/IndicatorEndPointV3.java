@@ -99,6 +99,7 @@ public class IndicatorEndPointV3 {
 			String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<KDJVO> list = new ArrayList<KDJVO>();
+		JSONObject jsonParm = null;
 		try {
 			if (Strings.isNotEmpty(postBody)) {
 				jsonParm = new JSONObject(postBody);
@@ -134,6 +135,7 @@ public class IndicatorEndPointV3 {
 			String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<BollVO> list = new ArrayList<BollVO>();
+		JSONObject jsonParm = null;
 		try {
 			if (Strings.isNotEmpty(postBody)) {
 				jsonParm = new JSONObject(postBody);
@@ -167,6 +169,7 @@ public class IndicatorEndPointV3 {
 			@PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<ShenXianVO> list = new ArrayList<ShenXianVO>();
+		JSONObject jsonParm = null;
 		try {
 			if (Strings.isNotEmpty(postBody)) {
 				jsonParm = new JSONObject(postBody);
