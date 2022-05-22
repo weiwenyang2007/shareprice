@@ -440,6 +440,6 @@ public class WeekdayUtil {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(WeekdayUtil.yesterdayDate() + "," + WeekdayUtil.currentDate()+ ","+WeekdayUtil.tomorrowDate());
+		System.out.println(WeekdayUtil.isDate1AfterOrEqualDate2("2022-05-23", "2022-05-22"));
 	}
 }

@@ -162,7 +162,7 @@ public class ShenXianSellAnalyseHelper {
         List<String> selectStockIds = filterStockIdsByCP.stream().distinct().collect(Collectors.toList());
 
         //run for each stockId
-        selectStockIds.parallelStream().forEach(stockId
+        selectStockIds.stream().forEach(stockId
                 -> {
             System.out.println("analyseWithPredictStockPrice process "+ stockId);
             List<ShenXianUIVO> shenXianUIVOList = queryShenXianSellById(stockId, startDate+"_"+curDate, jsonParm);
