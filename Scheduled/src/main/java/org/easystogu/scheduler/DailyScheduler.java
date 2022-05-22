@@ -3,6 +3,7 @@ package org.easystogu.scheduler;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.easystogu.analyse.ShenXianSellAnalyseHelper;
 import org.easystogu.cache.ConfigurationServiceCache;
 import org.easystogu.cache.runner.AllCacheRunner;
 import org.easystogu.checkpoint.DailyCombineCheckPoint;
@@ -66,8 +67,8 @@ public class DailyScheduler implements SchedulingConfigurer {
 		}
 	}
 
-	// run at 19:30 DailyOverAllRunner
-	@Scheduled(cron = "0 30 19 * * MON-FRI")
+	// run at 19:00 DailyOverAllRunner
+	@Scheduled(cron = "0 0 19 * * MON-FRI")
 	public void _3_DailyOverAllRunner() {
 		if (Constants.ZONE_OFFICE.equalsIgnoreCase(zone)) {
 //		  DailyOverAllRunner runner = new DailyOverAllRunner(false);
@@ -94,6 +95,8 @@ public class DailyScheduler implements SchedulingConfigurer {
 	          new DailyViewAnalyseRunner().run();
 	          //
 	          new AllCacheRunner().refreshAll();
+			  //
+			  ShenXianSellAnalyseHelper.main(null);
 	        }
 	      });
 	      t.start();
