@@ -30,7 +30,7 @@ import org.easystogu.db.vo.table.WRVO;
 import org.easystogu.indicator.LuZaoHelper;
 import org.easystogu.indicator.ShenXianHelper;
 import org.easystogu.indicator.runner.utils.StockPriceFetcher;
-import org.easystogu.portal.vo.ShenXianUIVO;
+import org.easystogu.analyse.vo.ShenXianUIVO;
 import org.easystogu.utils.Strings;
 
 import com.google.common.primitives.Doubles;
