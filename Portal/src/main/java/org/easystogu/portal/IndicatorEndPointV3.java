@@ -292,6 +292,7 @@ public class IndicatorEndPointV3 {
 			String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<LuZaoVO> list = new ArrayList<LuZaoVO>();
+		JSONObject jsonParm = null;
 		try {
 			if (Strings.isNotEmpty(postBody)) {
 				jsonParm = new JSONObject(postBody);
@@ -325,6 +326,7 @@ public class IndicatorEndPointV3 {
 			String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<QSDDVO> list = new ArrayList<QSDDVO>();
+		JSONObject jsonParm = null;
 		try {
 			if (Strings.isNotEmpty(postBody)) {
 				jsonParm = new JSONObject(postBody);
@@ -360,6 +362,7 @@ public class IndicatorEndPointV3 {
 			String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<WRVO> list = new ArrayList<WRVO>();
+		JSONObject jsonParm = null;
 		try {
 			if (Strings.isNotEmpty(postBody)) {
 				jsonParm = new JSONObject(postBody);
