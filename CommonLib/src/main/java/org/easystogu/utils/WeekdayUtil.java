@@ -395,6 +395,50 @@ public class WeekdayUtil {
 		return false;
 	}
 
+	public static boolean isDate1BeforeDate2(String date1, String date2){
+		try {
+			Date d1 = sdf_yyyyMMdd.parse(date1);
+			Date d2 = sdf_yyyyMMdd.parse(date2);
+			return d1.before(d2);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public static boolean isDate1BeforeOrEqualDate2(String date1, String date2){
+		try {
+			Date d1 = sdf_yyyyMMdd.parse(date1);
+			Date d2 = sdf_yyyyMMdd.parse(date2);
+			return d1.before(d2) || d1.equals(d2);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public static boolean isDate1AfterDate2(String date1, String date2){
+		try {
+			Date d1 = sdf_yyyyMMdd.parse(date1);
+			Date d2 = sdf_yyyyMMdd.parse(date2);
+			return d1.after(d2);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public static boolean isDate1AfterOrEqualDate2(String date1, String date2){
+		try {
+			Date d1 = sdf_yyyyMMdd.parse(date1);
+			Date d2 = sdf_yyyyMMdd.parse(date2);
+			return d1.after(d2) || d1.equals(d2);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	public static void main(String[] args) {
 		System.out.println(WeekdayUtil.yesterdayDate() + "," + WeekdayUtil.currentDate()+ ","+WeekdayUtil.tomorrowDate());
 	}

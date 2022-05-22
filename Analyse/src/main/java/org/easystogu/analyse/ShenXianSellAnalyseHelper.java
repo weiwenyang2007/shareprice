@@ -164,11 +164,12 @@ public class ShenXianSellAnalyseHelper {
         //run for each stockId
         selectStockIds.parallelStream().forEach(stockId
                 -> {
-            System.out.println("process "+ stockId);
+            System.out.println("analyseWithPredictStockPrice process "+ stockId);
             List<ShenXianUIVO> shenXianUIVOList = queryShenXianSellById(stockId, startDate+"_"+curDate, jsonParm);
             shenXianUIVOList.stream().forEach(svo -> {
-               if(svo.getDuoFlagsText().contains("山腰乘凉")){
-                   System.out.println("process result: " + svo.getStockId() + " has 山腰乘凉 @" + svo.getDate());
+               if(svo.getDuoFlagsText().contains("山腰乘凉")
+               && WeekdayUtil.isDate1AfterOrEqualDate2(svo.getDate(), curDate)){
+                   System.out.println("analyseWithPredictStockPrice process result: " + svo.getStockId() + " has 山腰乘凉 @" + svo.getDate());
                }
             });
         });
