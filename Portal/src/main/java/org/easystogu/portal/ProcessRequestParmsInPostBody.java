@@ -43,7 +43,7 @@ public class ProcessRequestParmsInPostBody {
 		if (jsonParm == null) {
 			return spList;
 		}
-
+		try {
 			// parms has process priority, do not change the order
 			int repeatTimes = 1;
 			String repeatTimesParms = jsonParm.getString("repeatTimes");
@@ -60,7 +60,9 @@ public class ProcessRequestParmsInPostBody {
 			if (Strings.isNotEmpty(nDays) && Strings.isNumeric(nDays)) {
 				spList = this.mergeNDaysPrice(Integer.parseInt(nDays), spList);
 			}
-
+		}catch(org.json.JSONException e){
+			e.printStackTrace();
+		}
 		// finally return the updated spList
 		return spList;
 	}
@@ -146,6 +148,7 @@ public class ProcessRequestParmsInPostBody {
 			// it
 			// and append the last date to dateRange
 			if (jsonParm != null) {
+				try{
 					int repeatTimes = 1;
 					String repeatTimesParms = jsonParm.getString("repeatTimes");
 					if (Strings.isNotEmpty(repeatTimesParms) && Strings.isNumeric(repeatTimesParms)) {
@@ -166,6 +169,9 @@ public class ProcessRequestParmsInPostBody {
 							return fromDate + "_" + newEndDate;
 						}
 					}
+				}catch(org.json.JSONException e){
+					e.printStackTrace();
+				}
 			}
 		}
 

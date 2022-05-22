@@ -178,7 +178,7 @@ public class IndicatorEndPointV3 {
 			if (Strings.isNotEmpty(postBody)) {
 				jsonParm = new JSONObject(postBody);
 			}
-		}catch(JSONException e){
+		}catch(org.json.JSONException e){
 			e.printStackTrace();
 		}
 		List<ShenXianUIVO> rtnList = queryShenXianSellById(stockIdParm, dateParm, jsonParm);
