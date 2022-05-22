@@ -11,6 +11,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
+import org.easystogu.analyse.util.ProcessRequestParmsInPostBody;
 import org.easystogu.config.ConfigurationService;
 import org.easystogu.config.DBConfigurationService;
 import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
