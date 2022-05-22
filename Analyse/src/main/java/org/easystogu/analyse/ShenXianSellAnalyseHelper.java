@@ -10,6 +10,7 @@ import com.google.common.primitives.Doubles;
 import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.easystogu.analyse.util.ProcessRequestParmsInPostBody;
 import org.easystogu.analyse.vo.ShenXianUIVO;
+import org.easystogu.checkpoint.DailyCombineCheckPoint;
 import org.easystogu.db.access.table.CheckPointDailySelectionTableHelper;
 import org.easystogu.db.vo.table.*;
 import org.easystogu.indicator.*;
@@ -43,6 +44,7 @@ public class ShenXianSellAnalyseHelper {
             "LuZao_PhaseIII_MACD_WEEK_GORDON_MACD_DAY_DIF_CROSS_0",
             "MACD_TWICE_GORDON_W_Botton_TiaoKong_ZhanShang_Bull",
             "MACD_TWICE_GORDON_W_Botton_MACD_DI_BEILI"};
+    //最终有上述特征的股票经过未来2天的预计算，得出 checkpoint 为 LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days
 
     //预估后面2天每天涨2个点，计算出是否出现luzao山腰乘凉买点
     private static String postBody = "{\"trendModeName\":\"Zhang2GeDian\",\"nDays\":\"1\",\"repeatTimes\":\"2\"}";
@@ -170,6 +172,12 @@ public class ShenXianSellAnalyseHelper {
                if(svo.getDuoFlagsText().contains("山腰乘凉")
                && WeekdayUtil.isDate1AfterOrEqualDate2(svo.getDate(), curDate)){
                    System.out.println("analyseWithPredictStockPrice process result: " + svo.getStockId() + " has 山腰乘凉 @" + svo.getDate());
+                   CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
+                   cpvo.stockId = stockId;
+                   cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days.name();
+                   cpvo.date = curDate;
+                   checkPointDailySelectionTable.delete(cpvo);
+                   checkPointDailySelectionTable.insert(cpvo);
                }
             });
         });

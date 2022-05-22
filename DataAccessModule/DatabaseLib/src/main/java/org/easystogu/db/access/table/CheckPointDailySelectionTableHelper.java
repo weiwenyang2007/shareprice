@@ -268,6 +268,10 @@ public class CheckPointDailySelectionTableHelper {
 		return 0;
 	}
 
+	public void delete(CheckPointDailySelectionVO vo) {
+		this.delete(vo.stockId, vo.date, vo.checkPoint);
+	}
+
 	public void delete(String stockId, String date, String checkpoint) {
 		try {
 			MapSqlParameterSource namedParameters = new MapSqlParameterSource();
