@@ -17,11 +17,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.albertyang2007.easystogu</groupId>
-			<artifactId>easystogu-trendmode</artifactId>
-			<version>${repo-internal-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.albertyang2007.easystogu</groupId>
 			<artifactId>easystogu-ai</artifactId>
 			<version>${repo-internal-version}</version>
 		</dependency>
