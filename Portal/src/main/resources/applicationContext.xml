@@ -12,6 +12,7 @@
 	<!-- Enable @Autowired -->
 	<context:annotation-config />
 	<context:component-scan base-package="org.easystogu.portal" />
+	<context:component-scan base-package="org.easystogu.trendmode" />
 
 	<!-- WS Service -->
 	<bean id="portalServiceHomeEndPoint" class="org.easystogu.portal.HomeEndPoint">
