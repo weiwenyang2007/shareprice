@@ -45,9 +45,16 @@ public class PriceEndPointV3 {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<StockPriceVO> rtnSpList = new ArrayList<StockPriceVO>();
 		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, postBody);
-
+		JSONObject jsonParm = null;
+		try {
+			if (Strings.isNotEmpty(postBody)) {
+				jsonParm = new JSONObject(postBody);
+			}
+		}catch(org.json.JSONException e){
+			e.printStackTrace();
+		}
 		for (StockPriceVO vo : spList) {
-			if (postParmsProcess.isStockDateSelected(postBody, dateParm, vo.date)) {
+			if (postParmsProcess.isStockDateSelected(jsonParm, dateParm, vo.date)) {
 				rtnSpList.add(vo);
 			}
 		}
