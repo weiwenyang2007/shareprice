@@ -166,7 +166,7 @@ public class ShenXianSellAnalyseHelper {
             List<ShenXianUIVO> shenXianUIVOList = queryShenXianSellById(stockId, curDate+"_"+startDate, jsonParm);
             shenXianUIVOList.stream().forEach(svo -> {
                if(svo.getDuoFlagsText().contains("山腰乘凉")){
-                   System.out.println(svo.getStockId() + " has 山腰乘凉 @" + svo.getDate());
+                   System.out.println("process result: " + svo.getStockId() + " has 山腰乘凉 @" + svo.getDate());
                }
             });
         });
