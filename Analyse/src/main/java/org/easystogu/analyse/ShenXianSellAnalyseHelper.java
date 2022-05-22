@@ -44,6 +44,20 @@ public class ShenXianSellAnalyseHelper {
             "MACD_TWICE_GORDON_W_Botton_TiaoKong_ZhanShang_Bull",
             "MACD_TWICE_GORDON_W_Botton_MACD_DI_BEILI"};
 
+    //预估后面2天每天涨2个点，计算出是否出现luzao山腰乘凉买点
+    private static String postBody = "{\"trendModeName\":\"Zhang2GeDian\",\"nDays\":\"1\",\"repeatTimes\":\"2\"}";
+    private static JSONObject jsonParm = null;
+
+    static {
+        try {
+            if (Strings.isNotEmpty(postBody)) {
+                jsonParm = new JSONObject(postBody);
+            }
+        } catch (org.json.JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     //just for legacy using, instead of using @Component
     private static ShenXianSellAnalyseHelper instance = null;
     private ShenXianSellAnalyseHelper(){
@@ -133,22 +147,29 @@ public class ShenXianSellAnalyseHelper {
     public void analyseWithPredictStockPrice() {
         //选择最近发生重要事件，比如底背离和金叉的个股. 参考index.htm的鲁兆-金叉和W底-金叉
         //选择交易日期至少是120天前有数据的
-        String startDate = WeekdayUtil.nextNDateString(WeekdayUtil.currentDate(), -120);
+        String curDate = WeekdayUtil.currentDate();
+        String startDate = WeekdayUtil.nextNDateString(curDate, -120);
 
         //最近120天内，有重要事件发生的个股
-        Map<String, String> selectStockIds = new HashMap<String, String>();
         List<CheckPointDailySelectionVO> checkPointList = this.checkPointDailySelectionTable.getRecentDaysCheckPoint(startDate);
         List<String> filterStockIdsByCP = checkPointList.stream()
                 .filter(cp ->  isSelectedCheckPoint(cp.getCheckPoint()))
                 .map(cp -> cp.getStockId())
+                .distinct()//filter out the duplicated stockIds
                 .collect(Collectors.toList());
 
-        //filter out the duplicated stockIds
-        filterStockIdsByCP.forEach(stockId -> selectStockIds.put(stockId, stockId));
 
         //run for each stockId
-        selectStockIds.forEach((stockIdKey, stockIdValue)
-                -> {System.out.println("select stockId for shenXianBuySellFlagsAnalyse is:" + stockIdKey);});
+        filterStockIdsByCP.parallelStream().forEach(stockId
+                -> {
+            System.out.println("process "+ stockId);
+            List<ShenXianUIVO> shenXianUIVOList = queryShenXianSellById(stockId, curDate+"_"+startDate, jsonParm);
+            shenXianUIVOList.stream().forEach(svo -> {
+               if(svo.getDuoFlagsText().contains("山腰乘凉")){
+                   System.out.println(svo.getStockId() + " has 山腰乘凉 @" + svo.getDate());
+               }
+            });
+        });
     }
 
     private boolean isSelectedCheckPoint(String checkPoint) {
