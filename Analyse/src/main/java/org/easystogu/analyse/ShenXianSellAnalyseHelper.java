@@ -177,7 +177,7 @@ public class ShenXianSellAnalyseHelper {
             //flag, date
             Map<String, String> flagMap = new HashMap<>();
 
-            shenXianUIVOList.stream().forEach(svo -> {
+            for(ShenXianUIVO svo:shenXianUIVOList) {
                 if(svo.getDuoFlagsText().contains("震出东方")){
                     flagMap.put(LUZAO_KEY1, svo.getDate());
                 }
@@ -187,7 +187,7 @@ public class ShenXianSellAnalyseHelper {
                 if(svo.getDuoFlagsText().contains("山腰乘凉")){
                     flagMap.put(LUZAO_KEY3, svo.getDate());
                 }
-            });
+            };
 
             if(flagMap.containsKey(LUZAO_KEY1) && flagMap.containsKey(LUZAO_KEY2) && flagMap.containsKey(LUZAO_KEY3)
                     && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY1), flagMap.get(LUZAO_KEY2))
@@ -202,6 +202,9 @@ public class ShenXianSellAnalyseHelper {
                 checkPointDailySelectionTable.insert(cpvo);
             }
         });
+
+        //
+        System.out.println("analyseWithPredictStockPrice process complete");
     }
 
     private boolean isSelectedCheckPoint(String checkPoint) {
