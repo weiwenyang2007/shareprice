@@ -79,7 +79,7 @@ public class IndicatorEndPointV3 {
 		List<Double> close = StockPriceFetcher.getClosePrice(spList);
 		double[][] macd = macdHelper.getMACDList(Doubles.toArray(close));
 		for (int i = 0; i < macd[0].length; i++) {
-			if (postParmsProcess.isStockDateSelected(postBody, dateParm, spList.get(i).date)) {
+			if (postParmsProcess.isStockDateSelected(jsonParm, dateParm, spList.get(i).date)) {
 				MacdVO vo = new MacdVO();
 				vo.setDif(Strings.convert2ScaleDecimal(macd[0][i]));
 				vo.setDea(Strings.convert2ScaleDecimal(macd[1][i]));
@@ -113,7 +113,7 @@ public class IndicatorEndPointV3 {
 		List<Double> high = StockPriceFetcher.getHighPrice(spList);
 		double[][] kdj = kdjHelper.getKDJList(Doubles.toArray(close), Doubles.toArray(low), Doubles.toArray(high));
 		for (int i = 0; i < kdj[0].length; i++) {
-			if (postParmsProcess.isStockDateSelected(postBody, dateParm, spList.get(i).date)) {
+			if (postParmsProcess.isStockDateSelected(jsonParm, dateParm, spList.get(i).date)) {
 				KDJVO vo = new KDJVO();
 				vo.setK(Strings.convert2ScaleDecimal(kdj[0][i]));
 				vo.setD(Strings.convert2ScaleDecimal(kdj[1][i]));
@@ -146,7 +146,7 @@ public class IndicatorEndPointV3 {
 		List<Double> close = StockPriceFetcher.getClosePrice(spList);
 		double[][] boll = bollHelper.getBOLLList(Doubles.toArray(close), 20, 2.0, 2.0);
 		for (int i = 0; i < boll[0].length; i++) {
-			if (postParmsProcess.isStockDateSelected(postBody, dateParm, spList.get(i).date)) {
+			if (postParmsProcess.isStockDateSelected(jsonParm, dateParm, spList.get(i).date)) {
 				BollVO vo = new BollVO();
 				vo.setUp(Strings.convert2ScaleDecimal(boll[0][i]));
 				vo.setMb(Strings.convert2ScaleDecimal(boll[1][i]));
@@ -179,7 +179,7 @@ public class IndicatorEndPointV3 {
 		List<Double> close = StockPriceFetcher.getClosePrice(spList);
 		double[][] shenXian = shenXianHelper.getShenXianList(Doubles.toArray(close));
 		for (int i = 0; i < shenXian[0].length; i++) {
-			if (postParmsProcess.isStockDateSelected(postBody, dateParm, spList.get(i).date)) {
+			if (postParmsProcess.isStockDateSelected(jsonParm, dateParm, spList.get(i).date)) {
 				ShenXianVO vo = new ShenXianVO();
 				vo.setH1(Strings.convert2ScaleDecimal(shenXian[0][i]));
 				vo.setH2(Strings.convert2ScaleDecimal(shenXian[1][i]));
@@ -304,7 +304,7 @@ public class IndicatorEndPointV3 {
 		List<Double> close = StockPriceFetcher.getClosePrice(spList);
 		double[][] lz = luzaoHelper.getLuZaoList(Doubles.toArray(close));
 		for (int i = 0; i < lz[0].length; i++) {
-			if (postParmsProcess.isStockDateSelected(postBody, dateParm, spList.get(i).date)) {
+			if (postParmsProcess.isStockDateSelected(jsonParm, dateParm, spList.get(i).date)) {
 				LuZaoVO vo = new LuZaoVO();
 				vo.setMa19(Strings.convert2ScaleDecimal(lz[0][i]));
 				vo.setMa43(Strings.convert2ScaleDecimal(lz[1][i]));
@@ -339,7 +339,7 @@ public class IndicatorEndPointV3 {
 		List<Double> high = StockPriceFetcher.getHighPrice(spList);
 		double[][] qsdd = qsddHelper.getQSDDList(Doubles.toArray(close), Doubles.toArray(low), Doubles.toArray(high));
 		for (int i = 0; i < qsdd[0].length; i++) {
-			if (postParmsProcess.isStockDateSelected(postBody, dateParm, spList.get(i).date)) {
+			if (postParmsProcess.isStockDateSelected(jsonParm, dateParm, spList.get(i).date)) {
 				QSDDVO vo = new QSDDVO();
 				vo.setLonTerm(Strings.convert2ScaleDecimal(qsdd[0][i]));
 				vo.setShoTerm(Strings.convert2ScaleDecimal(qsdd[1][i]));
@@ -375,7 +375,7 @@ public class IndicatorEndPointV3 {
 		double[][] wr = wrHelper.getWRList(Doubles.toArray(close), Doubles.toArray(low), Doubles.toArray(high), 19, 43,
 				86);
 		for (int i = 0; i < wr[0].length; i++) {
-			if (postParmsProcess.isStockDateSelected(postBody, dateParm, spList.get(i).date)) {
+			if (postParmsProcess.isStockDateSelected(jsonParm, dateParm, spList.get(i).date)) {
 				WRVO vo = new WRVO();
 				vo.setLonTerm(Strings.convert2ScaleDecimal(wr[0][i]));
 				vo.setShoTerm(Strings.convert2ScaleDecimal(wr[1][i]));
