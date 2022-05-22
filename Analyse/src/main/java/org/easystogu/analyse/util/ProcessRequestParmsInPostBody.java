@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 //parms such as: append trendMode, merge nDays into one
 //the parms has priority: nDays > trendMode
 
-@Component
+//@Component
 public class ProcessRequestParmsInPostBody {
 	protected StockPriceTableHelper qianFuQuanStockPriceTable = QianFuQuanStockPriceTableHelper.getInstance();
 	protected StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
@@ -33,8 +33,20 @@ public class ProcessRequestParmsInPostBody {
 	protected MergeNDaysPriceUtil mergeNdaysPriceHeloer = new MergeNDaysPriceUtil();
 	protected StockIndicatorCache indicatorCache = StockIndicatorCache.getInstance();
 	protected HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner historyQianFuQuanRunner = new HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner();
-	@Autowired
-	protected TrendModeLoader trendModeLoader;
+	//@Autowired
+	protected TrendModeLoader trendModeLoader = TrendModeLoader.getInstance();
+
+	//just for legacy using, instead of using @Component
+	private static ProcessRequestParmsInPostBody instance = null;
+	private ProcessRequestParmsInPostBody() {
+
+	}
+
+	public static ProcessRequestParmsInPostBody getInstance(){
+		if(instance == null){
+			instance = new ProcessRequestParmsInPostBody();
+		}
+	}
 
 	//根据trendMode预计算股价
 	public List<StockPriceVO> updateStockPriceAccordingToRequest(String stockId, JSONObject jsonParm) {

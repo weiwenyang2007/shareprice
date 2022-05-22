@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+//@Component
 public class FlagsAnalyseHelper {
   private static Logger logger = LogHelper.getLogger(FlagsAnalyseHelper.class);
   private CheckPointDailySelectionTableCache checkPointDailySelectionCache =
@@ -26,6 +26,16 @@ public class FlagsAnalyseHelper {
           "luzao_phaseII_ddx_2_of_5_days_bigger_05", "luzao_phaseIII_zijinliu_3_days_top300",
           "luzao_phaseIII_zijinliu_3_of_5_days_top300", "luzao_phaseIII_ddx_2_of_5_days_bigger_05"};
 
+  //just for legacy using, instead of using @Component
+  private static FlagsAnalyseHelper instance = null;
+  private FlagsAnalyseHelper(){
+
+  }
+  public static FlagsAnalyseHelper getInstance(){
+    if(instance == null){
+      instance = new FlagsAnalyseHelper();
+    }
+  }
   public List<ShenXianUIVO> shenXianBuySellFlagsAnalyse(List<StockPriceVO> spList,
       List<ShenXianUIVO> sxList, List<MacdVO> macdList, List<BBIVO> bbiList,
       List<LuZaoVO> luzaoList) {

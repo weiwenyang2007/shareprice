@@ -33,8 +33,7 @@ public class PriceEndPointV0 {
 	protected CompanyInfoFileHelper companyInfoHelper = CompanyInfoFileHelper.getInstance();
 	private StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
 	protected StockIndicatorCache indicatorCache = StockIndicatorCache.getInstance();
-	@Autowired
-	protected ProcessRequestParmsInPostBody postParmsProcess;
+	protected ProcessRequestParmsInPostBody postParmsProcess = ProcessRequestParmsInPostBody.getInstance();
 	protected String dateRegex = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
 	protected String fromToRegex = dateRegex + "_" + dateRegex;
 	

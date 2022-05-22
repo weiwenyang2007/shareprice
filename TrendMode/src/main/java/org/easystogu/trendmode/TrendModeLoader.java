@@ -10,13 +10,27 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.*;
 
-@Component
+//@Component
 public class TrendModeLoader {
     private TextFileSourceHelper fileSource = TextFileSourceHelper.getInstance();
     private Map<String, TrendModeVO> trendModeMap = new HashMap<String, TrendModeVO>();
     private static Map<String, Class> classMap = new HashMap<String, Class>();
+    //just for legacy using, instead of using @Component
+    private static TrendModeLoader instance = null;
+
     static {
         classMap.put("prices", SimplePriceVO.class);
+    }
+
+    private TrendModeLoader() {
+        startUp();
+    }
+
+    public static TrendModeLoader getInstance(){
+        if(instance == null){
+            instance = new TrendModeLoader();
+        }
+        return instance;
     }
 
     @PostConstruct

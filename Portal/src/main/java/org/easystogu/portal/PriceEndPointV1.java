@@ -35,8 +35,7 @@ public class PriceEndPointV1 {
 	protected StockIndicatorCache indicatorCache = StockIndicatorCache.getInstance();
 	private MergeNDaysPriceUtil nDaysPriceMergeUtil = new MergeNDaysPriceUtil();
 
-	@Autowired
-	protected ProcessRequestParmsInPostBody postParmsProcess;
+	protected ProcessRequestParmsInPostBody postParmsProcess = ProcessRequestParmsInPostBody.getInstance();
 	private String dateRegex = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
 	private String fromToRegex = dateRegex + "_" + dateRegex;
 	

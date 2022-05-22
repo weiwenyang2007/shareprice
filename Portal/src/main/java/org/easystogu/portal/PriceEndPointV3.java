@@ -31,10 +31,8 @@ public class PriceEndPointV3 {
 	private ConfigurationServiceCache config = ConfigurationServiceCache.getInstance();
 	private String accessControlAllowOrgin = config.getString("Access-Control-Allow-Origin", "");
 	protected CompanyInfoFileHelper companyInfoHelper = CompanyInfoFileHelper.getInstance();
-	@Autowired
-	protected ProcessRequestParmsInPostBody postParmsProcess;
-	@Autowired
-	protected TrendModeLoader trendModeLoader;
+	protected ProcessRequestParmsInPostBody postParmsProcess = ProcessRequestParmsInPostBody.getInstance();
+	protected TrendModeLoader trendModeLoader = TrendModeLoader.getInstance();
 
 	private Gson gson = new Gson();
 	

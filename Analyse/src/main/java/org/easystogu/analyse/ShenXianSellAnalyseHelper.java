@@ -17,17 +17,31 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class ShenXianSellAnalyseHelper {
     protected MACDHelper macdHelper = new MACDHelper();
     protected ShenXianHelper shenXianHelper = new ShenXianHelper();
     protected BBIHelper bbiHelper = new BBIHelper();
     protected LuZaoHelper luzaoHelper = new LuZaoHelper();
-    @Autowired
-    protected ProcessRequestParmsInPostBody postParmsProcess;
-    @Autowired
-    FlagsAnalyseHelper flagsAnalyseHelper;
+    //@Autowired
+    protected ProcessRequestParmsInPostBody postParmsProcess = ProcessRequestParmsInPostBody.getInstance();
+    //@Autowired
+    FlagsAnalyseHelper flagsAnalyseHelper = FlagsAnalyseHelper.getInstance();
 
+    //just for legacy using, instead of using @Component
+    private static ShenXianSellAnalyseHelper instance = null;
+    private ShenXianSellAnalyseHelper(){
+
+    }
+    public static ShenXianSellAnalyseHelper getInstance(){
+        if(instance == null){
+            instance = new ShenXianSellAnalyseHelper();
+        }
+    }
+
+    //stockIdParm is like: 603999
+    //dateParm is like: 2016-11-29_2022-05-22
+    //postBody is like: {"trendModeName":"Zhang2GeDian","nDays":"1","repeatTimes":"2"}
     public List<ShenXianUIVO> queryShenXianSellById(String stockIdParm, String dateParm, JSONObject jsonParm) {
         List<ShenXianUIVO> sxList = new ArrayList<ShenXianUIVO>();
         List<MacdVO> macdList = new ArrayList<MacdVO>();
