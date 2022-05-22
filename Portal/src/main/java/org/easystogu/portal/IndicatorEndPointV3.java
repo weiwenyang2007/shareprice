@@ -66,7 +66,15 @@ public class IndicatorEndPointV3 {
 			String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<MacdVO> list = new ArrayList<MacdVO>();
-		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, postBody);
+		JSONObject jsonParm = null;
+		try {
+			if (Strings.isNotEmpty(postBody)) {
+				jsonParm = new JSONObject(postBody);
+			}
+		}catch(org.json.JSONException e){
+			e.printStackTrace();
+		}
+		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, jsonParm);
 
 		List<Double> close = StockPriceFetcher.getClosePrice(spList);
 		double[][] macd = macdHelper.getMACDList(Doubles.toArray(close));
@@ -91,7 +99,14 @@ public class IndicatorEndPointV3 {
 			String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<KDJVO> list = new ArrayList<KDJVO>();
-		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, postBody);
+		try {
+			if (Strings.isNotEmpty(postBody)) {
+				jsonParm = new JSONObject(postBody);
+			}
+		}catch(org.json.JSONException e){
+			e.printStackTrace();
+		}
+		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, jsonParm);
 
 		List<Double> close = StockPriceFetcher.getClosePrice(spList);
 		List<Double> low = StockPriceFetcher.getLowPrice(spList);
@@ -119,7 +134,14 @@ public class IndicatorEndPointV3 {
 			String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<BollVO> list = new ArrayList<BollVO>();
-		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, postBody);
+		try {
+			if (Strings.isNotEmpty(postBody)) {
+				jsonParm = new JSONObject(postBody);
+			}
+		}catch(org.json.JSONException e){
+			e.printStackTrace();
+		}
+		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, jsonParm);
 
 		List<Double> close = StockPriceFetcher.getClosePrice(spList);
 		double[][] boll = bollHelper.getBOLLList(Doubles.toArray(close), 20, 2.0, 2.0);
@@ -145,7 +167,14 @@ public class IndicatorEndPointV3 {
 			@PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<ShenXianVO> list = new ArrayList<ShenXianVO>();
-		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, postBody);
+		try {
+			if (Strings.isNotEmpty(postBody)) {
+				jsonParm = new JSONObject(postBody);
+			}
+		}catch(org.json.JSONException e){
+			e.printStackTrace();
+		}
+		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, jsonParm);
 
 		List<Double> close = StockPriceFetcher.getClosePrice(spList);
 		double[][] shenXian = shenXianHelper.getShenXianList(Doubles.toArray(close));
@@ -263,7 +292,14 @@ public class IndicatorEndPointV3 {
 			String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<LuZaoVO> list = new ArrayList<LuZaoVO>();
-		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, postBody);
+		try {
+			if (Strings.isNotEmpty(postBody)) {
+				jsonParm = new JSONObject(postBody);
+			}
+		}catch(org.json.JSONException e){
+			e.printStackTrace();
+		}
+		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, jsonParm);
 
 		List<Double> close = StockPriceFetcher.getClosePrice(spList);
 		double[][] lz = luzaoHelper.getLuZaoList(Doubles.toArray(close));
@@ -289,7 +325,14 @@ public class IndicatorEndPointV3 {
 			String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<QSDDVO> list = new ArrayList<QSDDVO>();
-		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, postBody);
+		try {
+			if (Strings.isNotEmpty(postBody)) {
+				jsonParm = new JSONObject(postBody);
+			}
+		}catch(org.json.JSONException e){
+			e.printStackTrace();
+		}
+		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, jsonParm);
 
 		List<Double> close = StockPriceFetcher.getClosePrice(spList);
 		List<Double> low = StockPriceFetcher.getLowPrice(spList);
@@ -317,7 +360,14 @@ public class IndicatorEndPointV3 {
 			String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		List<WRVO> list = new ArrayList<WRVO>();
-		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, postBody);
+		try {
+			if (Strings.isNotEmpty(postBody)) {
+				jsonParm = new JSONObject(postBody);
+			}
+		}catch(org.json.JSONException e){
+			e.printStackTrace();
+		}
+		List<StockPriceVO> spList = postParmsProcess.updateStockPriceAccordingToRequest(stockIdParm, jsonParm);
 
 		List<Double> close = StockPriceFetcher.getClosePrice(spList);
 		List<Double> low = StockPriceFetcher.getLowPrice(spList);
