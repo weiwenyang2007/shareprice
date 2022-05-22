@@ -3,7 +3,7 @@ package org.easystogu.portal.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.easystogu.portal.vo.StatisticsVO;
+import org.easystogu.analyse.vo.StatisticsVO;
 
 public class MergeNDaysStatisticsHelper {
 	// input: date price, order by date
