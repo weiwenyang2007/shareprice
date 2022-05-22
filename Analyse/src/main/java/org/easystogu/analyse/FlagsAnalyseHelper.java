@@ -35,6 +35,7 @@ public class FlagsAnalyseHelper {
     if(instance == null){
       instance = new FlagsAnalyseHelper();
     }
+    return instance;
   }
   public List<ShenXianUIVO> shenXianBuySellFlagsAnalyse(List<StockPriceVO> spList,
       List<ShenXianUIVO> sxList, List<MacdVO> macdList, List<BBIVO> bbiList,

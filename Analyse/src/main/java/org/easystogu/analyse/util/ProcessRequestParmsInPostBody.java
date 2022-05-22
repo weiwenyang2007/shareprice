@@ -46,6 +46,7 @@ public class ProcessRequestParmsInPostBody {
 		if(instance == null){
 			instance = new ProcessRequestParmsInPostBody();
 		}
+		return instance;
 	}
 
 	//根据trendMode预计算股价

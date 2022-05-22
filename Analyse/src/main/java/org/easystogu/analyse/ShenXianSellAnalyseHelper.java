@@ -37,6 +37,7 @@ public class ShenXianSellAnalyseHelper {
         if(instance == null){
             instance = new ShenXianSellAnalyseHelper();
         }
+        return instance;
     }
 
     //stockIdParm is like: 603999
