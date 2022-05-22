@@ -9,15 +9,44 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class WeekdayUtil {
-	public static SimpleDateFormat sdf_yyyy = new SimpleDateFormat("yyyy");
-	public static SimpleDateFormat sdf_MM = new SimpleDateFormat("MM");
-	public static SimpleDateFormat sdf_dd = new SimpleDateFormat("dd");
-	public static SimpleDateFormat sdf_yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd");
-	public static SimpleDateFormat sdf_yyyyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-	public static SimpleDateFormat sdf_HHmmss = new SimpleDateFormat("HH-mm-ss");
+	public static final String yyyy = "yyyy";
+	public static final String MM = "MM";
+	public static final String dd = "dd";
+	public static final String yyyyMMdd = "yyyy-MM-dd";
+	public static final String yyyyMMddHHmmss = "yyyy-MM-dd_HH-mm-ss";
+	public static final String HHmmss = "HH-mm-ss";
+
+	//SimpleDateFormat 不是线程安全的，所以用局部变量方法解决
+	public static SimpleDateFormat getInstance(String format){
+		return new SimpleDateFormat(format);
+	}
+
+	public static SimpleDateFormat getInstance_yyyy(){
+		return getInstance(yyyy);
+	}
+
+	public static SimpleDateFormat getInstance_MM(){
+		return getInstance(MM);
+	}
+
+	public static SimpleDateFormat getInstance_dd(){
+		return getInstance(dd);
+	}
+
+	public static SimpleDateFormat getInstance_yyyyMMdd(){
+		return getInstance(yyyyMMdd);
+	}
+
+	public static SimpleDateFormat getInstance_yyyyMMddHHmmss(){
+		return getInstance(yyyyMMddHHmmss);
+	}
+
+	public static SimpleDateFormat getInstance_HHmmss(){
+		return getInstance(HHmmss);
+	}
 
 	public static String currentDate() {
-		return sdf_yyyyMMdd.format(new Date()).toString();
+		return getInstance_yyyyMMdd().format(new Date()).toString();
 	}
 	
 	public static String yesterdayDate() {
@@ -29,19 +58,19 @@ public class WeekdayUtil {
     }
 
 	public static String currentDateTime() {
-		return sdf_yyyyMMddHHmmss.format(new Date()).toString();
+		return getInstance_yyyyMMddHHmmss().format(new Date()).toString();
 	}
 
 	public static String currentTime() {
-		return sdf_HHmmss.format(new Date()).toString();
+		return getInstance_HHmmss().format(new Date()).toString();
 	}
 
 	public static int currentYear() {
-		return Integer.parseInt(sdf_yyyy.format(new Date()).toString());
+		return Integer.parseInt(getInstance_yyyy().format(new Date()).toString());
 	}
 
 	public static String currentDay() {
-		return sdf_dd.format(new Date()).toString();
+		return getInstance_dd().format(new Date()).toString();
 	}
 
 	/**
@@ -58,8 +87,8 @@ public class WeekdayUtil {
 	 */
 	public static boolean compareWeekday(String beforeDate, String afterDate, int deadline) {
 		try {
-			Date d1 = sdf_yyyyMMdd.parse(beforeDate);
-			Date d2 = sdf_yyyyMMdd.parse(afterDate);
+			Date d1 = getInstance_yyyyMMdd().parse(beforeDate);
+			Date d2 = getInstance_yyyyMMdd().parse(afterDate);
 
 			// 工作日
 			int workDay = 0;
@@ -99,10 +128,10 @@ public class WeekdayUtil {
 		if ((calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY)
 				&& (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY)) {
 			// 平时
-			return !getWeekdayIsHolidayList().contains(sdf_yyyyMMdd.format(calendar.getTime()));
+			return !getWeekdayIsHolidayList().contains(getInstance_yyyyMMdd().format(calendar.getTime()));
 		} else {
 			// 周末
-			return getWeekendIsWorkDateList().contains(sdf_yyyyMMdd.format(calendar.getTime()));
+			return getWeekendIsWorkDateList().contains(getInstance_yyyyMMdd().format(calendar.getTime()));
 		}
 	}
 
@@ -137,29 +166,29 @@ public class WeekdayUtil {
 			cal.set(Calendar.YEAR, year);
 			cal.set(Calendar.WEEK_OF_YEAR, week);
 			cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-			String date = sdf_yyyyMMdd.format(cal.getTime());
+			String date = getInstance_yyyyMMdd().format(cal.getTime());
 			if (date.startsWith(year + "")) {
-				dates.add(sdf_yyyyMMdd.format(cal.getTime()));
+				dates.add(getInstance_yyyyMMdd().format(cal.getTime()));
 			}
 			cal.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
-			date = sdf_yyyyMMdd.format(cal.getTime());
+			date = getInstance_yyyyMMdd().format(cal.getTime());
 			if (date.startsWith(year + "")) {
-				dates.add(sdf_yyyyMMdd.format(cal.getTime()));
+				dates.add(getInstance_yyyyMMdd().format(cal.getTime()));
 			}
 			cal.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
-			date = sdf_yyyyMMdd.format(cal.getTime());
+			date = getInstance_yyyyMMdd().format(cal.getTime());
 			if (date.startsWith(year + "")) {
-				dates.add(sdf_yyyyMMdd.format(cal.getTime()));
+				dates.add(getInstance_yyyyMMdd().format(cal.getTime()));
 			}
 			cal.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
-			date = sdf_yyyyMMdd.format(cal.getTime());
+			date = getInstance_yyyyMMdd().format(cal.getTime());
 			if (date.startsWith(year + "")) {
-				dates.add(sdf_yyyyMMdd.format(cal.getTime()));
+				dates.add(getInstance_yyyyMMdd().format(cal.getTime()));
 			}
 			cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
-			date = sdf_yyyyMMdd.format(cal.getTime());
+			date = getInstance_yyyyMMdd().format(cal.getTime());
 			if (date.startsWith(year + "")) {
-				dates.add(sdf_yyyyMMdd.format(cal.getTime()));
+				dates.add(getInstance_yyyyMMdd().format(cal.getTime()));
 			}
 
 			return dates;
@@ -226,7 +255,7 @@ public class WeekdayUtil {
 		try {
 			long minSecondsPerDay = 24 * 60 * 60 * 1000;
 			// System.out.println("today is " + today);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat sdf = getInstance_yyyyMMdd();
 			Calendar calT = Calendar.getInstance();
 			Date todayD = sdf.parse(today);
 			Date nextWorkingD = null;
@@ -269,7 +298,7 @@ public class WeekdayUtil {
 			long minSecondsPerDay = 24 * 60 * 60 * 1000;
 			// System.out.println("today is " + today);
 			Calendar calT = Calendar.getInstance();
-			Date todayD = sdf_yyyyMMdd.parse(today);
+			Date todayD = getInstance_yyyyMMdd().parse(today);
 			Date nextDate = null;
 			// check if today is working day or weeken
 			calT.setTime(todayD);
@@ -279,7 +308,7 @@ public class WeekdayUtil {
 			// System.out.println("todayD is " + todayD);
 			// System.out.println("nextWorkingD is " + nextWorkingD);
 			// System.out.println(sdf.format(nextWorkingD));
-			return sdf_yyyyMMdd.format(nextDate);
+			return getInstance_yyyyMMdd().format(nextDate);
 
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -291,13 +320,13 @@ public class WeekdayUtil {
 	public static Date nextNDate(String today, int N) {
 		try {
 			if (N == 0) {
-				return sdf_yyyyMMdd.parse(today);
+				return getInstance_yyyyMMdd().parse(today);
 			}
 
 			long minSecondsPerDay = 24 * 60 * 60 * 1000;
 			// System.out.println("today is " + today);
 			Calendar calT = Calendar.getInstance();
-			Date todayD = sdf_yyyyMMdd.parse(today);
+			Date todayD = getInstance_yyyyMMdd().parse(today);
 			Date nextDate = null;
 			// check if today is working day or weeken
 			calT.setTime(todayD);
@@ -353,7 +382,7 @@ public class WeekdayUtil {
 
 	// 判断date1和date2之间的时间跨距, 如果是10日之内，返回true
 	public static boolean isDateBetweenNumberofDays(String date1, String date2, int len) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = getInstance_yyyyMMdd();
 		try {
 			Date date1D = sdf.parse(date1);
 			Date date2D = sdf.parse(date2);
@@ -385,7 +414,7 @@ public class WeekdayUtil {
 	// return true if 09:30~15:00 at working date
 	public static boolean isNowAtWorkingDayAndTransactionTime() {
 		GregorianCalendar cal = new GregorianCalendar();
-		SimpleDateFormat sdf = new SimpleDateFormat("HH-mm-ss");
+		SimpleDateFormat sdf = getInstance_HHmmss();
 		String timeStr = sdf.format(new Date()).toString();
 		if (WeekdayUtil.isWeekday(new GregorianCalendar())) {
 			if (timeStr.compareTo("09-25-00") >= 0 && timeStr.compareTo("15-00-00") <= 0) {
@@ -395,10 +424,11 @@ public class WeekdayUtil {
 		return false;
 	}
 
+	//慎重:SimpleDateFormat.parse 有线程同步问题，不能在并发下使用!
 	public static boolean isDate1BeforeDate2(String date1, String date2){
 		try {
-			Date d1 = sdf_yyyyMMdd.parse(date1);
-			Date d2 = sdf_yyyyMMdd.parse(date2);
+			Date d1 = getInstance_yyyyMMdd().parse(date1);
+			Date d2 = getInstance_yyyyMMdd().parse(date2);
 			return d1.before(d2);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -408,8 +438,8 @@ public class WeekdayUtil {
 
 	public static boolean isDate1BeforeOrEqualDate2(String date1, String date2){
 		try {
-			Date d1 = sdf_yyyyMMdd.parse(date1);
-			Date d2 = sdf_yyyyMMdd.parse(date2);
+			Date d1 = getInstance_yyyyMMdd().parse(date1);
+			Date d2 = getInstance_yyyyMMdd().parse(date2);
 			return d1.before(d2) || d1.equals(d2);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -419,8 +449,8 @@ public class WeekdayUtil {
 
 	public static boolean isDate1AfterDate2(String date1, String date2){
 		try {
-			Date d1 = sdf_yyyyMMdd.parse(date1);
-			Date d2 = sdf_yyyyMMdd.parse(date2);
+			Date d1 = getInstance_yyyyMMdd().parse(date1);
+			Date d2 = getInstance_yyyyMMdd().parse(date2);
 			return d1.after(d2);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -430,8 +460,8 @@ public class WeekdayUtil {
 
 	public static boolean isDate1AfterOrEqualDate2(String date1, String date2){
 		try {
-			Date d1 = sdf_yyyyMMdd.parse(date1);
-			Date d2 = sdf_yyyyMMdd.parse(date2);
+			Date d1 = getInstance_yyyyMMdd().parse(date1);
+			Date d2 = getInstance_yyyyMMdd().parse(date2);
 			return d1.after(d2) || d1.equals(d2);
 		}catch(Exception e){
 			e.printStackTrace();

@@ -35,13 +35,19 @@ public class ShenXianSellAnalyseHelper {
     //@Autowired
     private FlagsAnalyseHelper flagsAnalyseHelper = FlagsAnalyseHelper.getInstance();
 
+    private static final String LUZAO_KEY1 = "ZHENGCHUDONGFANG";//震出东方
+    private static final String LUZAO_KEY2 = "SHENGYUELIANGSHAN";//升越良山
+    private static final String LUZAO_KEY3 = "SHANYAOCHENGLIANG";//山腰乘凉
+
     //选择最近发生重要事件，比如底背离和金叉的个股. 参考index.htm的鲁兆-金叉和W底-金叉
     private static String[] checkPoints = {
+            //鲁兆-金叉
             "LuZao_KDJ_Gordon_TiaoKongGaoKai",
             "LuZao_PhaseII_MACD_WEEK_GORDON_MACD_DAY_DIF_CROSS_0",
             "LuZao_PhaseII_MACD_WEEK_GORDON_KDJ_WEEK_GORDON",
             "LuZao_PhaseIII_MACD_WEEK_GORDON_KDJ_WEEK_GORDON",
             "LuZao_PhaseIII_MACD_WEEK_GORDON_MACD_DAY_DIF_CROSS_0",
+            //W底-金叉
             "MACD_TWICE_GORDON_W_Botton_TiaoKong_ZhanShang_Bull",
             "MACD_TWICE_GORDON_W_Botton_MACD_DI_BEILI"};
     //最终有上述特征的股票经过未来2天的预计算，得出 checkpoint 为 LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days
@@ -164,22 +170,37 @@ public class ShenXianSellAnalyseHelper {
         List<String> selectStockIds = filterStockIdsByCP.stream().distinct().collect(Collectors.toList());
 
         //run for each stockId
-        selectStockIds.stream().forEach(stockId
+        selectStockIds.parallelStream().forEach(stockId
                 -> {
             System.out.println("analyseWithPredictStockPrice process "+ stockId);
             List<ShenXianUIVO> shenXianUIVOList = queryShenXianSellById(stockId, startDate+"_"+curDate, jsonParm);
+            //flag, date
+            Map<String, String> flagMap = new HashMap<>();
+
             shenXianUIVOList.stream().forEach(svo -> {
-               if(svo.getDuoFlagsText().contains("山腰乘凉")
-               && WeekdayUtil.isDate1AfterOrEqualDate2(svo.getDate(), curDate)){
-                   System.out.println("analyseWithPredictStockPrice process result: " + svo.getStockId() + " has 山腰乘凉 @" + svo.getDate());
-                   CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
-                   cpvo.stockId = stockId;
-                   cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days.name();
-                   cpvo.date = curDate;
-                   checkPointDailySelectionTable.delete(cpvo);
-                   checkPointDailySelectionTable.insert(cpvo);
-               }
+                if(svo.getDuoFlagsText().contains("震出东方")){
+                    flagMap.put(LUZAO_KEY1, svo.getDate());
+                }
+                if(svo.getDuoFlagsText().contains("升越良山")){
+                    flagMap.put(LUZAO_KEY2, svo.getDate());
+                }
+                if(svo.getDuoFlagsText().contains("山腰乘凉")){
+                    flagMap.put(LUZAO_KEY3, svo.getDate());
+                }
             });
+
+            if(flagMap.containsKey(LUZAO_KEY1) && flagMap.containsKey(LUZAO_KEY2) && flagMap.containsKey(LUZAO_KEY3)
+                    && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY1), flagMap.get(LUZAO_KEY2))
+                    && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY2), flagMap.get(LUZAO_KEY3))
+                    && WeekdayUtil.isDate1BeforeOrEqualDate2(curDate, flagMap.get(LUZAO_KEY3))){
+                System.out.println("analyseWithPredictStockPrice process result: " + stockId + " ,event Map:"+flagMap);
+                CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
+                cpvo.stockId = stockId;
+                cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days.name();
+                cpvo.date = curDate;
+                checkPointDailySelectionTable.delete(cpvo);
+                checkPointDailySelectionTable.insert(cpvo);
+            }
         });
     }
 
