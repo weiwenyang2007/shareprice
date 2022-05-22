@@ -10,6 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
+import org.easystogu.analyse.FlagsAnalyseHelper;
 import org.easystogu.analyse.util.ProcessRequestParmsInPostBody;
 import org.easystogu.db.vo.table.BBIVO;
 import org.easystogu.db.vo.table.BollVO;

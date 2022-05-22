@@ -1,14 +1,8 @@
-package org.easystogu.portal;
+package org.easystogu.analyse;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.primitives.Doubles;
 import org.easystogu.cache.CheckPointDailySelectionTableCache;
-import org.easystogu.db.vo.table.BBIVO;
-import org.easystogu.db.vo.table.CheckPointDailySelectionVO;
-import org.easystogu.db.vo.table.LuZaoVO;
-import org.easystogu.db.vo.table.MacdVO;
-import org.easystogu.db.vo.table.StockPriceVO;
-import org.easystogu.db.vo.table.VolumeVO;
+import org.easystogu.db.vo.table.*;
 import org.easystogu.indicator.IND;
 import org.easystogu.indicator.MAHelper;
 import org.easystogu.log.LogHelper;
@@ -16,7 +10,9 @@ import org.easystogu.portal.vo.CheckPointFlagsVO;
 import org.easystogu.portal.vo.ShenXianUIVO;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
-import com.google.common.primitives.Doubles;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class FlagsAnalyseHelper {
