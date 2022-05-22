@@ -1,18 +1,21 @@
 package org.easystogu.analyse;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.google.common.primitives.Doubles;
+import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.easystogu.analyse.util.ProcessRequestParmsInPostBody;
 import org.easystogu.analyse.vo.ShenXianUIVO;
-import org.easystogu.db.vo.table.BBIVO;
-import org.easystogu.db.vo.table.LuZaoVO;
-import org.easystogu.db.vo.table.MacdVO;
-import org.easystogu.db.vo.table.StockPriceVO;
+import org.easystogu.db.access.table.CheckPointDailySelectionTableHelper;
+import org.easystogu.db.vo.table.*;
 import org.easystogu.indicator.*;
 import org.easystogu.indicator.runner.utils.StockPriceFetcher;
 import org.easystogu.utils.Strings;
+import org.easystogu.utils.WeekdayUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,8 +28,21 @@ public class ShenXianSellAnalyseHelper {
     protected LuZaoHelper luzaoHelper = new LuZaoHelper();
     //@Autowired
     protected ProcessRequestParmsInPostBody postParmsProcess = ProcessRequestParmsInPostBody.getInstance();
+
+    private CheckPointDailySelectionTableHelper checkPointDailySelectionTable = CheckPointDailySelectionTableHelper
+            .getInstance();
     //@Autowired
-    FlagsAnalyseHelper flagsAnalyseHelper = FlagsAnalyseHelper.getInstance();
+    private FlagsAnalyseHelper flagsAnalyseHelper = FlagsAnalyseHelper.getInstance();
+
+    //选择最近发生重要事件，比如底背离和金叉的个股. 参考index.htm的鲁兆-金叉和W底-金叉
+    private static String[] checkPoints = {
+            "LuZao_KDJ_Gordon_TiaoKongGaoKai",
+            "LuZao_PhaseII_MACD_WEEK_GORDON_MACD_DAY_DIF_CROSS_0",
+            "LuZao_PhaseII_MACD_WEEK_GORDON_KDJ_WEEK_GORDON",
+            "LuZao_PhaseIII_MACD_WEEK_GORDON_KDJ_WEEK_GORDON",
+            "LuZao_PhaseIII_MACD_WEEK_GORDON_MACD_DAY_DIF_CROSS_0",
+            "MACD_TWICE_GORDON_W_Botton_TiaoKong_ZhanShang_Bull",
+            "MACD_TWICE_GORDON_W_Botton_MACD_DI_BEILI"};
 
     //just for legacy using, instead of using @Component
     private static ShenXianSellAnalyseHelper instance = null;
@@ -112,5 +128,40 @@ public class ShenXianSellAnalyseHelper {
         }
         //
         return flagsAnalyseHelper.shenXianBuySellFlagsAnalyse(spList, sxList, macdList, bbiList, luzaoList);
+    }
+
+    public void analyseWithPredictStockPrice() {
+        //选择最近发生重要事件，比如底背离和金叉的个股. 参考index.htm的鲁兆-金叉和W底-金叉
+        //选择交易日期至少是120天前有数据的
+        String startDate = WeekdayUtil.nextNDateString(WeekdayUtil.currentDate(), -120);
+
+        //最近120天内，有重要事件发生的个股
+        Map<String, String> selectStockIds = new HashMap<String, String>();
+        List<CheckPointDailySelectionVO> checkPointList = this.checkPointDailySelectionTable.getRecentDaysCheckPoint(startDate);
+        List<String> filterStockIdsByCP = checkPointList.stream()
+                .filter(cp ->  isSelectedCheckPoint(cp.getCheckPoint()))
+                .map(cp -> cp.getStockId())
+                .collect(Collectors.toList());
+
+        //filter out the duplicated stockIds
+        filterStockIdsByCP.forEach(stockId -> selectStockIds.put(stockId, stockId));
+
+        //run for each stockId
+        selectStockIds.forEach((stockIdKey, stockIdValue)
+                -> {System.out.println("select stockId for shenXianBuySellFlagsAnalyse is:" + stockIdKey);});
+    }
+
+    private boolean isSelectedCheckPoint(String checkPoint) {
+        for(String cp: checkPoints){
+            if(cp.equalsIgnoreCase(checkPoint)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void main(String[] args){
+        ShenXianSellAnalyseHelper ins = new ShenXianSellAnalyseHelper();
+        ins.analyseWithPredictStockPrice();
     }
 }

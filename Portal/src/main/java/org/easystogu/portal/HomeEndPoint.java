@@ -6,6 +6,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+
+import org.easystogu.analyse.ShenXianSellAnalyseHelper;
 import org.easystogu.config.ConfigurationService;
 import org.easystogu.config.Constants;
 import org.easystogu.config.DBConfigurationService;
@@ -406,15 +408,15 @@ public class HomeEndPoint {
   }
 
   @GET
-  @Path("/HistoryDailySelectionRunner")
+  @Path("/test")
   public String test() {
     Thread t = new Thread(new Runnable() {
       public void run() {
-        ModeGenerator.main(null);
+        ShenXianSellAnalyseHelper.main(null);
       }
     });
     t.start();
     
-    return "start CheckPointStatisticsPrepareData";
+    return "start test, pls check log";
   }
 }
