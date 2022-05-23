@@ -56,7 +56,7 @@ public class ShenXianSellAnalyseHelper {
     //最终有上述特征的股票经过未来2天的预计算，得出 checkpoint 为 LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days
 
     //预估后面2天每天涨2个点，计算出是否出现luzao山腰乘凉买点
-    private static String postBody = "{\"trendModeName\":\"Zhang2GeDian\",\"nDays\":\"1\",\"repeatTimes\":\"2\"}";
+    private static String postBody = "{\"trendModeName\":\"PingPan\",\"nDays\":\"1\",\"repeatTimes\":\"2\"}";
     private static JSONObject jsonParm = null;
 
     static {
