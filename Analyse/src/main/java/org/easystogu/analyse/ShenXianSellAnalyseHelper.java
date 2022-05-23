@@ -206,25 +206,29 @@ public class ShenXianSellAnalyseHelper {
             if(flagMap.containsKey(LUZAO_KEY2) && flagMap.containsKey(LUZAO_KEY3)
                     && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY2), flagMap.get(LUZAO_KEY3))
                     && WeekdayUtil.isDate1BeforeOrEqualDate2(curDate, flagMap.get(LUZAO_KEY3))){
+                int count = 0;
                 //condition 2:
                 boolean match2 = true;
                 if(flagMap.containsKey(LUZAO_KEY4)){
                     match2 = WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY4), flagMap.get(LUZAO_KEY2));
+                    count++;
                 }
 
                 //condition 3:
                 boolean match3 = true;
                 if(flagMap.containsKey(LUZAO_KEY5)){
                     match3 = WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY5), flagMap.get(LUZAO_KEY2));
+                    count++;
                 }
 
                 //condition 4:
                 boolean match4 = true;
                 if(flagMap.containsKey(LUZAO_KEY6)){
                     match4 = WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY6), flagMap.get(LUZAO_KEY2));
+                    count++;
                 }
 
-                match = match2 && match3 && match4;
+                match = match2 && match3 && match4 && (count >= 2);
             }
             //
             if(match){
