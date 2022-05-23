@@ -35,9 +35,12 @@ public class ShenXianSellAnalyseHelper {
     //@Autowired
     private FlagsAnalyseHelper flagsAnalyseHelper = FlagsAnalyseHelper.getInstance();
 
-    private static final String LUZAO_KEY1 = "ZHENGCHUDONGFANG";//震出东方
-    private static final String LUZAO_KEY2 = "SHENGYUELIANGSHAN";//升越良山
-    private static final String LUZAO_KEY3 = "SHANYAOCHENGLIANG";//山腰乘凉
+    private static final String LUZAO_KEY1 = "KEY1_ZhengChuDongFang";//震出东方
+    private static final String LUZAO_KEY2 = "KEY2_ShengYueLiangShan";//升越良山
+    private static final String LUZAO_KEY3 = "KEY3_ShanYaoChengLiang";//山腰乘凉
+    private static final String LUZAO_KEY4 = "KEY4_SanShanChongDie";//三山重叠
+    private static final String LUZAO_KEY5 = "KEY5_DieDaoShanYao";//跌到山腰
+    private static final String LUZAO_KEY6 = "KEY6_DieDaoShanJiao";//跌到山脚
 
     //选择最近发生重要事件，比如底背离和金叉的个股. 参考index.htm的鲁兆-金叉和W底-金叉
     private static String[] checkPoints = {
@@ -179,29 +182,42 @@ public class ShenXianSellAnalyseHelper {
 
             shenXianUIVOList.stream().forEach(svo -> {
                 if(svo.getDuoFlagsText().contains("震出东方")){
-                    if(svo.stockId.equals("001215") || svo.stockId.equals("300820")){
-                        System.out.println("analyseWithPredictStockPrice process result key1:" + svo.getDate());
-                    }
                     flagMap.put(LUZAO_KEY1, svo.getDate());
                 }
                 if(svo.getDuoFlagsText().contains("升越良山")){
-                    if(svo.stockId.equals("001215") || svo.stockId.equals("300820")){
-                        System.out.println("analyseWithPredictStockPrice process result key2:" + svo.getDate());
-                    }
                     flagMap.put(LUZAO_KEY2, svo.getDate());
                 }
                 if(svo.getDuoFlagsText().contains("山腰乘凉")){
-                    if(svo.stockId.equals("001215") || svo.stockId.equals("300820")){
-                        System.out.println("analyseWithPredictStockPrice process result key3:" + svo.getDate());
-                    }
                     flagMap.put(LUZAO_KEY3, svo.getDate());
+                }
+                if(svo.getDuoFlagsText().contains("三山重叠")){
+                    flagMap.put(LUZAO_KEY4, svo.getDate());
+                }
+                if(svo.getDuoFlagsText().contains("跌到山腰")){
+                    flagMap.put(LUZAO_KEY5, svo.getDate());
+                }
+                if(svo.getDuoFlagsText().contains("跌到山脚")){
+                    flagMap.put(LUZAO_KEY6, svo.getDate());
                 }
             });
 
-            if(flagMap.containsKey(LUZAO_KEY1) && flagMap.containsKey(LUZAO_KEY2) && flagMap.containsKey(LUZAO_KEY3)
-                    && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY1), flagMap.get(LUZAO_KEY2))
+            boolean match = false;
+            //condition 1:
+            if(flagMap.containsKey(LUZAO_KEY2) && flagMap.containsKey(LUZAO_KEY3)
                     && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY2), flagMap.get(LUZAO_KEY3))
                     && WeekdayUtil.isDate1BeforeOrEqualDate2(curDate, flagMap.get(LUZAO_KEY3))){
+                //condition 2:
+                if((flagMap.containsKey(LUZAO_KEY4)
+                      && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY4), flagMap.get(LUZAO_KEY2)))
+                || (flagMap.containsKey(LUZAO_KEY5)
+                        && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY5), flagMap.get(LUZAO_KEY2)))
+                || (flagMap.containsKey(LUZAO_KEY6)
+                        && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY6), flagMap.get(LUZAO_KEY2)))){
+                    match = true;
+                }
+            }
+            //
+            if(match){
                 System.out.println("analyseWithPredictStockPrice process result: " + stockId + " ,event Map:"+flagMap);
                 CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
                 cpvo.stockId = stockId;
