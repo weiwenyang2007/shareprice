@@ -177,17 +177,26 @@ public class ShenXianSellAnalyseHelper {
             //flag, date
             Map<String, String> flagMap = new HashMap<>();
 
-            for(ShenXianUIVO svo:shenXianUIVOList) {
+            shenXianUIVOList.stream().forEach(svo -> {
                 if(svo.getDuoFlagsText().contains("震出东方")){
+                    if(svo.stockId.equals("001215") || svo.stockId.equals("300820")){
+                        System.out.println("analyseWithPredictStockPrice process result key1:" + svo.getDate());
+                    }
                     flagMap.put(LUZAO_KEY1, svo.getDate());
                 }
                 if(svo.getDuoFlagsText().contains("升越良山")){
+                    if(svo.stockId.equals("001215") || svo.stockId.equals("300820")){
+                        System.out.println("analyseWithPredictStockPrice process result key2:" + svo.getDate());
+                    }
                     flagMap.put(LUZAO_KEY2, svo.getDate());
                 }
                 if(svo.getDuoFlagsText().contains("山腰乘凉")){
+                    if(svo.stockId.equals("001215") || svo.stockId.equals("300820")){
+                        System.out.println("analyseWithPredictStockPrice process result key3:" + svo.getDate());
+                    }
                     flagMap.put(LUZAO_KEY3, svo.getDate());
                 }
-            };
+            });
 
             if(flagMap.containsKey(LUZAO_KEY1) && flagMap.containsKey(LUZAO_KEY2) && flagMap.containsKey(LUZAO_KEY3)
                     && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY1), flagMap.get(LUZAO_KEY2))
@@ -198,7 +207,7 @@ public class ShenXianSellAnalyseHelper {
                 cpvo.stockId = stockId;
                 cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days.name();
                 cpvo.date = curDate;
-                checkPointDailySelectionTable.delete(cpvo);
+                //checkPointDailySelectionTable.delete(cpvo);
                 checkPointDailySelectionTable.insert(cpvo);
             }
         });
