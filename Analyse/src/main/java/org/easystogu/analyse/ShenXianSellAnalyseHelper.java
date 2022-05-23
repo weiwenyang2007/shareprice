@@ -249,7 +249,7 @@ public class ShenXianSellAnalyseHelper {
                     count++;
                 }
 
-                match = match2 && match3 && match4 && match5 && match6 && match7 && (count >= 3);
+                match = match2 && match3 && match4 && match5 && match6 && match7 && (count >= 2);
             }
             //
             if(match){
