@@ -228,7 +228,28 @@ public class ShenXianSellAnalyseHelper {
                     count++;
                 }
 
-                match = match2 && match3 && match4 && (count >= 2);
+                //condition 5:
+                boolean match5 = true;
+                if(flagMap.containsKey(LUZAO_KEY4) && flagMap.containsKey(LUZAO_KEY5)){
+                    match5 = WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY4), flagMap.get(LUZAO_KEY5));
+                    count++;
+                }
+
+                //condition 6:
+                boolean match6 = true;
+                if(flagMap.containsKey(LUZAO_KEY4) && flagMap.containsKey(LUZAO_KEY6)){
+                    match6 = WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY4), flagMap.get(LUZAO_KEY6));
+                    count++;
+                }
+
+                //condition 7:
+                boolean match7 = true;
+                if(flagMap.containsKey(LUZAO_KEY5) && flagMap.containsKey(LUZAO_KEY6)){
+                    match7 = WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY5), flagMap.get(LUZAO_KEY6));
+                    count++;
+                }
+
+                match = match2 && match3 && match4 && match5 && match6 && match7 && (count >= 3);
             }
             //
             if(match){
