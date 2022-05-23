@@ -244,8 +244,8 @@ public class ShenXianSellAnalyseHelper {
                     count++;
                 }
 
-                //luzao事件安装时间先后出现，并非所有条件都满足，只有满足3个事件就差不多了
-                boolean basicMatch = match2 && match3 && match4 && match5 && match6 && match7 && (count >= 2);
+                //luzao事件安装时间先后出现，并非所有条件都满足，只有满足4个事件就差不多了
+                boolean basicMatch = match2 && match3 && match4 && match5 && match6 && match7 && (count >= 3);
 
                 //未来2天出现山腰乘凉
                 if(basicMatch && flagMap.containsKey(LUZAO_KEY2) && flagMap.containsKey(LUZAO_KEY3)
