@@ -54,8 +54,16 @@ public enum DailyCombineCheckPoint {
     		LuZao_PhaseIII_MACD_WEEK_GORDON_MACD_DAY_DIF_CROSS_0(SellPointType.KDJ_Dead, 0, 99.0),
     		LuZao_PhaseII_MACD_WEEK_GORDON_KDJ_WEEK_GORDON(SellPointType.KDJ_Dead, 0, 99.0),
     		LuZao_PhaseIII_MACD_WEEK_GORDON_KDJ_WEEK_GORDON(SellPointType.KDJ_Dead, 0, 99.0),
+
+            LuZao_PhaseII_ZhenChuDongFang_In_Future_2_Days(SellPointType.KDJ_Dead, 0, 99.0),
+
+            LuZao_PhaseII_ShengYueLiangShan_In_Future_2_Days(SellPointType.KDJ_Dead, 0, 99.0),
             LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days(SellPointType.KDJ_Dead, 0, 99.0),
             LuZao_PhaseIII_SanShanChongDie_In_Future_2_Days(SellPointType.KDJ_Dead, 0, 99.0),
+
+            LuZao_PhaseIV_DieDaoShanYao_In_Future_2_Days(SellPointType.KDJ_Dead, 0, 99.0),
+
+            LuZao_PhaseIV_DieDaoShanJiao_In_Future_2_Days(SellPointType.KDJ_Dead, 0, 99.0),
     		MACD_TWICE_GORDON_W_Botton_MACD_DI_BEILI(SellPointType.KDJ_Dead, 0, 99.0), 
     		MACD_TWICE_GORDON_W_Botton_TiaoKong_ZhanShang_Bull(SellPointType.KDJ_Dead, 0, 99.0),
     		High_Price_Digit_In_Order(SellPointType.KDJ_Dead, 0, 99.0),

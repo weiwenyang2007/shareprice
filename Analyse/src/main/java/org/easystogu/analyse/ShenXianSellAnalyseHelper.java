@@ -52,7 +52,15 @@ public class ShenXianSellAnalyseHelper {
             "LuZao_PhaseIII_MACD_WEEK_GORDON_MACD_DAY_DIF_CROSS_0",
             //W底-金叉
             "MACD_TWICE_GORDON_W_Botton_TiaoKong_ZhanShang_Bull",
-            "MACD_TWICE_GORDON_W_Botton_MACD_DI_BEILI"};
+            "MACD_TWICE_GORDON_W_Botton_MACD_DI_BEILI",
+            //
+            "LuZao_PhaseII_ZhenChuDongFang_In_Future_2_Days",
+            "LuZao_PhaseII_ShengYueLiangShan_In_Future_2_Days",
+            "LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days",
+            "LuZao_PhaseIII_SanShanChongDie_In_Future_2_Days",
+            "LuZao_PhaseIV_DieDaoShanYao_In_Future_2_Days",
+            "LuZao_PhaseIV_DieDaoShanJiao_In_Future_2_Days"
+    };
     //最终有上述特征的股票经过未来2天的预计算，得出 checkpoint 为 LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days
 
     //预估后面2天每天平盘，计算出是否出现luzao山腰乘凉买点
@@ -247,6 +255,30 @@ public class ShenXianSellAnalyseHelper {
                 //luzao事件安装时间先后出现，并非所有条件都满足，只要满足4个事件就差不多了
                 boolean basicMatch = match2 && match3 && match4 && match5 && match6 && match7 && (count >= 3);
 
+                //未来2天出现震出东方
+                if(basicMatch && flagMap.containsKey(LUZAO_KEY6) && flagMap.containsKey(LUZAO_KEY1)
+                        && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY6), flagMap.get(LUZAO_KEY1))
+                        && WeekdayUtil.isDate1BeforeOrEqualDate2(curDate, flagMap.get(LUZAO_KEY1))){
+                    System.out.println("analyseWithPredictStockPrice match 震出东方: " + stockId + " ,event Map:"+flagMap);
+                    CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
+                    cpvo.stockId = stockId;
+                    cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseII_ZhenChuDongFang_In_Future_2_Days.name();
+                    cpvo.date = curDate;
+                    checkPointDailySelectionTable.insert(cpvo);
+                }
+
+                //未来2天出现升越良山
+                if(basicMatch && flagMap.containsKey(LUZAO_KEY1) && flagMap.containsKey(LUZAO_KEY2)
+                        && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY1), flagMap.get(LUZAO_KEY2))
+                        && WeekdayUtil.isDate1BeforeOrEqualDate2(curDate, flagMap.get(LUZAO_KEY2))){
+                    System.out.println("analyseWithPredictStockPrice match 升越良山: " + stockId + " ,event Map:"+flagMap);
+                    CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
+                    cpvo.stockId = stockId;
+                    cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseII_ShengYueLiangShan_In_Future_2_Days.name();
+                    cpvo.date = curDate;
+                    checkPointDailySelectionTable.insert(cpvo);
+                }
+
                 //未来2天出现山腰乘凉
                 if(basicMatch && flagMap.containsKey(LUZAO_KEY2) && flagMap.containsKey(LUZAO_KEY3)
                         && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY2), flagMap.get(LUZAO_KEY3))
@@ -267,6 +299,30 @@ public class ShenXianSellAnalyseHelper {
                     CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
                     cpvo.stockId = stockId;
                     cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIII_SanShanChongDie_In_Future_2_Days.name();
+                    cpvo.date = curDate;
+                    checkPointDailySelectionTable.insert(cpvo);
+                }
+
+                //未来2天出现跌到山腰
+                if(basicMatch && flagMap.containsKey(LUZAO_KEY4) && flagMap.containsKey(LUZAO_KEY5)
+                        && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY4), flagMap.get(LUZAO_KEY5))
+                        && WeekdayUtil.isDate1BeforeOrEqualDate2(curDate, flagMap.get(LUZAO_KEY5))){
+                    System.out.println("analyseWithPredictStockPrice match 跌到山腰: " + stockId + " ,event Map:"+flagMap);
+                    CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
+                    cpvo.stockId = stockId;
+                    cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIV_DieDaoShanYao_In_Future_2_Days.name();
+                    cpvo.date = curDate;
+                    checkPointDailySelectionTable.insert(cpvo);
+                }
+
+                //未来2天出现跌到山脚
+                if(basicMatch && flagMap.containsKey(LUZAO_KEY5) && flagMap.containsKey(LUZAO_KEY6)
+                        && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY5), flagMap.get(LUZAO_KEY6))
+                        && WeekdayUtil.isDate1BeforeOrEqualDate2(curDate, flagMap.get(LUZAO_KEY6))){
+                    System.out.println("analyseWithPredictStockPrice match 跌到山脚: " + stockId + " ,event Map:"+flagMap);
+                    CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
+                    cpvo.stockId = stockId;
+                    cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIV_DieDaoShanJiao_In_Future_2_Days.name();
                     cpvo.date = curDate;
                     checkPointDailySelectionTable.insert(cpvo);
                 }
