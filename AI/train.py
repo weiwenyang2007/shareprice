@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import os, datetime
+import os, datetime, sys
 import argparse
 import tensorflow as tf
 from tensorflow.keras.models import *
@@ -15,6 +15,7 @@ parser = argparse.ArgumentParser()
 # Adding optional argument
 parser.add_argument("-id", "--StockId")
 parser.add_argument("-tfs", "--TrainFromScratch")
+parser.add_argument("-gpu", "--GpuDevice")
 
 # Read arguments from command line
 args = parser.parse_args()
@@ -33,6 +34,15 @@ ff_dim = 256
 stock_id = args.StockId
 stock_price_path = 'stockData/' + stock_id + '.csv'
 train_from_scratch = args.TrainFromScratch  # True: Train the model, False: Use the pre-train checkpoints
+
+#specify the gpu
+if args.GpuDevice:
+    os.environ["CUDA_VISIBLE_DEVICES"] = args.GpuDevice
+else:
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"    
+
+
+print('Run train for ' + stock_id)
 
 #Load data from DB to csv file
 import psycopg2
@@ -74,6 +84,11 @@ lines = []
 
 with open(stock_price_path, 'r') as f:
     lines = f.readlines()
+
+#If the stock price len is too small, then exit
+if len(lines) < 1500:
+    print('Len of stockId ' + stock_id + ' is ' + str(len(lines)) + ' too small, exit')
+    sys.exit()
 
 #Append the predict mock date price:     
 latest_record = lines[len(lines)-1]
