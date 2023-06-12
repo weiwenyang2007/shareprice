@@ -10,7 +10,7 @@ cd ./EasyStoGu/DockerCompose
 docker-compose -f dc_cassandra.yaml up -d
 docker-compose -f dc_cassandra.yaml down
 
-==================install wildfly,postgresql in ubuntu-20.04 host ===============================
+==================install wildfly,postgresql in ubuntu-20.04 host (currently use this) ===============================
 0. install wildfly: https://dev.to/orestispantazos/install-and-configure-wildfly-jboss-on-ubuntu-20-04-lts-266f
    install postsql: https://www.digitalocean.com/community/tutorials/how-to-install-postgresql-on-ubuntu-20-04-quickstart
    optional if indicator type is sql:
@@ -18,10 +18,12 @@ docker-compose -f dc_cassandra.yaml down
    
    must enlarge the xms xmx for jboss: /opt/wildfly/bin/standalone.conf
    wildfly log folder: /opt/wildfly/standalone/log
-   					   /opt/wildfly/standalone/deployments
+		       /opt/wildfly/standalone/deployments
    
    postgresql folder: /etc/postgresql/12/main/
-   					  /var/log/postgresql
+   		      /var/log/postgresql
+   the mount data folder: /mnt/5a538d29-2608-4ba0-985a-0f143703ef5c/postgresql/data                   
+   use pg_lsclusters to check the cluster status and if it is down, then pg_ctlcluster 12 main start 
    
    su postgres
    psql

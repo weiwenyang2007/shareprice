@@ -17,7 +17,7 @@ ${demo.css}
 <body>
 	<script type="text/jsx">    
           var stockId = "999999";
-          var indicator = "luzao";
+          var indicator = "shenxian_sell";
           var dateFrom = moment().subtract(2000, 'days').format("YYYY-MM-DD");
           var dateTo = moment().format("YYYY-MM-DD");
           var selectDate = dateTo;
@@ -36,10 +36,10 @@ ${demo.css}
 	         getInitialState: function() {
 	         return {
 	            stockId: "999999",
-	            indicator: "luzao",
+	            indicator: "shenxian_sell",
                 version: "v1",
-	            dateFrom: moment().subtract(2000, 'days').format("YYYY-MM-DD"),
-	            dateTo: moment().format("YYYY-MM-DD"),
+	              dateFrom: moment().subtract(2000, 'days').format("YYYY-MM-DD"),
+	              dateTo: moment().format("YYYY-MM-DD"),
                 selectDate: "",
                 viewName: "",
                 viewOptions: [],
@@ -107,7 +107,7 @@ ${demo.css}
 	         var data = {
 	            stockId : this.state.stockId,
 	            indicator : this.state.indicator,
-                version: this.state.version, 
+              version: this.state.version,
 	            dateFrom : this.state.dateFrom,
 	            dateTo : this.state.dateTo,
 	        };

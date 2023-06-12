@@ -967,3 +967,23 @@ GRANT ALL ON TABLE stockprice_hl_time TO public;
 GRANT ALL ON TABLE stockprice_hl_time TO postgres;
 COMMENT ON TABLE stockprice_hl_time
   IS '当日最高最低价格的时间';
+
+
+-- Table: AI_TREND_PREDICTION
+
+-- DROP TABLE AI_TREND_PREDICTION;
+
+CREATE TABLE AI_TREND_PREDICTION
+(
+  stockId text NOT NULL,
+  date text NOT NULL,
+  result numeric,
+  CONSTRAINT AI_TREND_PREDICTION_primary_key PRIMARY KEY (stockId, date)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE AI_TREND_PREDICTION
+  OWNER TO postgres;
+COMMENT ON TABLE AI_TREND_PREDICTION
+  IS 'AI_TREND_PREDICTION';

@@ -11,6 +11,7 @@ import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.easystogu.analyse.util.ProcessRequestParmsInPostBody;
 import org.easystogu.analyse.vo.ShenXianUIVO;
 import org.easystogu.checkpoint.DailyCombineCheckPoint;
+import org.easystogu.db.access.table.AiTrendPredictTableHelper;
 import org.easystogu.db.access.table.CheckPointDailySelectionTableHelper;
 import org.easystogu.db.vo.table.*;
 import org.easystogu.indicator.*;
@@ -34,6 +35,7 @@ public class ShenXianSellAnalyseHelper {
             .getInstance();
     //@Autowired
     private FlagsAnalyseHelper flagsAnalyseHelper = FlagsAnalyseHelper.getInstance();
+    private AiTrendPredictTableHelper aiTrendPredictTableHelper = AiTrendPredictTableHelper.getInstance();
 
     private static final String LUZAO_KEY1 = "KEY1_ZhengChuDongFang";//震出东方
     private static final String LUZAO_KEY2 = "KEY2_ShengYueLiangShan";//升越良山
@@ -159,8 +161,11 @@ public class ShenXianSellAnalyseHelper {
                 luzaoList.add(vo);
             }
         }
+        // AI trend prediction
+        List<AiTrendPredictVO> aiTrendPredictVOList = aiTrendPredictTableHelper.getByStockId(stockIdParm);
         //
-        return flagsAnalyseHelper.shenXianBuySellFlagsAnalyse(spList, sxList, macdList, bbiList, luzaoList);
+        return flagsAnalyseHelper.shenXianBuySellFlagsAnalyse
+            (spList, sxList, macdList, bbiList, luzaoList, aiTrendPredictVOList);
     }
 
     public void analyseWithPredictStockPrice() {

@@ -8,6 +8,8 @@ import org.easystogu.indicator.MAHelper;
 import org.easystogu.log.LogHelper;
 import org.easystogu.analyse.vo.CheckPointFlagsVO;
 import org.easystogu.analyse.vo.ShenXianUIVO;
+import org.easystogu.utils.Strings;
+import org.easystogu.utils.WeekdayUtil;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +41,7 @@ public class FlagsAnalyseHelper {
   }
   public List<ShenXianUIVO> shenXianBuySellFlagsAnalyse(List<StockPriceVO> spList,
       List<ShenXianUIVO> sxList, List<MacdVO> macdList, List<BBIVO> bbiList,
-      List<LuZaoVO> luzaoList) {
+      List<LuZaoVO> luzaoList, List<AiTrendPredictVO> aiTrendPredictVOList) {
 
     StockPriceVO spvoF = spList.get(spList.size() - 1);
     List<VolumeVO> volumeList = getMAVolumeList(spList);
@@ -52,6 +54,9 @@ public class FlagsAnalyseHelper {
       BBIVO bbivo = getBBIIndVOByDate(spvo.date, bbiList);
       LuZaoVO luzaovo = getLuzaoIndVOByDate(spvo.date, luzaoList);
       VolumeVO volumevo = getVolumeVOByDate(spvo.date, volumeList);
+      AiTrendPredictVO aiVOCur= getAiTrendPredictVOByDate(spvo.date, aiTrendPredictVOList);
+      AiTrendPredictVO aiVOBeforeCur= getAiTrendPredictVOByPreviousDate(spvo.date, aiTrendPredictVOList);
+      AiTrendPredictVO aiVOPredict= getAiTrendPredictVOByDate("9999-01-01", aiTrendPredictVOList);
       // below can be search from table checkpoint_daily_selection
       CheckPointFlagsVO cpfvo = this.checkPoints(spvo.date, checkPoints);
 
@@ -83,17 +88,22 @@ public class FlagsAnalyseHelper {
           sxvo.setDuoFlagsText("神仙死叉");
         }
 
+        //太多这种诱多诱空的标记，暂时去掉
+        //comment out due to too many such flags
         // macd 诱多: price is higher but macd is lower
-        if (this.isMacdYouDuo(spvo.date, macdList, spList)) {
-          sxvo.appendDuoFlagsTitle("YD");
-          sxvo.appendDuoFlagsText("诱多");
-        }
+        //if (this.isMacdYouDuo(spvo.date, macdList, spList)) {
+          //comment out due to too many such flags
+          //sxvo.appendDuoFlagsTitle("YD");
+          //sxvo.appendDuoFlagsText("诱多");
+        //}
 
+        //comment out due to too many such flags
         // macd 诱空: price is lower but macd is higher
-        if (this.isMacdYouKong(spvo.date, macdList, spList)) {
-          sxvo.appendDuoFlagsTitle("YK");
-          sxvo.appendDuoFlagsText("诱空");
-        }
+        //if (this.isMacdYouKong(spvo.date, macdList, spList)) {
+          //comment out due to too many such flags
+          //sxvo.appendDuoFlagsTitle("YK");
+          //sxvo.appendDuoFlagsText("诱空");
+        //}
 
         // 空头
         if (isBBIDead(spvo.date, bbiList)) {
@@ -251,10 +261,76 @@ public class FlagsAnalyseHelper {
           sxvo.setDuoFlagsText(info + "下跌黄金分割点");
         }
 
+        //AI Trend Predicate: if result is higher than 0.75, then the trend is increasing, else is decreasing
+        if (aiVOBeforeCur == null && aiVOCur != null) {
+          if (aiVOCur.getResult() >= 0.75) {
+            //yesterday is null, today is AI Buy
+
+            setAiTrendPoint(sxvo, aiVOCur, "AI B");
+          } else if (aiVOCur.getResult() < 0.75) {
+            //yesterday is null, today is AI Sell
+            setAiTrendPoint(sxvo, aiVOCur, "AI S");
+          }
+        } else if (aiVOBeforeCur != null && aiVOCur != null) {
+          if (aiVOBeforeCur.getResult() >= 0.75 && aiVOCur.getResult() >= 0.75) {
+            //yesterday and today is AI buy, no necessarily to mark today, since yesterday should had been marked earlier
+          } else if (aiVOBeforeCur.getResult() < 0.75 && aiVOCur.getResult() < 0.75) {
+            //yesterday and today is AI sell, no necessarily to mark today, since yesterday should had been marked earlier
+          } else if (aiVOBeforeCur.getResult() >= 0.75 && aiVOCur.getResult() < 0.75) {
+            //yesterday is AI buy, today is AI sell
+            setAiTrendPoint(sxvo, aiVOCur, "AI S");
+          } else if (aiVOBeforeCur.getResult() < 0.75 && aiVOCur.getResult() >= 0.75) {
+            //yesterday is AI sell, today is AI buy
+            setAiTrendPoint(sxvo, aiVOCur, "AI B");
+          }
+        }
+        //if current AI trend vo data is latest date, and the flags is not set, then set the predict next date AI trend point
+        if(aiVOPredict !=null && aiVOCur!=null && aiVOCur.getDate().equals(spvoF.getDate())) {
+          if (aiVOPredict.getResult() >= 0.75) {
+            setAiTrendPoint(sxvo, aiVOCur, "PND AI B");//predict next date AI buy point
+          } else if (aiVOPredict.getResult() < 0.75){
+            setAiTrendPoint(sxvo, aiVOCur, "PND AI S");//predict next date AI sell point
+          }
+        }
       }
 
     }
     return sxList;
+  }
+
+  private void setAiTrendPoint(ShenXianUIVO sxvo, AiTrendPredictVO aiVOCur, String buyOrSell) {
+    if(Strings.isNotEmpty(sxvo.getBuyFlagsTitle())) {
+      sxvo.setBuyFlagsTitle(sxvo.getBuyFlagsTitle() + "," + buyOrSell);
+    } else {
+      sxvo.setBuyFlagsTitle(buyOrSell);
+    }
+
+    if(Strings.isNotEmpty(sxvo.getBuyFlagsText())) {
+      sxvo.setBuyFlagsText(sxvo.getBuyFlagsText() + "," + buyOrSell  + String.format(" %.2f", aiVOCur.getResult()));
+    } else {
+      sxvo.setBuyFlagsText("AI 预测点 置信度"  + String.format("%.2f", aiVOCur.getResult()));
+    }
+  }
+
+  private AiTrendPredictVO getAiTrendPredictVOByDate(String date,
+      List<AiTrendPredictVO> aiTrendPredictVOList) {
+    for (AiTrendPredictVO vo : aiTrendPredictVOList) {
+      if (vo.date.equals(date))
+        return vo;
+    }
+    return null;
+  }
+
+  private AiTrendPredictVO getAiTrendPredictVOByPreviousDate(String date,
+      List<AiTrendPredictVO> aiTrendPredictVOList) {
+    AiTrendPredictVO tmpVO = null;
+    for (AiTrendPredictVO vo : aiTrendPredictVOList) {
+      if (vo.date.equals(date)) {
+        return tmpVO;
+      }
+      tmpVO = vo;
+    }
+    return null;
   }
 
   private ShenXianUIVO getShenXianIndVOByDate(String date, List<ShenXianUIVO> indList) {
