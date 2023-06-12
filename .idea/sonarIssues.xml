@@ -3,6 +3,11 @@
   <component name="issues">
     <option name="index">
       <map>
+        <entry key="$USER_HOME$/git/ue-info-cces/ueinfo-session-keeper/ueinfo-keeper-parent/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/EWeb/src/main/webapp/react_native_gordon.htm">
           <value>
             <set />

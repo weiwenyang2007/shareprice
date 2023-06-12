@@ -2,9 +2,39 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
+      <option name="id" value="ece-release" />
+      <option name="name" value="The NgIN product maven repository" />
+      <option name="url" value="https://arm.lmera.ericsson.se/artifactory/proj-ece-dev" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="sep-release" />
+      <option name="name" value="The SEP product maven repository" />
+      <option name="url" value="https://arm.lmera.ericsson.se/artifactory/proj-ece-dev" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="https://repo.maven.apache.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="ece-external" />
+      <option name="name" value="The NgIN product maven repository" />
+      <option name="url" value="https://arm.lmera.ericsson.se/artifactory/proj-ece-dev" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="sep-snapshot" />
+      <option name="name" value="The SEP project maven repository" />
+      <option name="url" value="https://arm.lmera.ericsson.se/artifactory/proj-ece-dev" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="ece-snapshot" />
+      <option name="name" value="The NgIN project maven repository" />
+      <option name="url" value="https://arm.lmera.ericsson.se/artifactory/proj-ece-dev" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="https://arm.lmera.ericsson.se/artifactory/proj-ece-dev" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
@@ -15,6 +45,11 @@
       <option name="id" value="jboss.community" />
       <option name="name" value="JBoss Community repository" />
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="ece-promote" />
+      <option name="name" value="The NgIN product maven repository" />
+      <option name="url" value="https://arm.lmera.ericsson.se/artifactory/proj-ece-dev" />
     </remote-repository>
   </component>
 </project>

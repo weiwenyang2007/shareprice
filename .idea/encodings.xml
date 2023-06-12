@@ -2,50 +2,25 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/AI/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/AI/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Analyse/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Analyse/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/App/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/App/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Cache/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Cache/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/CommonLib/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/CommonLib/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/DataAccessModule/CassandraLib/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/DataAccessModule/CassandraLib/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/DataAccessModule/DBAccessFacde/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/DataAccessModule/DBAccessFacde/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/DataAccessModule/DatabaseIF/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/DataAccessModule/DatabaseIF/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/DataAccessModule/DatabaseLib/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/DataAccessModule/DatabaseLib/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/DataAccessModule/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/DataAccessModule/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/DataCollectModule/EasyMoneyCollect/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/DataCollectModule/EasyMoneyCollect/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/DataCollectModule/SinaDataCollect/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/DataCollectModule/SinaDataCollect/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/DataCollectModule/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/DataCollectModule/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/DatabaseReplicate/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/DatabaseReplicate/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Docker/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Docker/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/DynamicCompiler/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/DynamicCompiler/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/EWeb/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/EWeb/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Indicator/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Indicator/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Parent/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Parent/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Portal/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Portal/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Scheduled/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Scheduled/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/TrendMode/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/TrendMode/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>
 </project>
