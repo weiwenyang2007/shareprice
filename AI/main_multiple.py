@@ -25,12 +25,13 @@ if __name__ == "__main__":
 
     print('Use GPU ' + str(gpu_device))
 
+    #if set visible devices to 1, then list_physical_devices only return this only one visible gpu
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_device)
 
     gpus = tf.config.experimental.list_physical_devices('GPU')
-    print('GPU:' + str(gpus[gpu_device]))
+    print('GPU:' + str(gpus[0]))
     #PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')
-    tf.config.set_logical_device_configuration(gpus[gpu_device], [tf.config.LogicalDeviceConfiguration(memory_limit=gpuMemory)])
+    tf.config.set_logical_device_configuration(gpus[0], [tf.config.LogicalDeviceConfiguration(memory_limit=gpuMemory)])
 
 
     all_start_ts = time.time()
