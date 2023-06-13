@@ -5,4 +5,4 @@ Run a single stockId:
 python main.py -id 300059 -tfs True -gpu 0
 
 Run with all stockIds with multiple gpu:(sufix is the end string of stockId)
-python main_multiple.py -sufix 1000 -tfs True -gpu 0
+python main_multiple.py -sufix 1000 -tfs True -gpu 0 -mem 1024
