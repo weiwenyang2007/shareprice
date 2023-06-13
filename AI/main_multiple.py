@@ -23,6 +23,8 @@ if __name__ == "__main__":
     gpu_device = args.GpuDevice
     gpuMemory = args.gpuMemory
 
+    print('Use GPU ' + str(gpu_device))
+
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_device)
 
     gpus = tf.config.experimental.list_physical_devices('GPU')
