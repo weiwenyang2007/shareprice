@@ -1,5 +1,6 @@
-import time
+import time, os
 import argparse
+import tensorflow as tf
 from train import StockTrainHandler
 from postgres import PostgresDBHandler
 
@@ -8,7 +9,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     # Adding optional argument
-    parser.add_argument("-sufix", "--SufixId") # Sufix of the stockId (the last digit of the stockId)
+    parser.add_argument("-id", "--StockId") # Sufix of the stockId (the last digit of the stockId)
     parser.add_argument("-tfs", "--TrainFromScratch")
     parser.add_argument("-gpu", "--GpuDevice", type=int, default=0) # 0,1,2 etc
     parser.add_argument("-mem", "--gpuMemory", type=int, default=1024) #limit the gpu memory for each process
@@ -17,7 +18,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     #
-    sufix = args.SufixId
     train_from_scratch = args.TrainFromScratch  # True: Train the model, False: Use the pre-train checkpoints
     gpu_device = args.GpuDevice
     gpuMemory = args.gpuMemory
@@ -27,7 +27,8 @@ if __name__ == "__main__":
     gpus = tf.config.experimental.list_physical_devices('GPU')
     print('GPU:' + str(gpus[gpu_device]))
     #PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')
-    tf.config.set_logical_device_configuration(gpus[gpu_device], [tf.config.LogicalDeviceConfiguration(memory_limit=gpuMemory)])
+    if gpuMemory > 0:
+        tf.config.set_logical_device_configuration(gpus[gpu_device], [tf.config.LogicalDeviceConfiguration(memory_limit=gpuMemory)])
 
     args = parser.parse_args()
 
