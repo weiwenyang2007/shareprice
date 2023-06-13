@@ -1,4 +1,4 @@
-import time, os
+import time, os, sys
 import argparse
 import tensorflow as tf
 from train import StockTrainHandler
@@ -13,6 +13,7 @@ if __name__ == "__main__":
     parser.add_argument("-tfs", "--TrainFromScratch")
     parser.add_argument("-gpu", "--GpuDevice", type=int, default=0) # 0,1,2 etc
     parser.add_argument("-mem", "--gpuMemory", type=int, default=1024) #limit the gpu memory for each process, with rtx3090, each gpu can run 2 train process with 10g memory
+    parser.add_argument("-ckp", "--UseCheckPointId", default='') # Use other checkpoint Id for predict (TrainFromScratch is False)
 
     # Read arguments from command line
     args = parser.parse_args()
@@ -22,6 +23,11 @@ if __name__ == "__main__":
     train_from_scratch = args.TrainFromScratch  # True: Train the model, False: Use the pre-train checkpoints
     gpu_device = args.GpuDevice
     gpuMemory = args.gpuMemory
+    useCkpId = args.UseCheckPointId
+
+    if train_from_scratch == 'True' and useCkpId != '':
+        print('Invalid args: TrainFromScratch is True but UseCheckPointId is Not null, exit')
+        sys.exit()
 
     print('Use GPU ' + str(gpu_device))
 
@@ -48,7 +54,7 @@ if __name__ == "__main__":
 
         start_ts = time.time()
 
-        train = StockTrainHandler(stock_id, train_from_scratch)
+        train = StockTrainHandler(stock_id, train_from_scratch, useCkpId)
         postgres.get_stock_price_and_save_to_file(stock_id)
         test_pred, df_test_with_date = train.train_model()
         postgres.save_predict_result_to_db(stock_id, test_pred, df_test_with_date)

@@ -10,11 +10,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class StockTrainHandler():
-    def __init__(self, stock_id, train_from_scratch):
+    def __init__(self, stock_id, train_from_scratch, useCkpId):
         #
         self.stock_id = stock_id
         self.stock_price_path = 'stockData/' + stock_id + '.csv'
         self.train_from_scratch = train_from_scratch # True: Train the model, False: Use the pre-train checkpoints
+        self.useCkpId = useCkpId # When train_from_scratch is False and use other checkpoint Id for prediction
 
         #specify the gpu
         #os.environ["CUDA_VISIBLE_DEVICES"] = self.gpu_device
@@ -226,7 +227,11 @@ class StockTrainHandler():
                             callbacks=[callback],
                             validation_data=(X_val, y_val))
         else:
-            model = tf.keras.models.load_model('./checkpoints/Transformer+TimeEmbedding_mean_' + self.stock_id + '.hdf5',
+            ckp = './checkpoints/Transformer+TimeEmbedding_mean_' + self.stock_id + '.hdf5'
+            if self.useCkpId != '':
+                ckp = './checkpoints/Transformer+TimeEmbedding_mean_' + self.useCkpId + '.hdf5'
+
+            model = tf.keras.models.load_model(ckp,
                                                custom_objects={'Time2Vector': Time2Vector,
                                                                'SingleAttention': SingleAttention,
                                                                'MultiAttention': MultiAttention,

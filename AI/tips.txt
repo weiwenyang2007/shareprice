@@ -9,3 +9,6 @@ Run with all stockIds with multiple gpu:(sufix is the end string of stockId)
 Can run 2 train process each with 10g memory in Rtx3090, set mem to 0 will ignore this setting
 python main_multiple.py -sufix 1000 -tfs True -gpu 0 -mem 10240
 
+To use other checkpoint Id (instead of itself) for prediction:
+python main.py -id 300059 -tfs False -ckp 999999
+
