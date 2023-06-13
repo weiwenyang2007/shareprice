@@ -2,8 +2,10 @@ docker run --gpus all -it -p 8888:8888 --restart=always -v /home/eyaweiw/github/
 
 In the docker:
 Run a single stockId:
-python main.py -id 300059 -tfs True -gpu 0
+set mem to less then 0 will ignore this setting(use the total memory of gpu)
+python main.py -id 300059 -tfs True -gpu 0 -mem 0
 
 Run with all stockIds with multiple gpu:(sufix is the end string of stockId)
-Can run 2 train process each with 10g memory in Rtx3090
+Can run 2 train process each with 10g memory in Rtx3090, set mem to 0 will ignore this setting
 python main_multiple.py -sufix 1000 -tfs True -gpu 0 -mem 10240
+
