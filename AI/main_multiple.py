@@ -39,10 +39,10 @@ if __name__ == "__main__":
     for stock_id in stock_ids:
         start_ts = time.time()
 
-        #train = StockTrainHandler(stock_id, train_from_scratch)
-        #postgres.get_stock_price_and_save_to_file(stock_id)
-        #test_pred, df_test_with_date = train.train_model()
-        #postgres.save_predict_result_to_db(stock_id, test_pred, df_test_with_date)
+        train = StockTrainHandler(stock_id, train_from_scratch)
+        postgres.get_stock_price_and_save_to_file(stock_id)
+        test_pred, df_test_with_date = train.train_model()
+        postgres.save_predict_result_to_db(stock_id, test_pred, df_test_with_date)
 
         count += 1
         stop_ts = time.time()
