@@ -10,10 +10,10 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class StockTrainHandler():
-    def __init__(self, stock_id, train_from_scratch, gpu_device, stock_price_path):
+    def __init__(self, stock_id, train_from_scratch, gpu_device):
         #
         self.stock_id = stock_id
-        self.stock_price_path = stock_price_path
+        self.stock_price_path = 'stockData/' + stock_id + '.csv'
         self.train_from_scratch = train_from_scratch # True: Train the model, False: Use the pre-train checkpoints
         self.gpu_device = gpu_device
 
@@ -33,6 +33,10 @@ class StockTrainHandler():
 
     def load_stock_data(self):
         #Load data and prepare moving average data
+        if not os.path.exists(self.stock_price_path):
+            print('file is not found ' + self.stock_price_path)
+            sys.exit(1)
+
         df = pd.read_csv(self.stock_price_path, delimiter=',', usecols=['date', 'open', 'high', 'low', 'close', 'volume'])
 
         # Replace 0 to avoid dividing by 0 later on
@@ -167,6 +171,7 @@ class StockTrainHandler():
         df_test_with_date = df[(df.index >= last_10pct)]
         df_test_with_date = df_test_with_date[-(len(df_test_with_date)-self.seq_len):]
 
+        print('Dataset shape:')
         print(X_train.shape, y_train.shape)
         print(X_val.shape, y_val.shape)
         print(X_test.shape, y_test.shape, df_test_with_date.shape)
@@ -251,4 +256,3 @@ class StockTrainHandler():
             print('Test Data - Loss: {:.4f}, MAE: {:.4f}, MAPE: {:.4f}'.format(test_eval[0], test_eval[1], test_eval[2]))
 
         return test_pred, df_test_with_date
-

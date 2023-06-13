@@ -1,6 +1,8 @@
 docker run --gpus all -it -p 8888:8888 --restart=always -v /home/eyaweiw/github/:/tf eyaweiw.cn:5000/tensorflow/tensorflow:2.9.1-gpu-jupyter-coursera2-minigpt &
 
 In the docker:
-python train.py -id 300059 -tfs True
-Or:
-python train.py --StockId 300059 --TrainFromScratch True
+Run a single stockId:
+python main.py -id 300059 -tfs True -gpu 0
+
+Run with all stockIds with multiple gpu:
+
