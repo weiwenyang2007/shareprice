@@ -41,6 +41,11 @@ if __name__ == "__main__":
     stock_ids = postgres.get_all_stockIds(sufix)
     count = 0
     for stock_id in stock_ids:
+        ckp = './checkpoints/Transformer+TimeEmbedding_mean_' + stock_id + '.hdf5'
+        if os.path.exists(ckp):
+            print('checkpoint file exist, skip the train ' + stock_id)
+            continue
+
         start_ts = time.time()
 
         train = StockTrainHandler(stock_id, train_from_scratch)
