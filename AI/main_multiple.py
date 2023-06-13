@@ -31,7 +31,8 @@ if __name__ == "__main__":
     gpus = tf.config.experimental.list_physical_devices('GPU')
     print('GPU:' + str(gpus[0]))
     #PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')
-    tf.config.set_logical_device_configuration(gpus[0], [tf.config.LogicalDeviceConfiguration(memory_limit=gpuMemory)])
+    if gpuMemory > 0:
+        tf.config.set_logical_device_configuration(gpus[0], [tf.config.LogicalDeviceConfiguration(memory_limit=gpuMemory)])
 
 
     all_start_ts = time.time()
