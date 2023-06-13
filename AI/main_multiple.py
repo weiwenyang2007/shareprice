@@ -12,7 +12,7 @@ if __name__ == "__main__":
     parser.add_argument("-sufix", "--SufixId") # Sufix of the stockId (the last digit of the stockId)
     parser.add_argument("-tfs", "--TrainFromScratch")
     parser.add_argument("-gpu", "--GpuDevice", type=int, default=0) # 0,1,2 etc
-    parser.add_argument("-mem", "--gpuMemory", type=int, default=1024) #limit the gpu memory for each process
+    parser.add_argument("-mem", "--gpuMemory", type=int, default=1024) #limit the gpu memory for each process, with rtx3090, each gpu can run 2 train process with 10g memory
 
     # Read arguments from command line
     args = parser.parse_args()
