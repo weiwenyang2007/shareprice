@@ -1,2 +1,2 @@
-sufix done: 10,11,12
-sufix ongoing: 13,14,15,16
+sufix done: 10,11,12,13,14,15,16
+sufix ongoing: 0,1,2,3
