@@ -73,7 +73,9 @@ public enum DailyCombineCheckPoint {
     		TIAOKONG_GAOKAI_25_POINTS_DAY1_HUIBU(SellPointType.KDJ_Dead, 0, 99.0),
     		TIAOKONG_DIKAI_25_POINTS_DAY1_HUIBU(SellPointType.KDJ_Dead, 0, 99.0),
     		MAGIC_NIGHT_DAYS_SHANG_ZHANG(SellPointType.KDJ_Dead, 0, 99.0),
-    		MAGIC_NIGHT_DAYS_XIA_DIE(SellPointType.KDJ_Dead, 0, 99.0);
+    		MAGIC_NIGHT_DAYS_XIA_DIE(SellPointType.KDJ_Dead, 0, 99.0),
+        AiTrend_Top_Area(SellPointType.KDJ_Dead, 0, 99.0), AiTrend_Bottom_Area(SellPointType.KDJ_Dead, 0, 99.0),
+        AiTrend_Bottom_Gordon(SellPointType.KDJ_Dead, 0, 99.0);
 
     private ConfigurationService config = DBConfigurationService.getInstance();
     private double minEarnPercent = config.getDouble("minEarnPercent_Select_CheckPoint");

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.easystogu.config.Constants;
 import org.easystogu.db.access.facde.DBAccessFacdeFactory;
 import org.easystogu.db.helper.IF.IndicatorDBHelperIF;
+import org.easystogu.db.vo.table.AiTrendPredictVO;
 import org.easystogu.db.vo.table.BollVO;
 import org.easystogu.db.vo.table.KDJVO;
 import org.easystogu.db.vo.table.MacdVO;
@@ -27,6 +28,7 @@ public class StockSuperVOHelper {
   protected IndicatorDBHelperIF qsddTable = DBAccessFacdeFactory.getInstance(Constants.indQSDD);
   protected IndicatorDBHelperIF wrTable = DBAccessFacdeFactory.getInstance(Constants.indWR);
   protected IndDDXTableHelper ddxTable = IndDDXTableHelper.getInstance();
+  protected AiTrendPredictTableHelper aiTrendTable = AiTrendPredictTableHelper.getInstance();
 
   private static Map<String, ValueWrapper> allStockSuperVOMap =
       new java.util.concurrent.ConcurrentHashMap<String, ValueWrapper>();
@@ -49,6 +51,9 @@ public class StockSuperVOHelper {
     List<ShenXianVO> shenXianList = shenXianTable.getAll(stockId);
     List<QSDDVO> qsddList = qsddTable.getAll(stockId);
     List<WRVO> wrList = wrTable.getAll(stockId);
+
+    //the length of the atTrend table may be different to others table
+    List<AiTrendPredictVO> aiTrendList = aiTrendTable.getByStockId(stockId);
 
     if ((spList.size() != macdList.size()) || (macdList.size() != kdjList.size())
         || (kdjList.size() != spList.size()) || (bollList.size() != spList.size())
@@ -82,6 +87,10 @@ public class StockSuperVOHelper {
       superVO.setWRVO(wrList.get(index));
       superVO.setDdxVO(ddxTable.getDDX(superVO.priceVO.stockId, superVO.priceVO.date));
       superVO.setQsddVO(qsddList.get(index));
+
+      //add aiTrendPredictVO based on date (instead of by index)
+      getAiTrendPredictVO(aiTrendList, superVO.priceVO.date);
+
       overList.add(superVO);
     }
 
@@ -89,6 +98,19 @@ public class StockSuperVOHelper {
 //    allStockSuperVOMap.put(stockId, new ValueWrapper(overList));
 
     return overList;
+  }
+
+  private AiTrendPredictVO getAiTrendPredictVO(List<AiTrendPredictVO> aiTrendList, String date) {
+    if (aiTrendList == null || aiTrendList.size() == 0) {
+      return null;
+    } else {
+      for (AiTrendPredictVO vo : aiTrendList) {
+        if (date.equals(vo.date)) {
+          return vo;
+        }
+      }
+    }
+    return null;
   }
 }
 

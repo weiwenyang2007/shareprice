@@ -1342,11 +1342,32 @@ public class CombineAnalyseHelper {
 			break;
 		}
 
-		// qsdd bottom
+		// qsdd bottom Gordon
 		case QSDD_Bottom_Gordon: {
 			if (curSuperDayVO.qsddBottomCrossType == CrossType.GORDON)
 				return true;
 			break;
+		}
+
+		// AiTrend top
+		case AiTrend_Top_Area: {
+				if (curSuperDayVO.aiTrendTopArea)
+					return true;
+				break;
+		}
+
+			// AiTrend bottom
+		case AiTrend_Bottom_Area: {
+				if (curSuperDayVO.aiTrendBottomArea)
+					return true;
+				break;
+		}
+
+			// AiTrend bottom Gordon
+		case AiTrend_Bottom_Gordon: {
+				if (curSuperDayVO.aiTrendBottomCrossType == CrossType.GORDON)
+					return true;
+				break;
 		}
 
 		// 最高价是一个特殊数字，比如12.34, 55.55, 67.54 etc

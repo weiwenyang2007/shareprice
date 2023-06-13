@@ -4,6 +4,7 @@ public class AiTrendPredictVO {
   public String stockId;
   public String date;
   public double result;
+  public static final double buyPoint = 0.75;// range is from 0 to 1.0
 
   public String getStockId() {
     return stockId;

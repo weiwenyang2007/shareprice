@@ -194,7 +194,10 @@ public class DailySelectionRunner implements Runnable {
           if (combineAnalyserHelper.isConditionSatisfy(checkPoint, overDayListTmp, overWeekListTmp)) {
             // only save QSDD Bottom to daily selection table and
             // display
-            if (checkPoint.compareTo(DailyCombineCheckPoint.QSDD_Bottom_Area) == 0
+            if (checkPoint.compareTo(DailyCombineCheckPoint.AiTrend_Bottom_Area) == 0
+                || checkPoint.compareTo(DailyCombineCheckPoint.AiTrend_Bottom_Gordon) == 0
+                || checkPoint.compareTo(DailyCombineCheckPoint.AiTrend_Top_Area) == 0//add to DB? more top area
+                || checkPoint.compareTo(DailyCombineCheckPoint.QSDD_Bottom_Area) == 0
                 || checkPoint.compareTo(DailyCombineCheckPoint.QSDD_Bottom_Gordon) == 0
                 || checkPoint.compareTo(DailyCombineCheckPoint.QSDD_Top_Area) == 0//add to DB? more top area
                 || checkPoint.compareTo(DailyCombineCheckPoint.WR_Bottom_Area) == 0

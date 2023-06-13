@@ -263,32 +263,32 @@ public class FlagsAnalyseHelper {
 
         //AI Trend Predicate: if result is higher than 0.75, then the trend is increasing, else is decreasing
         if (aiVOBeforeCur == null && aiVOCur != null) {
-          if (aiVOCur.getResult() >= 0.75) {
+          if (aiVOCur.getResult() >= AiTrendPredictVO.buyPoint) {
             //yesterday is null, today is AI Buy
 
             setAiTrendPoint(sxvo, aiVOCur, "AI B");
-          } else if (aiVOCur.getResult() < 0.75) {
+          } else if (aiVOCur.getResult() < AiTrendPredictVO.buyPoint) {
             //yesterday is null, today is AI Sell
             setAiTrendPoint(sxvo, aiVOCur, "AI S");
           }
         } else if (aiVOBeforeCur != null && aiVOCur != null) {
-          if (aiVOBeforeCur.getResult() >= 0.75 && aiVOCur.getResult() >= 0.75) {
+          if (aiVOBeforeCur.getResult() >= AiTrendPredictVO.buyPoint && aiVOCur.getResult() >= AiTrendPredictVO.buyPoint) {
             //yesterday and today is AI buy, no necessarily to mark today, since yesterday should had been marked earlier
-          } else if (aiVOBeforeCur.getResult() < 0.75 && aiVOCur.getResult() < 0.75) {
+          } else if (aiVOBeforeCur.getResult() < AiTrendPredictVO.buyPoint && aiVOCur.getResult() < AiTrendPredictVO.buyPoint) {
             //yesterday and today is AI sell, no necessarily to mark today, since yesterday should had been marked earlier
-          } else if (aiVOBeforeCur.getResult() >= 0.75 && aiVOCur.getResult() < 0.75) {
+          } else if (aiVOBeforeCur.getResult() >= AiTrendPredictVO.buyPoint && aiVOCur.getResult() < AiTrendPredictVO.buyPoint) {
             //yesterday is AI buy, today is AI sell
             setAiTrendPoint(sxvo, aiVOCur, "AI S");
-          } else if (aiVOBeforeCur.getResult() < 0.75 && aiVOCur.getResult() >= 0.75) {
+          } else if (aiVOBeforeCur.getResult() < AiTrendPredictVO.buyPoint && aiVOCur.getResult() >= AiTrendPredictVO.buyPoint) {
             //yesterday is AI sell, today is AI buy
             setAiTrendPoint(sxvo, aiVOCur, "AI B");
           }
         }
         //if current AI trend vo data is latest date, and the flags is not set, then set the predict next date AI trend point
         if(aiVOPredict !=null && aiVOCur!=null && aiVOCur.getDate().equals(spvoF.getDate())) {
-          if (aiVOPredict.getResult() >= 0.75) {
+          if (aiVOPredict.getResult() >= AiTrendPredictVO.buyPoint) {
             setAiTrendPoint(sxvo, aiVOCur, "PND AI B");//predict next date AI buy point
-          } else if (aiVOPredict.getResult() < 0.75){
+          } else if (aiVOPredict.getResult() < AiTrendPredictVO.buyPoint){
             setAiTrendPoint(sxvo, aiVOCur, "PND AI S");//predict next date AI sell point
           }
         }

@@ -21,6 +21,7 @@ public class StockSuperVO {
 	public DDXVO ddxVO;
 	public ZiJinLiuVO zhiJinLiuVO;
 	public QSDDVO qsddVO;
+	public AiTrendPredictVO aiTrendPredictVO;
 	public Map<String, ZiJinLiuVO> ziJinLiuVOMap = new HashMap<String, ZiJinLiuVO>();
 	public ZhuLiJingLiuRuVO zhuLiJingLiuRuVO = null;
 	public double volumeIncreasePercent;// äº¤æ˜“çš„volumeè¾ƒå‰�ä¸€æ—¥çš„å¢žé‡�ç™¾åˆ†æ¯”
@@ -39,6 +40,9 @@ public class StockSuperVO {
 	public boolean qsddTopArea;//
 	public boolean qsddBottomArea;//
 	public CrossType qsddBottomCrossType;//
+	public boolean aiTrendTopArea;//
+	public boolean aiTrendBottomArea;//
+	public CrossType aiTrendBottomCrossType;//
 	public boolean[] KLineStatus = new boolean[4];// big/small red, big/small
 													// green
 	public boolean priceHigherThanNday = false;// 当前价格是否突破平台,比如15天的价格

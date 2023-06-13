@@ -27,6 +27,7 @@ public class IndProcessHelper {
     IndCrossCheckingHelper.kdjCross(overDayList);
     IndCrossCheckingHelper.rsvCross(overDayList);
     IndCrossCheckingHelper.shenXianCross12(overDayList);
+    IndCrossCheckingHelper.aiTrendCross(overDayList);
     IndCrossCheckingHelper.qsddCross(overDayList);
     // IndCrossCheckingHelper.yiMengBSCross(overDayList);
     IndCountHelper.countAvgWR(overDayList);

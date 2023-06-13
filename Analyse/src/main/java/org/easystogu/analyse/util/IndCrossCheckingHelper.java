@@ -2,6 +2,7 @@ package org.easystogu.analyse.util;
 
 import java.util.List;
 
+import org.easystogu.db.vo.table.AiTrendPredictVO;
 import org.easystogu.db.vo.table.BollVO;
 import org.easystogu.db.vo.table.KDJVO;
 import org.easystogu.db.vo.table.MacdVO;
@@ -299,6 +300,48 @@ public class IndCrossCheckingHelper {
                         superNextVO.qsddBottomCrossType = CrossType.GORDON;
                     }
                 }
+            }
+        }
+    }
+
+    //AI trend prediction
+    public static void aiTrendCross(List<StockSuperVO> overList) {
+
+        for (int index = 1; index < (overList.size() - 1); index++) {
+            StockSuperVO superPre1VO = overList.get(index - 1);
+            StockSuperVO superVO = overList.get(index);
+            StockSuperVO superNextVO = overList.get(index + 1);
+            AiTrendPredictVO prevo = superPre1VO.aiTrendPredictVO;
+            AiTrendPredictVO vo = superVO.aiTrendPredictVO;
+            AiTrendPredictVO nextvo = superNextVO.aiTrendPredictVO;
+
+            // check aiTrendPredict sell point
+            if (vo == null && nextvo != null && nextvo.getResult() < AiTrendPredictVO.buyPoint) {
+                superNextVO.aiTrendTopArea = true;
+            }
+
+            if (vo != null && nextvo != null
+                && vo.getResult() >= AiTrendPredictVO.buyPoint
+                && nextvo.getResult() < AiTrendPredictVO.buyPoint) {
+                superNextVO.aiTrendTopArea = true;
+            }
+
+            // check aiTrendPredict buy point
+            if (vo == null && nextvo != null && nextvo.getResult() >= AiTrendPredictVO.buyPoint) {
+                superNextVO.aiTrendBottomArea = true;
+            }
+
+            if (vo != null && nextvo != null
+                && vo.getResult() < AiTrendPredictVO.buyPoint
+                && nextvo.getResult() >= AiTrendPredictVO.buyPoint) {
+                superNextVO.aiTrendBottomArea = true;
+            }
+
+            // check bottom Cross GORDON
+            if (vo != null && nextvo != null
+                && vo.getResult() < AiTrendPredictVO.buyPoint
+                && nextvo.getResult() >= AiTrendPredictVO.buyPoint) {
+                superNextVO.aiTrendBottomCrossType = CrossType.GORDON;
             }
         }
     }

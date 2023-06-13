@@ -434,6 +434,11 @@ public class HistoryAnalyseReport {
 
   public void countAllStockIdAnalyseHistoryBuySellCheckPoint() {
     List<DailyCombineCheckPoint> dailyCPs = new ArrayList<DailyCombineCheckPoint>();
+
+    dailyCPs.add(DailyCombineCheckPoint.AiTrend_Top_Area);
+    dailyCPs.add(DailyCombineCheckPoint.AiTrend_Bottom_Area);
+    dailyCPs.add(DailyCombineCheckPoint.AiTrend_Bottom_Gordon);
+
     dailyCPs.add(DailyCombineCheckPoint.Trend_PhaseI_GuanCha);
     dailyCPs.add(DailyCombineCheckPoint.Trend_PhaseII_JianCang);
     dailyCPs.add(DailyCombineCheckPoint.Trend_PhaseIII_ChiGu);
@@ -472,6 +477,11 @@ public class HistoryAnalyseReport {
 
   public void countAllStockIdStatisticsCheckPoint() {
     List<DailyCombineCheckPoint> dailyCPs = new ArrayList<DailyCombineCheckPoint>();
+
+    dailyCPs.add(DailyCombineCheckPoint.AiTrend_Top_Area);
+    dailyCPs.add(DailyCombineCheckPoint.AiTrend_Bottom_Area);
+    dailyCPs.add(DailyCombineCheckPoint.AiTrend_Bottom_Gordon);
+
     dailyCPs.add(DailyCombineCheckPoint.Trend_PhaseI_GuanCha);
     dailyCPs.add(DailyCombineCheckPoint.Trend_PhaseII_JianCang);
     dailyCPs.add(DailyCombineCheckPoint.Trend_PhaseIII_ChiGu);
