@@ -1,3 +1,2 @@
 sufix done: 10,11,12,13,14,15,16
 sufix ongoing: 0,1,2,3 by two rtx3090
-sufix ongoing: 4 by p4 Lite
