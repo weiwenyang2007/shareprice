@@ -74,6 +74,8 @@ class PostgresDBHandler():
 
         print('stock price ' + stock_id + ' is saved to ' + stock_price_path)
 
+        return len(lines)
+
     def save_predict_result_to_db(self, stock_id, test_pred, df_test_with_date):
         #First delete then insert
         index = 0

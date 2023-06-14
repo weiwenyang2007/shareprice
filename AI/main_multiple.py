@@ -55,7 +55,12 @@ if __name__ == "__main__":
         start_ts = time.time()
 
         train = StockTrainHandler(stock_id, train_from_scratch, useCkpId)
-        postgres.get_stock_price_and_save_to_file(stock_id)
+
+        len = postgres.get_stock_price_and_save_to_file(stock_id)
+        if len < 500:
+            print('Length of stock price ' + stock_id + ' is too small, ignore')
+            continue
+
         test_pred, df_test_with_date = train.train_model()
         postgres.save_predict_result_to_db(stock_id, test_pred, df_test_with_date)
 
