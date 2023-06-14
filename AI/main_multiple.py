@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
         start_ts = time.time()
 
-        #train = StockTrainHandler(stock_id, train_from_scratch, useCkpId)
+        train = StockTrainHandler(stock_id, train_from_scratch, useCkpId)
 
         length = postgres.get_stock_price_and_save_to_file(stock_id)
         if length < 500:
