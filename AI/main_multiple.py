@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     postgres = PostgresDBHandler()
     stock_ids = postgres.get_all_stockIds(sufix)
-    count = 0
+    counter = 0
     for stock_id in stock_ids:
         ckp = './checkpoints/Transformer+TimeEmbedding_mean_' + stock_id + '.hdf5'
         if os.path.exists(ckp):
@@ -64,9 +64,9 @@ if __name__ == "__main__":
         test_pred, df_test_with_date = train.train_model()
         postgres.save_predict_result_to_db(stock_id, test_pred, df_test_with_date)
 
-        count += 1
+        counter += 1
         stop_ts = time.time()
-        print('One time usage: ' + str(round(stop_ts - start_ts)) + ' seconds, ' + str(count) + '/' + str(len(stock_ids)))
+        print('One time usage: ' + str(round(stop_ts - start_ts)) + ' seconds, ' + str(counter) + '/' + str(len(stock_ids)))
 
     stop_ts = time.time()
     print('Total time usage: ' + str(round(stop_ts - all_start_ts)) + ' seconds')
