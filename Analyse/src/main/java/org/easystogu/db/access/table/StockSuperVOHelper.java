@@ -89,7 +89,7 @@ public class StockSuperVOHelper {
       superVO.setQsddVO(qsddList.get(index));
 
       //add aiTrendPredictVO based on date (instead of by index)
-      getAiTrendPredictVO(aiTrendList, superVO.priceVO.date);
+      superVO.aiTrendPredictVO = getAiTrendPredictVO(aiTrendList, superVO.priceVO.date);
 
       overList.add(superVO);
     }
