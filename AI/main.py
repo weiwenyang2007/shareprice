@@ -48,9 +48,9 @@ if __name__ == "__main__":
     postgres = PostgresDBHandler()
     train = StockTrainHandler(stock_id, train_from_scratch, useCkpId)
 
-    len = postgres.get_stock_price_and_save_to_file(stock_id)
-    if len < 500:
-        print('Length of stock price ' + stock_id + ' is too small, ignore')
+    length = postgres.get_stock_price_and_save_to_file(stock_id)
+    if length < 500 and train_from_scratch == 'True':
+        print('Length of stock price ' + stock_id + ' is too small (len=' + str(length) + ') for train, pls use other checkpoint for predict')
         sys.exit()
 
     test_pred, df_test_with_date = train.train_model()

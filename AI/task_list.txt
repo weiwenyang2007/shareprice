@@ -1,2 +1,12 @@
 sufix done: 10,11,12,13,14,15,16
 sufix ongoing: 0,1,2,3 by two rtx3090
+
+command is likes: 
+python main_multiple.py -sufix 0 -tfs True -gpu 0 -mem 10240
+python main_multiple.py -sufix 1 -tfs True -gpu 0 -mem 10240
+
+python main_multiple.py -sufix 2 -tfs True -gpu 1 -mem 10240
+python main_multiple.py -sufix 3 -tfs True -gpu 1 -mem 10240
+
+The process will spend about 8 mins for each stock (len is > 2500) training.
+There about 2500 stocks that has len bigger than 2500 (10 years), totally the 2 Rtx3090 will spend about 4 days to complete the training.

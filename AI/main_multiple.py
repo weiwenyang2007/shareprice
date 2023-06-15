@@ -49,7 +49,7 @@ if __name__ == "__main__":
     for stock_id in stock_ids:
         ckp = './checkpoints/Transformer+TimeEmbedding_mean_' + stock_id + '.hdf5'
         if os.path.exists(ckp):
-            print('checkpoint file exist, skip the train ' + stock_id)
+            print('checkpoint already file exist, skip the train, remove this line to re-train the model')
             continue
 
         start_ts = time.time()
@@ -57,8 +57,8 @@ if __name__ == "__main__":
         train = StockTrainHandler(stock_id, train_from_scratch, useCkpId)
 
         length = postgres.get_stock_price_and_save_to_file(stock_id)
-        if length < 500:
-            print('Length of stock price ' + stock_id + ' is too small, ignore')
+        if length < 500 and train_from_scratch == 'True':
+            print('Length of stock price ' + stock_id + ' is too small (len=' + str(length) + ') for train, pls use other checkpoint for predict')
             continue
 
         test_pred, df_test_with_date = train.train_model()

@@ -125,7 +125,16 @@ class StockTrainHandler():
 
         df_train = df[(df.index < last_20pct)]  # Training data are 80% of total data
         df_val = df[(df.index >= last_20pct) & (df.index < last_10pct)]
-        df_test = df[(df.index >= last_10pct)]
+
+        if self.train_from_scratch == 'True':
+            #if train_from_scratch is True, then use the only last 10 pct for predict
+            df_test = df[(df.index >= last_10pct)]
+            df_test_with_date = df[(df.index >= last_10pct)]
+        else:
+            #if train_from_scratch is False, then I could like to use all the df data for predict
+            df_test = df[(df.index >= 0)]
+            df_test_with_date = df[(df.index >= 0)]
+
 
         # Remove date column
         df_train.drop(columns=['date'], inplace=True)
@@ -168,7 +177,7 @@ class StockTrainHandler():
 
         X_test, y_test = np.array(X_test), np.array(y_test)
 
-        df_test_with_date = df[(df.index >= last_10pct)]
+        #The len of df for test should be subtract the seq_len
         df_test_with_date = df_test_with_date[-(len(df_test_with_date)-self.seq_len):]
 
         print('Dataset shape:')
