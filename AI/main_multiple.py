@@ -51,7 +51,7 @@ if __name__ == "__main__":
     for stock_id in stock_ids:
         ckp = './checkpoints/Transformer+TimeEmbedding_mean_' + stock_id + '.hdf5'
         if os.path.exists(ckp):
-            print('checkpoint already file exist, skip the train, remove this line to re-train the model')
+            print(stock_id + ' checkpoint already file exist, skip the train, remove this line to re-train the model')
             continue
 
         start_ts = time.time()
