@@ -1,5 +1,7 @@
+import pandas as pd
 import psycopg2
 import numpy
+import sys, os
 from psycopg2.extensions import register_adapter, AsIs
 
 def addapt_numpy_float32(numpy_float32):
@@ -22,18 +24,22 @@ class PostgresDBHandler():
         except (Exception, psycopg2.Error) as error:
             print("Error while fetching data from PostgreSQL", error)
 
-    def get_all_stockIds(self, sufix):
+    def get_all_stockIds(self, sufix, desc=None):
         print("Getting all stock with sufix " + sufix)
         query='select DISTINCT stockId from qian_fuquan_stockprice order by stockId'
+        if desc:
+            query = query + ' ' + desc
+            
         self.cursor.execute(query)
         records = self.cursor.fetchall()
         print('Total stockId len is ' + str(len(records)))
         new_records = []
 
         for stock_id in records:
-            if stock_id[0].endswith(sufix):
-                if self.filter_stock_ids(stock_id[0]):
-                    new_records.append(stock_id[0])
+            sid = stock_id[0]
+            if sid.endswith(sufix):
+                if self.filter_stock_ids(sid):
+                    new_records.append(sid)
 
         print('Total filter stockId len is ' + str(len(new_records)))
         return new_records
@@ -76,6 +82,64 @@ class PostgresDBHandler():
 
         return len(lines)
 
+    def get_stock_price_indicator_and_save_to_file(self, stock_id):
+        stock_price_path = 'stockData/' + stock_id + '_ind.csv'
+        #query close price
+        query="select date,close from qian_fuquan_stockprice where stockid='" + stock_id + "' order by date"
+        self.cursor.execute(query)
+        price = self.cursor.fetchall()
+        price_df = pd.DataFrame(data=price, columns=['date', 'close'])
+        
+        #query mscd ind
+        query="select date,dif,dea,macd from ind_macd where stockid='" + stock_id + "' order by date"
+        self.cursor.execute(query)
+        macd = self.cursor.fetchall()
+        macd_df = pd.DataFrame(data=macd, columns=['date','dif', 'dea', 'macd'])
+        
+        #query kdj ind
+        query="select date,k,d,j,rsv from ind_kdj where stockid='" + stock_id + "' order by date"
+        self.cursor.execute(query)
+        kdj = self.cursor.fetchall()
+        kdj_df = pd.DataFrame(data=kdj, columns=['date','k', 'd', 'j', 'rsv'])        
+        
+        #query qsdd ind
+        query="select date,lonterm,shoterm,midterm from ind_qsdd where stockid='" + stock_id + "' order by date"
+        self.cursor.execute(query)
+        qsdd = self.cursor.fetchall()
+        qsdd_df = pd.DataFrame(data=qsdd, columns=['date','qsdd_lt', 'qsdd_st', 'qsdd_mt'])
+        
+        #query wr ind
+        query="select date,lonterm,shoterm,midterm from ind_wr where stockid='" + stock_id + "' order by date"
+        self.cursor.execute(query)
+        wr = self.cursor.fetchall()
+        wr_df = pd.DataFrame(data=wr, columns=['date','wr_lt', 'wr_st', 'wr_mt'])
+        
+        #query shenxian ind
+        query="select date,h1,h2,h3 from ind_shenxian where stockid='" + stock_id + "' order by date"
+        self.cursor.execute(query)
+        shenxian = self.cursor.fetchall()
+        shenxian_df = pd.DataFrame(data=shenxian, columns=['date','h1', 'h2', 'h3'])
+        
+        #check the length of indicators make sure all the length is same
+        if len(price_df) != len(macd_df) or len(price_df) != len(kdj_df) or len(price_df) != len(qsdd_df) or len(price_df) != len(wr_df) or len(price_df) != len(shenxian_df) :
+            print(stock_id + ' length of price and indicators are different, pls run Sanity check.')
+            if os.path.exists(stock_price_path):
+                os.remove(stock_price_path)
+            return
+        
+        #Check the len must be same before merge them into single df
+        df = pd.merge(price_df, macd_df, left_on='date', right_on='date')
+        df = pd.merge(df, kdj_df, left_on='date', right_on='date')
+        df = pd.merge(df, qsdd_df, left_on='date', right_on='date')
+        df = pd.merge(df, wr_df, left_on='date', right_on='date')
+        df = pd.merge(df, shenxian_df, left_on='date', right_on='date')
+        print(df)
+        print('save indicator to ' + stock_price_path)
+        #do not save index column to csv file
+        df.to_csv(stock_price_path, index=False)
+        
+        return len(df)        
+    
     def save_predict_result_to_db(self, stock_id, test_pred, df_test_with_date):
         #First delete then insert
         index = 0
