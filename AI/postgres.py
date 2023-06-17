@@ -24,7 +24,7 @@ class PostgresDBHandler():
         except (Exception, psycopg2.Error) as error:
             print("Error while fetching data from PostgreSQL", error)
 
-    def get_all_stockIds(self, sufix, desc=None):
+    def get_all_stockIds(self, prefix=None, sufix=None, desc=None):
         print("Getting all stock with sufix " + sufix)
         query='select DISTINCT stockId from qian_fuquan_stockprice order by stockId'
         if desc:
@@ -36,23 +36,26 @@ class PostgresDBHandler():
         new_records = []
 
         for stock_id in records:
-            sid = stock_id[0]
-            if sid.endswith(sufix):
-                if self.filter_stock_ids(sid):
-                    new_records.append(sid)
+            sid = stock_id[0]            
+            if prefix or sufix:
+                if prefix:
+                    if sid.startswith(prefix):
+                        new_records.append(sid)
+                if sufix:
+                    if sid.endswith(sufix):
+                        new_records.append(sid)
+            else:        
+                new_records.append(sid)
 
-        print('Total filter stockId len is ' + str(len(new_records)))
+        print('Total sufix filter stockId len is ' + str(len(new_records)))
         return new_records
-
-    def filter_stock_ids(self, stock_id):
-        #If the stock price len is too small (less than 10 years), then
+    
+    def get_price_data_length(self, stock_id):
         query = "select count(*) from qian_fuquan_stockprice where stockid='" + stock_id + "'"
         self.cursor.execute(query)
         count = self.cursor.fetchone()
-        if count[0] < 2500:
-            return False
-        else:
-            return True
+        return count[0]
+
 
     def get_stock_price_and_save_to_file(self, stock_id):
         #It will skip the earlier stock date (the first record) and append the mock 9999-01-01 to the end.

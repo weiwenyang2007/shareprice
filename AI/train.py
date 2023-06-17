@@ -21,7 +21,7 @@ class StockTrainHandler():
         #os.environ["CUDA_VISIBLE_DEVICES"] = self.gpu_device
 
         #Hyperparameters
-        self.batch_size = 64
+        self.batch_size = 32
         self.seq_len = 43 # seq_len=43 意思是用43天的数据预测第44天后的趋势
         self.column_len = 6 #the number of column
         self.predict_column = 5 #which column to be predict, from 0 to column_len-1
@@ -239,7 +239,7 @@ class StockTrainHandler():
                             validation_data=(X_val, y_val))
         else:
             ckp = './checkpoints/Transformer+TimeEmbedding_mean_' + self.stock_id + '.hdf5'
-            if self.useCkpId != '':
+            if self.useCkpId:
                 ckp = './checkpoints/Transformer+TimeEmbedding_mean_' + self.useCkpId + '.hdf5'
 
             model = tf.keras.models.load_model(ckp,
