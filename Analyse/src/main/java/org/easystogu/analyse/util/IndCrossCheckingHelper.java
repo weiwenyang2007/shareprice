@@ -315,6 +315,10 @@ public class IndCrossCheckingHelper {
             AiTrendPredictVO vo = superVO.aiTrendPredictVO;
             AiTrendPredictVO nextvo = superNextVO.aiTrendPredictVO;
 
+            //System.out.println("ai prevo:"+prevo);
+            //System.out.println("ai vo:"+vo);
+            //System.out.println("ai nextvo:"+nextvo);
+
             // check aiTrendPredict sell point
             if (vo == null && nextvo != null && nextvo.getResult() < AiTrendPredictVO.buyPoint) {
                 superNextVO.aiTrendTopArea = true;
@@ -343,6 +347,15 @@ public class IndCrossCheckingHelper {
                 && nextvo.getResult() >= AiTrendPredictVO.buyPoint) {
                 superNextVO.aiTrendBottomCrossType = CrossType.GORDON;
             }
+
+            //System.out.println("spvo date:"+superNextVO.priceVO.getDate());
+            //System.out.println("spvo top:"+superNextVO.aiTrendTopArea);
+            //System.out.println("spvo bot:"+superNextVO.aiTrendBottomArea);
+            //System.out.println("spvo gor:"+superNextVO.aiTrendBottomCrossType);
+
+            //if (superNextVO.aiTrendBottomCrossType == CrossType.GORDON){
+            //    System.out.println("aiTrendBottomCrossType is gordon");
+            //}
         }
     }
 

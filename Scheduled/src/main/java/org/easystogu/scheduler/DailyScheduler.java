@@ -238,11 +238,12 @@ public class DailyScheduler implements SchedulingConfigurer {
 	//@Scheduled(cron = "0 00 21 * * ?")
 	public void JustRunOnce() {
 		String time = WeekdayUtil.currentDate();
-		if (time.equals("2017-11-18")) {
+		if (time.equals("2023-06-17")) {
 			logger.info("start HistoryAnalyseReport");
 			HistoryAnalyseReport reporter = new HistoryAnalyseReport();
-			reporter.searchAllStockIdStatisticsCheckPoint(DailyCombineCheckPoint.High_Price_Digit_In_Order);
-			reporter.searchAllStockIdStatisticsCheckPoint(DailyCombineCheckPoint.Low_Price_Digit_In_Order);
+			reporter.searchAllStockIdStatisticsCheckPoint(DailyCombineCheckPoint.AiTrend_Top_Area);
+			reporter.searchAllStockIdStatisticsCheckPoint(DailyCombineCheckPoint.AiTrend_Bottom_Area);
+			reporter.searchAllStockIdStatisticsCheckPoint(DailyCombineCheckPoint.AiTrend_Bottom_Gordon);
 			logger.info("stop HistoryAnalyseReport");
 		}
 	}

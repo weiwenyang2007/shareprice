@@ -8,6 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.easystogu.analyse.ShenXianSellAnalyseHelper;
+import org.easystogu.checkpoint.DailyCombineCheckPoint;
 import org.easystogu.config.ConfigurationService;
 import org.easystogu.config.Constants;
 import org.easystogu.config.DBConfigurationService;
@@ -412,7 +413,10 @@ public class HomeEndPoint {
   public String test() {
     Thread t = new Thread(new Runnable() {
       public void run() {
-        ShenXianSellAnalyseHelper.main(null);
+        HistoryAnalyseReport reporter = new HistoryAnalyseReport();
+        reporter.searchAllStockIdStatisticsCheckPoint(DailyCombineCheckPoint.AiTrend_Top_Area);
+        reporter.searchAllStockIdStatisticsCheckPoint(DailyCombineCheckPoint.AiTrend_Bottom_Area);
+        reporter.searchAllStockIdStatisticsCheckPoint(DailyCombineCheckPoint.AiTrend_Bottom_Gordon);
       }
     });
     t.start();

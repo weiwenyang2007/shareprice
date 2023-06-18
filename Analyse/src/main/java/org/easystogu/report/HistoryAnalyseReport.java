@@ -344,9 +344,9 @@ public class HistoryAnalyseReport {
     // run it as normal
     for (String stockId : stockIds) {
 
-      // if (!stockId.equals("002797")) {
-      // continue;
-      // }
+      //if (!stockId.equals("300059")) {
+      //  continue;
+      //}
 
       if (index++ % 100 == 0) {
         System.out.println(checkPoint.name() + " Analyse of " + index + "/" + stockIds.size());

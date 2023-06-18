@@ -30,5 +30,7 @@ public class AiTrendPredictVO {
     this.result = result;
   }
 
-
+  public String toString() {
+    return "AiTrendPredictVO: " + this.getStockId() + ", " + this.getDate() + ", " + this.getResult();
+  }
 }

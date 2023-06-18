@@ -171,7 +171,6 @@ public class CheckPointStatisticsEndPoint {
           StatisticsVO vo = new StatisticsVO();
           vo.date = date;
 
-          //TODO: add AiTrend_Top_Area etc into daily statistics
           vo.count1 =
               this.getRate(statisticsList, date, DailyCombineCheckPoint.AiTrend_Top_Area.name());
           vo.count2 =
