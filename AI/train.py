@@ -10,15 +10,13 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class StockTrainHandler():
-    def __init__(self, stock_id, train_from_scratch, useCkpId):
+    def __init__(self, stock_id, train_from_scratch, useCkpId, preictLen):
         #
         self.stock_id = stock_id
         self.stock_price_path = 'stockData/' + stock_id + '.csv'
         self.train_from_scratch = train_from_scratch # True: Train the model, False: Use the pre-train checkpoints
         self.useCkpId = useCkpId # When train_from_scratch is False and use other checkpoint Id for prediction
-
-        #specify the gpu
-        #os.environ["CUDA_VISIBLE_DEVICES"] = self.gpu_device
+        self.preictLen = preictLen # Length of test date for predict, 1 means predict the next date, 2 means predict today and next date...
 
         #Hyperparameters
         self.batch_size = 32
@@ -128,9 +126,8 @@ class StockTrainHandler():
 
         if self.train_from_scratch == 'False' and self.useCkpId != '':
             #if train_from_scratch is False, and specify another checkpoint for predict,
-            #then I could like to use all the df data for predict
-            df_test = df[(df.index >= 0)]
-            df_test_with_date = df[(df.index >= 0)]            
+            df_test = df[(df.index >= (len(df) - self.seq_len - self.preictLen))]
+            df_test_with_date = df[(df.index >= (len(df) - self.seq_len - self.preictLen))]            
         else:
             #if train_from_scratch is True, then use the only last 10 pct for predict
             df_test = df[(df.index >= last_10pct)]

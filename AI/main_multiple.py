@@ -17,6 +17,7 @@ if __name__ == "__main__":
     parser.add_argument("-ckp", "--UseCheckPointId", default=None) # Use other checkpoint Id for predict (TrainFromScratch is False)
     parser.add_argument("-desc", "--OrderByDesc", default=None) #temp args, remove it once all stockId complate pre-train
     #sufix and desc is used for batch process the pre-train or predict async, into multiple gpu system
+    parser.add_argument("-preictLen", "--predictTestDateLength", type=int, default=0)#Length of test date for predict, 0 means predict the next date, 1 means predict today and next date...
     
     # Read arguments from command line
     args = parser.parse_args()
@@ -29,6 +30,7 @@ if __name__ == "__main__":
     gpuMemory = args.gpuMemory
     useCkpId = args.UseCheckPointId
     desc = args.OrderByDesc
+    preictLen = args.predictTestDateLength
     
     if prefix and sufix:
         print('Only prefix or sufix is allow, not both')
@@ -93,7 +95,7 @@ if __name__ == "__main__":
             
 
         start_ts = time.time()            
-        train = StockTrainHandler(stock_id, train_from_scratch, useCkpId)            
+        train = StockTrainHandler(stock_id, train_from_scratch, useCkpId, preictLen)            
             
         test_pred, df_test_with_date = train.train_model()
         postgres.save_predict_result_to_db(stock_id, test_pred, df_test_with_date)
