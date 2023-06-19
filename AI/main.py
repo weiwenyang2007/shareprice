@@ -14,6 +14,7 @@ if __name__ == "__main__":
     parser.add_argument("-gpu", "--GpuDevice", type=int, default=0) # 0,1,2 etc
     parser.add_argument("-mem", "--gpuMemory", type=int, default=1024) #limit the gpu memory for each process
     parser.add_argument("-ckp", "--UseCheckPointId", default='') # Use other checkpoint Id for predict (TrainFromScratch is False)
+    parser.add_argument("-preictLen", "--predictTestDateLength", type=int, default=0)#Length of test date for predict, 0 means predict the next date, 1 means predict today and next date...
 
     # Read arguments from command line
     args = parser.parse_args()
@@ -23,6 +24,7 @@ if __name__ == "__main__":
     gpu_device = args.GpuDevice
     gpuMemory = args.gpuMemory
     useCkpId = args.UseCheckPointId
+    preictLen = args.predictTestDateLength
 
     if train_from_scratch == 'True' and useCkpId != '':
         print('Invalid args: TrainFromScratch is True but UseCheckPointId is Not null, exit')
@@ -46,7 +48,7 @@ if __name__ == "__main__":
     start_ts = time.time()
 
     postgres = PostgresDBHandler()
-    train = StockTrainHandler(stock_id, train_from_scratch, useCkpId)
+    train = StockTrainHandler(stock_id, train_from_scratch, useCkpId, preictLen)
 
     length = postgres.get_stock_price_and_save_to_file(stock_id)
     if length < 500 and train_from_scratch == 'True':

@@ -16,17 +16,19 @@ class StockTrainHandler():
         self.stock_price_path = 'stockData/' + stock_id + '.csv'
         self.train_from_scratch = train_from_scratch # True: Train the model, False: Use the pre-train checkpoints
         self.useCkpId = useCkpId # When train_from_scratch is False and use other checkpoint Id for prediction
-        self.preictLen = preictLen # Length of test date for predict, 1 means predict the next date, 2 means predict today and next date...
+        self.preictLen = preictLen # Length of test date for predict, 0 means predict the next date, 1 means predict today and next date...
 
         #Hyperparameters
         self.batch_size = 32
-        self.seq_len = 43 # seq_len=43 意思是用43天的数据预测第44天后的趋势
+        self.seq_len = 43 # seq_len=43 意思是用43天的数据预测第44天后的趋势.第44天后的趋势，如果19天内的close是最高，而且第19天的close也高于当前close,则认为是上涨趋势，result预测为1 (或者>=0.75这个阈值)
         self.column_len = 6 #the number of column
         self.predict_column = 5 #which column to be predict, from 0 to column_len-1
         self.d_k = 256
         self.d_v = 256
         self.n_heads = 12
         self.ff_dim = 256
+        self.moving_avg_window_len = 10 #moving average with a window of 10 days to all columns
+        self.max_close_price_in_next_n_days = 19 #the max close price in next 19 days
 
 
     def load_stock_data(self):
@@ -43,12 +45,12 @@ class StockTrainHandler():
 
 
         # Apply moving average with a window of 10 days to all columns
-        df[['open', 'high', 'low', 'close', 'volume']] = df[['open', 'high', 'low', 'close', 'volume']].rolling(10).mean()
+        df[['open', 'high', 'low', 'close', 'volume']] = df[['open', 'high', 'low', 'close', 'volume']].rolling(self.moving_avg_window_len).mean()
 
         # the max close price in next 19 days
-        df['Max_Close_Price_In_Next_N_Days'] = df['close'].rolling(20).max().shift(-19)
+        df['Max_Close_Price_In_Next_N_Days'] = df['close'].rolling(self.max_close_price_in_next_n_days + 1).max().shift(-self.max_close_price_in_next_n_days)
         # the close price after 10 days
-        df['Close_Price_After_N_Days'] = df['close'].shift(-19)
+        df['Close_Price_After_N_Days'] = df['close'].shift(-self.max_close_price_in_next_n_days)
 
         # Close price is less than the max close price after 19 days
         df['Max_Close_Diff'] = df['Max_Close_Price_In_Next_N_Days'] - df['close']
@@ -124,10 +126,16 @@ class StockTrainHandler():
         df_train = df[(df.index < last_20pct)]  # Training data are 80% of total data
         df_val = df[(df.index >= last_20pct) & (df.index < last_10pct)]
 
-        if self.train_from_scratch == 'False' and self.useCkpId != '':
-            #if train_from_scratch is False, and specify another checkpoint for predict,
-            df_test = df[(df.index >= (len(df) - self.seq_len - self.preictLen))]
-            df_test_with_date = df[(df.index >= (len(df) - self.seq_len - self.preictLen))]            
+        if self.train_from_scratch == 'False':
+            #if train_from_scratch is False
+            #self.seq_len + self.preictLen + 1: the last +1 is for the prediction date
+            df_test = df[-(self.seq_len + self.preictLen + 1):]
+            df_test_with_date = df[-(self.seq_len + self.preictLen + 1):]                                    
+            
+            #print('df len=' +str(len(df)))
+            #print('df test len='+str(len(df_test)))
+            #print(df_test)
+            #print(df_test_with_date)
         else:
             #if train_from_scratch is True, then use the only last 10 pct for predict
             df_test = df[(df.index >= last_10pct)]
@@ -153,8 +161,8 @@ class StockTrainHandler():
         # Training data
         X_train, y_train = [], []
         for i in range(self.seq_len, len(train_data)):
-            X_train.append(train_data[i-self.seq_len:i]) # Chunks of training data with a length of 128 df-rows
-            y_train.append(train_data[:, self.predict_column][i]) #Value of 4th column (Close Price) of df-row 128+1
+            X_train.append(train_data[i-self.seq_len:i]) # Chunks of training data with a length of 43 df-rows
+            y_train.append(train_data[:, self.predict_column][i]) #Value of 4th column (Close Price) of df-row 43+1
         X_train, y_train = np.array(X_train), np.array(y_train)
 
         ###############################################################################
@@ -183,6 +191,7 @@ class StockTrainHandler():
         print(X_train.shape, y_train.shape)
         print(X_val.shape, y_val.shape)
         print(X_test.shape, y_test.shape, df_test_with_date.shape)
+        #print(X_test)
 
         return X_train, X_val, X_test, y_train, y_val, y_test, df_test_with_date
 

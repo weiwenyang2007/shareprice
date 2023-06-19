@@ -56,7 +56,6 @@ class PostgresDBHandler():
         count = self.cursor.fetchone()
         return count[0]
 
-
     def get_stock_price_and_save_to_file(self, stock_id):
         #It will skip the earlier stock date (the first record) and append the mock 9999-01-01 to the end.
         stock_price_path = 'stockData/' + stock_id + '.csv'
@@ -148,6 +147,7 @@ class PostgresDBHandler():
         index = 0
         for date in df_test_with_date['date'].values:
             result = test_pred[index][0]
+            #print(stock_id, date, result)
             self.cursor.execute("delete from AI_TREND_PREDICTION where stockid=%s and date=%s", (stock_id,date))
             self.cursor.execute("insert into AI_TREND_PREDICTION (stockid,date,result) values(%s, %s, %s)", (stock_id, date, result))
             index += 1

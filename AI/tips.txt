@@ -12,6 +12,9 @@ python main_multiple.py -sufix 0 -tfs True -gpu 0 -mem 10240
 To use other checkpoint Id (instead of itself) for prediction (time is less):
 python main.py -id 300059 -tfs False -ckp 399006
 
+To predit the next date (9999-01-01), use -preictLen 0 (default is 0),  1 means predict today and next date, 2 means yesterday,today and next date
+python main.py -id 300059 -tfs False -preictLen 0
+
 
 Important:
 1. Currently for price len is bigger than 2500 (10 years), will have itself pre-train model, the checkpoint file is Transformer+TimeEmbedding_mean_<stockId>.hdf5, can use this checkpoint for predict.
