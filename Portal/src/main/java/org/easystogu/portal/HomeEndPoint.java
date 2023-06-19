@@ -29,6 +29,7 @@ import org.easystogu.runner.DailyViewAnalyseRunner;
 import org.easystogu.runner.DataBaseSanityCheck;
 import org.easystogu.runner.HistoryDailySelectionRunner;
 import org.easystogu.runner.RecentlySelectionRunner;
+import org.easystogu.runner.UpdateCheckPointDailyStatistics;
 import org.easystogu.runner.dynamic.taskIF.DynamicRunner;
 import org.easystogu.sina.runner.DailyStockPriceDownloadAndStoreDBRunner2;
 import org.easystogu.sina.runner.RealtimeDisplayStockPriceRunner;
@@ -74,7 +75,8 @@ public class HomeEndPoint {
     sb.append("<a href='/portal/home/DailyReplicateRunner'>DailyReplicateRunner</a><br>");
     sb.append("<a href='/portal/home/OneTimeDynamicRunner'>OneTimeDynamicRunner</a><br>");
     sb.append("<a href='/portal/home/HistoryAnalyseReport'>HistoryAnalyseReport Count All Check Point</a><br>");
-    sb.append("<a href='/portal/home/HistoryDailySelectionRunner'>HistoryDailySelectionRunner Count All Daily Check Point Statistics</a><br>");
+    //sb.append("<a href='/portal/home/HistoryDailySelectionRunner'>HistoryDailySelectionRunner Count All Daily Check Point Statistics</a><br>");
+    sb.append("<a href='/portal/home/test'>Test for onec</a><br>");
     sb.append("<a href='/portal/home/Serverlog'>Serverlog</a><br>");
     
     sb.append("<br><a href='/eweb/index.htm'>eweb index</a><br>");
@@ -392,6 +394,7 @@ public class HomeEndPoint {
           HistoryAnalyseReport reporter = new HistoryAnalyseReport();
           reporter.countAllStockIdAnalyseHistoryBuySellCheckPoint();
           reporter.countAllStockIdStatisticsCheckPoint();
+          UpdateCheckPointDailyStatistics.main(null);
         }
       });
       t.start();
@@ -405,7 +408,7 @@ public class HomeEndPoint {
   @Path("/Serverlog")
   public String serverlog() {
     return FileReaderAndWriter
-        .tailFile("/home/eyaweiw/software/jboss-eap-6.4/standalone/log/server.log", 20);
+        .tailFile("/opt/wildfly/standalone/log/server.log", 20);
   }
 
   @GET
@@ -413,10 +416,7 @@ public class HomeEndPoint {
   public String test() {
     Thread t = new Thread(new Runnable() {
       public void run() {
-        HistoryAnalyseReport reporter = new HistoryAnalyseReport();
-        reporter.searchAllStockIdStatisticsCheckPoint(DailyCombineCheckPoint.AiTrend_Top_Area);
-        reporter.searchAllStockIdStatisticsCheckPoint(DailyCombineCheckPoint.AiTrend_Bottom_Area);
-        reporter.searchAllStockIdStatisticsCheckPoint(DailyCombineCheckPoint.AiTrend_Bottom_Gordon);
+        //UpdateCheckPointDailyStatistics.main(null);
       }
     });
     t.start();

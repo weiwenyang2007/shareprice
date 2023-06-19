@@ -320,19 +320,10 @@ public class IndCrossCheckingHelper {
             //System.out.println("ai nextvo:"+nextvo);
 
             // check aiTrendPredict sell point
-            if (vo == null && nextvo != null && nextvo.getResult() < AiTrendPredictVO.buyPoint) {
-                superNextVO.aiTrendTopArea = true;
-            }
-
             if (vo != null && nextvo != null
                 && vo.getResult() >= AiTrendPredictVO.buyPoint
                 && nextvo.getResult() < AiTrendPredictVO.buyPoint) {
                 superNextVO.aiTrendTopArea = true;
-            }
-
-            // check aiTrendPredict buy point
-            if (vo == null && nextvo != null && nextvo.getResult() >= AiTrendPredictVO.buyPoint) {
-                superNextVO.aiTrendBottomArea = true;
             }
 
             if (vo != null && nextvo != null
