@@ -315,38 +315,44 @@ public class IndCrossCheckingHelper {
             AiTrendPredictVO vo = superVO.aiTrendPredictVO;
             AiTrendPredictVO nextvo = superNextVO.aiTrendPredictVO;
 
-            //System.out.println("ai prevo:"+prevo);
-            //System.out.println("ai vo:"+vo);
-            //System.out.println("ai nextvo:"+nextvo);
+            //if(vo!=null && vo.stockId.equals("300059")) {
 
-            // check aiTrendPredict sell point
-            if (vo != null && nextvo != null
-                && vo.getResult() >= AiTrendPredictVO.buyPoint
-                && nextvo.getResult() < AiTrendPredictVO.buyPoint) {
-                superNextVO.aiTrendTopArea = true;
+                // check aiTrendPredict sell point
+                if (prevo != null && vo != null && nextvo != null
+                    && prevo.getResult() >= AiTrendPredictVO.buyPoint
+                    && vo.getResult() >= AiTrendPredictVO.buyPoint
+                    && nextvo.getResult() < AiTrendPredictVO.buyPoint) {
+                    superNextVO.aiTrendTopArea = true;
+
+                    //System.out.println("aiTrendTopArea");
+                    //System.out.println("ai prevo:" + prevo);
+                    //System.out.println("ai vo:" + vo);
+                    //System.out.println("ai nextvo:" + nextvo);
+                }
+
+                if (prevo != null && vo != null && nextvo != null
+                    && prevo.getResult() < AiTrendPredictVO.buyPoint
+                    && vo.getResult() < AiTrendPredictVO.buyPoint
+                    && nextvo.getResult() >= AiTrendPredictVO.buyPoint) {
+                    superNextVO.aiTrendBottomArea = true;
+                    //System.out.println("aiTrendBottomArea");
+                    //System.out.println("ai prevo:" + prevo);
+                    //System.out.println("ai vo:" + vo);
+                    //System.out.println("ai nextvo:" + nextvo);
+                }
+
+                // check bottom Cross GORDON
+                if (prevo != null && vo != null && nextvo != null
+                    && prevo.getResult() < AiTrendPredictVO.buyPoint
+                    && vo.getResult() < AiTrendPredictVO.buyPoint
+                    && nextvo.getResult() >= AiTrendPredictVO.buyPoint) {
+                    superNextVO.aiTrendBottomCrossType = CrossType.GORDON;
+                    //System.out.println("aiTrendBottomCrossType");
+                    //System.out.println("ai prevo:" + prevo);
+                    //System.out.println("ai vo:" + vo);
+                    //System.out.println("ai nextvo:" + nextvo);
+                //}
             }
-
-            if (vo != null && nextvo != null
-                && vo.getResult() < AiTrendPredictVO.buyPoint
-                && nextvo.getResult() >= AiTrendPredictVO.buyPoint) {
-                superNextVO.aiTrendBottomArea = true;
-            }
-
-            // check bottom Cross GORDON
-            if (vo != null && nextvo != null
-                && vo.getResult() < AiTrendPredictVO.buyPoint
-                && nextvo.getResult() >= AiTrendPredictVO.buyPoint) {
-                superNextVO.aiTrendBottomCrossType = CrossType.GORDON;
-            }
-
-            //System.out.println("spvo date:"+superNextVO.priceVO.getDate());
-            //System.out.println("spvo top:"+superNextVO.aiTrendTopArea);
-            //System.out.println("spvo bot:"+superNextVO.aiTrendBottomArea);
-            //System.out.println("spvo gor:"+superNextVO.aiTrendBottomCrossType);
-
-            //if (superNextVO.aiTrendBottomCrossType == CrossType.GORDON){
-            //    System.out.println("aiTrendBottomCrossType is gordon");
-            //}
         }
     }
 

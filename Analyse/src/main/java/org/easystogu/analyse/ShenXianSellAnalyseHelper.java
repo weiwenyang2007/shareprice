@@ -61,7 +61,10 @@ public class ShenXianSellAnalyseHelper {
             "LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days",
             "LuZao_PhaseIII_SanShanChongDie_In_Future_2_Days",
             "LuZao_PhaseIV_DieDaoShanYao_In_Future_2_Days",
-            "LuZao_PhaseIV_DieDaoShanJiao_In_Future_2_Days"
+            "LuZao_PhaseIV_DieDaoShanJiao_In_Future_2_Days",
+            //AI
+            "AiTrend_Top_Area",
+            "AiTrend_Bottom_Area"
     };
     //最终有上述特征的股票经过未来2天的预计算，得出 checkpoint 为 LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days
 
