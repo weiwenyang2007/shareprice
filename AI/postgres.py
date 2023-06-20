@@ -25,7 +25,6 @@ class PostgresDBHandler():
             print("Error while fetching data from PostgreSQL", error)
 
     def get_all_stockIds(self, prefix=None, sufix=None, desc=None):
-        print("Getting all stock with sufix " + sufix)
         query='select DISTINCT stockId from qian_fuquan_stockprice order by stockId'
         if desc:
             query = query + ' ' + desc

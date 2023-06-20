@@ -14,7 +14,7 @@ if __name__ == "__main__":
     parser.add_argument("-gpu", "--GpuDevice", type=int, default=0) # 0,1,2 etc
     parser.add_argument("-mem", "--gpuMemory", type=int, default=1024) #limit the gpu memory for each process
     parser.add_argument("-ckp", "--UseCheckPointId", default='') # Use other checkpoint Id for predict (TrainFromScratch is False)
-    parser.add_argument("-preictLen", "--predictTestDateLength", type=int, default=0)#Length of test date for predict, 0 means predict the next date, 1 means predict today and next date...
+    parser.add_argument("-preictLen", "--predictTestDateLength", type=int, default=-1)#Length of test date for predict, -1 means this args is ignore (10% pct is use for test);0 means predict the next date, 1 means predict today and next date... 
 
     # Read arguments from command line
     args = parser.parse_args()

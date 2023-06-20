@@ -126,7 +126,7 @@ class StockTrainHandler():
         df_train = df[(df.index < last_20pct)]  # Training data are 80% of total data
         df_val = df[(df.index >= last_20pct) & (df.index < last_10pct)]
 
-        if self.train_from_scratch == 'False':
+        if self.train_from_scratch == 'False' and self.preictLen != -1:
             #if train_from_scratch is False
             #self.seq_len + self.preictLen + 1: the last +1 is for the prediction date
             df_test = df[-(self.seq_len + self.preictLen + 1):]
