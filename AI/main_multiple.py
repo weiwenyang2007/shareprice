@@ -58,8 +58,9 @@ if __name__ == "__main__":
     stock_ids = postgres.get_all_stockIds(prefix, sufix, desc)
     counter = 0
     for stock_id in stock_ids:
-        ckp = './checkpoints/Transformer+TimeEmbedding_mean_' + stock_id + '.hdf5'
-        counter += 1
+        start_ts = time.time() 
+        counter += 1        
+        ckp = './checkpoints/Transformer+TimeEmbedding_mean_' + stock_id + '.hdf5'        
         if train_from_scratch == 'True':
             #Train the model and save to checkpoints
             if os.path.exists(ckp) :
@@ -70,31 +71,47 @@ if __name__ == "__main__":
             data_length = postgres.get_price_data_length(stock_id)
             if  data_length < 500:   
                 #data len less than about 2 years, not enough data for train
-                print(stock_id + ' price data length is ' + data_length + ', less than 500, then skip the pre-train')
+                print(stock_id + ' price data length is ' + str(data_length) + ', less than 500, then skip the pre-train')
                 continue
             elif data_length >= 2500:   
                 #Continue to process
                 postgres.get_stock_price_and_save_to_file(stock_id)
             else:
                 # data length is between 500~2500
-                print(stock_id + ' price data length is ' + data_length + ', between 500 ~ 2500, currently no action for it :)')
+                print(stock_id + ' price data length is ' + str(data_length) + ', between 500 ~ 2500, currently no action for it :)')
                 continue
                 
-        #end if train_from_scratch == 'True'
+        #end if 
         else:
+            #train_from_scratch == 'False', means prediction the trend
             #predict the test data using the pre-train checkpoints
             if os.path.exists(ckp) or useCkpId:
                 #pre-train checkpoint exist or specify other checkpoint file for predict
                 #Continue to process
                 postgres.get_stock_price_and_save_to_file(stock_id)
-            else:                    
-                print(stock_id + ' pre-train checkpoint not exist, or not specify other checkpoint for predict, skip')                
-                continue
-            
-        #end if train_from_scratch == 'False'
-            
+            else:       
+                #neither has it own pre-train nor has specify the useCkpId:                    
+                data_length = postgres.get_price_data_length(stock_id)                    
+                if data_length < 500:
+                    #data len less than about 2 years, not enough data for train
+                    print(stock_id + ' price data length is ' + str(data_length) + ', less than 500, then skip the predict')
+                    continue
 
-        start_ts = time.time()            
+                if stock_id.startswith('6'):
+                    useCkpId = '999999'
+                elif stock_id.startswith('0'):
+                    useCkpId = '399001'    
+                elif stock_id.startswith('3'):
+                    useCkpId = '399006'       
+                else:
+                    print('Unknow catalog the stock ' + stock_id + ', skip the predict')
+                    continue
+                    
+                print(stock_id + ' do not has its own and not specify the pre-train checkpoint, will use ' + useCkpId + ' for predict') 
+                postgres.get_stock_price_and_save_to_file(stock_id)
+            #end else                
+        #end else
+                       
         train = StockTrainHandler(stock_id, train_from_scratch, useCkpId, preictLen)            
             
         test_pred, df_test_with_date = train.train_model()
