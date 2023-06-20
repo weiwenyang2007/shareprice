@@ -108,7 +108,7 @@ if __name__ == "__main__":
                     print('Unknow catalog the stock ' + stock_id + ', skip the predict')
                     continue
                     
-                print(stock_id + ' do not has its own and not specify the pre-train checkpoint, will use ' + useCkpId + ' for predict') 
+                print(stock_id + ' do not has its own and not specify the pre-train checkpoint, will use ' + tmp_useCkpId + ' for predict') 
                 postgres.get_stock_price_and_save_to_file(stock_id)
             #end else                
         #end else
