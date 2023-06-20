@@ -59,6 +59,7 @@ if __name__ == "__main__":
     counter = 0
     for stock_id in stock_ids:
         start_ts = time.time() 
+        tmp_useCkpId = useCkpId
         counter += 1        
         ckp = './checkpoints/Transformer+TimeEmbedding_mean_' + stock_id + '.hdf5'        
         if train_from_scratch == 'True':
@@ -98,11 +99,11 @@ if __name__ == "__main__":
                     continue
 
                 if stock_id.startswith('6'):
-                    useCkpId = '999999'
+                    tmp_useCkpId = '999999'
                 elif stock_id.startswith('0'):
-                    useCkpId = '399001'    
+                    tmp_useCkpId = '399001'    
                 elif stock_id.startswith('3'):
-                    useCkpId = '399006'       
+                    tmp_useCkpId = '399006'       
                 else:
                     print('Unknow catalog the stock ' + stock_id + ', skip the predict')
                     continue
@@ -112,7 +113,7 @@ if __name__ == "__main__":
             #end else                
         #end else
                        
-        train = StockTrainHandler(stock_id, train_from_scratch, useCkpId, preictLen)            
+        train = StockTrainHandler(stock_id, train_from_scratch, tmp_useCkpId, preictLen)            
             
         test_pred, df_test_with_date = train.train_model()
         postgres.save_predict_result_to_db(stock_id, test_pred, df_test_with_date)
