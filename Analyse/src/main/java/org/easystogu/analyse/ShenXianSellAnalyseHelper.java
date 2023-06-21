@@ -272,7 +272,7 @@ public class ShenXianSellAnalyseHelper {
                     cpvo.stockId = stockId;
                     cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseII_ZhenChuDongFang_In_Future_2_Days.name();
                     cpvo.date = curDate;
-                    checkPointDailySelectionTable.insert(cpvo);
+                    checkPointDailySelectionTable.insertIfNotExist(cpvo);
                 }
 
                 //未来2天出现升越良山
@@ -284,7 +284,7 @@ public class ShenXianSellAnalyseHelper {
                     cpvo.stockId = stockId;
                     cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseII_ShengYueLiangShan_In_Future_2_Days.name();
                     cpvo.date = curDate;
-                    checkPointDailySelectionTable.insert(cpvo);
+                    checkPointDailySelectionTable.insertIfNotExist(cpvo);
                 }
 
                 //未来2天出现山腰乘凉
@@ -296,7 +296,7 @@ public class ShenXianSellAnalyseHelper {
                     cpvo.stockId = stockId;
                     cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days.name();
                     cpvo.date = curDate;
-                    checkPointDailySelectionTable.insert(cpvo);
+                    checkPointDailySelectionTable.insertIfNotExist(cpvo);
                 }
 
                 //未来2天出现三山重叠
@@ -308,7 +308,7 @@ public class ShenXianSellAnalyseHelper {
                     cpvo.stockId = stockId;
                     cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIII_SanShanChongDie_In_Future_2_Days.name();
                     cpvo.date = curDate;
-                    checkPointDailySelectionTable.insert(cpvo);
+                    checkPointDailySelectionTable.insertIfNotExist(cpvo);
                 }
 
                 //未来2天出现跌到山腰
@@ -320,7 +320,7 @@ public class ShenXianSellAnalyseHelper {
                     cpvo.stockId = stockId;
                     cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIV_DieDaoShanYao_In_Future_2_Days.name();
                     cpvo.date = curDate;
-                    checkPointDailySelectionTable.insert(cpvo);
+                    checkPointDailySelectionTable.insertIfNotExist(cpvo);
                 }
 
                 //未来2天出现跌到山脚
@@ -332,7 +332,7 @@ public class ShenXianSellAnalyseHelper {
                     cpvo.stockId = stockId;
                     cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIV_DieDaoShanJiao_In_Future_2_Days.name();
                     cpvo.date = curDate;
-                    checkPointDailySelectionTable.insert(cpvo);
+                    checkPointDailySelectionTable.insertIfNotExist(cpvo);
                 }
 
         });

@@ -104,21 +104,12 @@ public class CheckPointDailySelectionTableHelper {
 			return;
 		}
 
-		try {
-			MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-			namedParameters.addValue("stockid", vo.getStockId());
-			namedParameters.addValue("date", vo.getDate());
-			namedParameters.addValue("checkpoint", vo.getCheckPoint());
-
-			namedParameterJdbcTemplate.execute(INSERT_SQL, namedParameters, new DefaultPreparedStatementCallback());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		insert(vo);
 	}
 
 	public void insert(List<CheckPointDailySelectionVO> list) throws Exception {
 		for (CheckPointDailySelectionVO vo : list) {
-			this.insert(vo);
+			this.insertIfNotExist(vo);
 		}
 	}
 

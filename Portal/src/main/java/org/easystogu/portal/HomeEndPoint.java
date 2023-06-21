@@ -416,7 +416,7 @@ public class HomeEndPoint {
   public String test() {
     Thread t = new Thread(new Runnable() {
       public void run() {
-        //UpdateCheckPointDailyStatistics.main(null);
+        UpdateCheckPointDailyStatistics.main(null);
       }
     });
     t.start();

@@ -35,7 +35,7 @@ public class DailySelectionReplicateWorker {
 
 			for (CheckPointDailySelectionVO vo : georedList) {
 				// System.out.println("insert vo:" + vo);
-				localTable.insert(vo);
+				localTable.insertIfNotExist(vo);
 			}
 		}
 	}

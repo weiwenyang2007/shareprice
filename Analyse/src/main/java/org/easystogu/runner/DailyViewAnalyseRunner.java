@@ -29,7 +29,7 @@ public class DailyViewAnalyseRunner implements Runnable {
           cpvo.date = this.latestDate;
 
           checkPointDailySelectionTable.delete(stockId, latestDate, viewName);
-          checkPointDailySelectionTable.insert(cpvo);
+          checkPointDailySelectionTable.insertIfNotExist(cpvo);
 		});
 		
 //		for (String stockId : stockIds) {
@@ -54,7 +54,7 @@ public class DailyViewAnalyseRunner implements Runnable {
 			cpvo.date = this.latestDate;
 
 			checkPointDailySelectionTable.delete(vo.stockId, latestDate, viewName);
-			checkPointDailySelectionTable.insert(cpvo);
+			checkPointDailySelectionTable.insertIfNotExist(cpvo);
 		}
 	}
 

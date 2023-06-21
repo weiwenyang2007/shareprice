@@ -287,9 +287,9 @@ public class FlagsAnalyseHelper {
         //if current AI trend vo data is latest date, and the flags is not set, then set the predict next date AI trend point
         if(aiVOPredict !=null && aiVOCur!=null && aiVOCur.getDate().equals(spvoF.getDate())) {
           if (aiVOPredict.getResult() >= AiTrendPredictVO.buyPoint) {
-            setAiTrendPoint(sxvo, aiVOCur, "PND AI B");//predict next date AI buy point
+            setAiTrendPoint(sxvo, aiVOPredict, "PND AI B");//predict next date AI buy point
           } else if (aiVOPredict.getResult() < AiTrendPredictVO.buyPoint){
-            setAiTrendPoint(sxvo, aiVOCur, "PND AI S");//predict next date AI sell point
+            setAiTrendPoint(sxvo, aiVOPredict, "PND AI S");//predict next date AI sell point
           }
         }
       }
