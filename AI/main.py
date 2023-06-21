@@ -25,7 +25,6 @@ if __name__ == "__main__":
     gpuMemory = args.gpuMemory
     useCkpId = args.UseCheckPointId
     preictLen = args.predictTestDateLength
-    seqLen = args.seqLength
 
     if train_from_scratch == 'True' and useCkpId != '':
         print('Invalid args: TrainFromScratch is True but UseCheckPointId is Not null, exit')

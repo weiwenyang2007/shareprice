@@ -31,7 +31,6 @@ if __name__ == "__main__":
     useCkpId = args.UseCheckPointId
     desc = args.OrderByDesc
     preictLen = args.predictTestDateLength
-    seqLen = args.seqLength
     
     if prefix and sufix:
         print('Only prefix or sufix is allow, not both')
