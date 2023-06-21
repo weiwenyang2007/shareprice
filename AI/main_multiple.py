@@ -31,6 +31,7 @@ if __name__ == "__main__":
     useCkpId = args.UseCheckPointId
     desc = args.OrderByDesc
     preictLen = args.predictTestDateLength
+    seqLen = args.seqLength
     
     if prefix and sufix:
         print('Only prefix or sufix is allow, not both')
@@ -38,7 +39,7 @@ if __name__ == "__main__":
 
     if train_from_scratch == 'True' and useCkpId != '':
         print('Invalid args: TrainFromScratch is True but UseCheckPointId is Not null, exit')
-        sys.exit()
+        sys.exit()            
 
     print('Use GPU ' + str(gpu_device))
 

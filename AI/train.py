@@ -21,14 +21,14 @@ class StockTrainHandler():
         #Hyperparameters
         self.batch_size = 32
         self.seq_len = 43 # seq_len=43 意思是用43天的数据预测第44天后的趋势.第44天后的趋势，如果19天内的close是最高，而且第19天的close也高于当前close,则认为是上涨趋势，result预测为1 (或者>=0.75这个阈值)
+        self.max_close_price_in_next_n_days = 19 #计算后面20天的close
+        self.moving_avg_window_len = 10 #default 10.moving average with a window of 10 days to all columns        
         self.column_len = 6 #the number of column
         self.predict_column = 5 #which column to be predict, from 0 to column_len-1
         self.d_k = 256
         self.d_v = 256
         self.n_heads = 12
-        self.ff_dim = 256
-        self.moving_avg_window_len = 10 #moving average with a window of 10 days to all columns
-        self.max_close_price_in_next_n_days = 19 #the max close price in next 19 days
+        self.ff_dim = 256        
 
 
     def load_stock_data(self):
@@ -49,7 +49,7 @@ class StockTrainHandler():
 
         # the max close price in next 19 days
         df['Max_Close_Price_In_Next_N_Days'] = df['close'].rolling(self.max_close_price_in_next_n_days + 1).max().shift(-self.max_close_price_in_next_n_days)
-        # the close price after 10 days
+        # the close price after 19 days
         df['Close_Price_After_N_Days'] = df['close'].shift(-self.max_close_price_in_next_n_days)
 
         # Close price is less than the max close price after 19 days
@@ -231,7 +231,7 @@ class StockTrainHandler():
         df = self.load_stock_data()
         X_train, X_val, X_test, y_train, y_val, y_test, df_test_with_date = self.prepare_train_dataset(df)
 
-        callback = tf.keras.callbacks.ModelCheckpoint('./checkpoints/Transformer+TimeEmbedding_mean_' + self.stock_id + '.hdf5',
+        callback = tf.keras.callbacks.ModelCheckpoint('./checkpoints/Transformer+TimeEmbedding_' + str(self.seq_len) + '_' + self.stock_id + '.hdf5',
                                                       monitor='val_loss',
                                                       save_best_only=True,
                                                       verbose=1)
@@ -244,9 +244,9 @@ class StockTrainHandler():
                             callbacks=[callback],
                             validation_data=(X_val, y_val))
         else:
-            ckp = './checkpoints/Transformer+TimeEmbedding_mean_' + self.stock_id + '.hdf5'
+            ckp = './checkpoints/Transformer+TimeEmbedding_' + str(self.seq_len) + '_' + self.stock_id + '.hdf5'
             if self.useCkpId:
-                ckp = './checkpoints/Transformer+TimeEmbedding_mean_' + self.useCkpId + '.hdf5'
+                ckp = './checkpoints/Transformer+TimeEmbedding_' + str(self.seq_len) + '_' + self.useCkpId + '.hdf5'
 
             model = tf.keras.models.load_model(ckp,
                                                custom_objects={'Time2Vector': Time2Vector,
