@@ -15,7 +15,7 @@ python main.py -id 300059 -tfs False -ckp 399006
 To predit the next date (9999-01-01), use -preictLen 0 (default is 0),  1 means predict today and next date, 2 means yesterday,today and next date
 python main.py -id 300059 -tfs False -preictLen 0
 
-Daily prediction for all stockId:
+Daily prediction for all AI filter stockId:
 python main_multiple.py -tfs False -preictLen 2
 
 Important:
