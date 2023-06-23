@@ -7,6 +7,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import jnr.x86asm.INST_CODE;
+import org.easystogu.analyse.AiTrendBuySellPointAnalyse;
 import org.easystogu.analyse.ShenXianSellAnalyseHelper;
 import org.easystogu.checkpoint.DailyCombineCheckPoint;
 import org.easystogu.config.ConfigurationService;
@@ -416,7 +418,8 @@ public class HomeEndPoint {
   public String test() {
     Thread t = new Thread(new Runnable() {
       public void run() {
-        UpdateCheckPointDailyStatistics.main(null);
+        AiTrendBuySellPointAnalyse ins = new AiTrendBuySellPointAnalyse();
+        ins.processAll();
       }
     });
     t.start();

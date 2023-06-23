@@ -71,7 +71,8 @@ ${demo.css}
                 newState["stockId"] = stockId;
 	            this.setState(newState);
                 //refresh the chart using the first stockid
-                loadLuZao(version, stockId, dateFrom, dateTo);
+                //loadLuZao(version, stockId, dateFrom, dateTo);
+                loadShenXianSellWithReqParms(stockId, dateFrom, dateTo, reqParms);
              }
 	      },
 
@@ -82,7 +83,8 @@ ${demo.css}
         
              //update the stockId to selected value
              stockId = e.target.value;
-             loadLuZao(version, stockId, dateFrom, dateTo);
+             //loadLuZao(version, stockId, dateFrom, dateTo);
+             loadShenXianSellWithReqParms(stockId, dateFrom, dateTo, reqParms);
 	      },
 
           handleChangeSelectIndicator: function(e) {
@@ -140,6 +142,10 @@ ${demo.css}
             //first option is empty
             tmpDateOptions = [];
 
+            tmpDateOptions.push(
+                  <option value='9999-01-01'>9999-01-01</option>
+                  );
+
             for (var i = 0; i < dateOptionsTmp.length; i++) {
                   tmpDateOptions.push(
                   <option value={dateOptionsTmp[i]}>{dateOptionsTmp[i]}</option>
@@ -148,7 +154,7 @@ ${demo.css}
 
             tmpDateOptions.push(<option value='Latest_20'>Latest_20</option>);
 
-	        newState["dateOptions"] = tmpDateOptions;
+	          newState["dateOptions"] = tmpDateOptions;
             
             viewName = getQueryString("selectView");
 
@@ -171,7 +177,8 @@ ${demo.css}
              if(selectStockIds.length > 0){
                 stockId = selectStockIds[0][0];
                 newState["stockId"] = stockId;
-                loadLuZao(version, stockId, dateFrom, dateTo);
+                //loadLuZao(version, stockId, dateFrom, dateTo);
+                loadShenXianSellWithReqParms(stockId, dateFrom, dateTo, reqParms);
              }
 
 	         this.setState(newState);

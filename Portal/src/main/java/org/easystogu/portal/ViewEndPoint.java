@@ -13,8 +13,10 @@ import javax.ws.rs.core.Context;
 
 import org.easystogu.config.ConfigurationService;
 import org.easystogu.config.DBConfigurationService;
+import org.easystogu.db.access.table.AiTrendPredictTableHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.access.view.CommonViewHelper;
+import org.easystogu.db.vo.table.AiTrendPredictVO;
 import org.easystogu.db.vo.table.CheckPointDailySelectionVO;
 import org.easystogu.db.vo.view.CommonViewVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
@@ -22,6 +24,7 @@ import org.easystogu.log.LogHelper;
 import org.easystogu.cache.CheckPointDailySelectionTableCache;
 import org.easystogu.cache.CommonViewCache;
 import org.easystogu.cache.ConfigurationServiceCache;
+import org.easystogu.utils.Strings;
 import org.slf4j.Logger;
 import com.google.gson.Gson;
 
@@ -34,6 +37,8 @@ public class ViewEndPoint {
 			.getInstance();
 	protected StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
 	private CommonViewCache commonViewCache = CommonViewCache.getInstance();
+	private AiTrendPredictTableHelper aiTrendPredictTableHelper  = AiTrendPredictTableHelper.getInstance();
+	private CompanyInfoFileHelper companyInfoHelper = CompanyInfoFileHelper.getInstance();
 	
 	private Gson gson = new Gson();
 
@@ -47,6 +52,10 @@ public class ViewEndPoint {
 		String cixin = request.getParameter("cixin");
 		logger.debug("viewName=" + viewname + ",date=" + date + ",cixin=" + cixin);
 
+		if(Strings.isEmpty(viewname)){
+			return gson.toJson(new ArrayList<CommonViewVO>());
+		}
+
 		if ("luzao_phaseII_zijinliu_top300".equals(viewname) || "luzao_phaseIII_zijinliu_top300".equals(viewname)
 				|| "luzao_phaseII_ddx_bigger_05".equals(viewname) || "luzao_phaseIII_ddx_bigger_05".equals(viewname)) {
 			// get result from view directory, since they are fast
@@ -57,12 +66,100 @@ public class ViewEndPoint {
 			return gson.toJson(this.fliterCiXinGu(cixin, list));
 		}
 
+		//get all the stockIds if the predication day (9999-01-01) is Bottom
+		if ("AiTrend_Bottom_Area".equals(viewname) && date.equals("9999-01-01")) {
+			List<CommonViewVO> list = new ArrayList<CommonViewVO>();
+			List<AiTrendPredictVO> aiList = aiTrendPredictTableHelper.getByDateAndResultBottom(date);
+			for (AiTrendPredictVO aiVO : aiList){
+				List<AiTrendPredictVO> vos = aiTrendPredictTableHelper.getByStockId(aiVO.getStockId());
+				if(vos.size() < 3){
+					continue;
+				}
+				AiTrendPredictVO vo9999 = vos.get(vos.size() - 1);
+				AiTrendPredictVO voToday = vos.get(vos.size() - 2);
+				AiTrendPredictVO voYesterday = vos.get(vos.size() - 3);
+				if("9999-01-01".equals(vo9999.getDate())){
+					//Bottom
+					if(vo9999.getResult() >= AiTrendPredictVO.buyPoint
+							&& voToday.getResult() < AiTrendPredictVO.buyPoint
+							&& voYesterday.getResult() < AiTrendPredictVO.buyPoint){
+						CommonViewVO acvo = new CommonViewVO();
+						acvo.date = vo9999.getDate();
+						acvo.stockId = vo9999.getStockId();
+						acvo.name = companyInfoHelper.getStockName(vo9999.getStockId());
+						list.add(acvo);
+					}
+				}
+			}
+			return gson.toJson(list);
+		}
+
+		//get all the stockIds if the predication day (9999-01-01) is Top
+		if ("AiTrend_Top_Area".equals(viewname) && date.equals("9999-01-01")) {
+			List<CommonViewVO> list = new ArrayList<CommonViewVO>();
+			List<AiTrendPredictVO> aiList = aiTrendPredictTableHelper.getByDateAndResultTop(date);
+			for (AiTrendPredictVO aiVO : aiList){
+				List<AiTrendPredictVO> vos = aiTrendPredictTableHelper.getByStockId(aiVO.getStockId());
+				if(vos.size() < 3){
+					continue;
+				}
+				AiTrendPredictVO vo9999 = vos.get(vos.size() - 1);
+				AiTrendPredictVO voToday = vos.get(vos.size() - 2);
+				AiTrendPredictVO voYesterday = vos.get(vos.size() - 3);
+				if("9999-01-01".equals(vo9999.getDate())){
+					//Top
+					if(vo9999.getResult() < AiTrendPredictVO.buyPoint
+							&& voToday.getResult() >= AiTrendPredictVO.buyPoint
+							&& voYesterday.getResult() >= AiTrendPredictVO.buyPoint){
+						CommonViewVO acvo = new CommonViewVO();
+						acvo.date = vo9999.getDate();
+						acvo.stockId = vo9999.getStockId();
+						acvo.name = companyInfoHelper.getStockName(vo9999.getStockId());
+						list.add(acvo);
+					}
+				}
+			}
+			return gson.toJson(list);
+		}
+
+		if(viewname.contains("_AITrendBuy")){
+			String newViewName = viewname.split("_AITrendBuy")[0];
+			List<CommonViewVO> list = getAllCheckPointDailySelection(newViewName, date);
+			List<CommonViewVO> rtnList = new ArrayList<CommonViewVO>();
+			//filter the list that match the ai trund buy point
+			for (CommonViewVO vo : list) {
+				AiTrendPredictVO aiVo = aiTrendPredictTableHelper.getByStockIdAndDate(vo.getStockId(), vo.getDate());
+				if (aiVo !=null && aiVo.getResult() >= AiTrendPredictVO.buyPoint){
+					rtnList.add(vo);
+				}
+			}
+			return gson.toJson(this.fliterCiXinGu(cixin, rtnList));
+		}
+
+		if(viewname.contains("_AITrendSell")){
+			String newViewName = viewname.split("_AITrendSell")[0];
+			List<CommonViewVO> list = getAllCheckPointDailySelection(newViewName, date);
+			List<CommonViewVO> rtnList = new ArrayList<CommonViewVO>();
+			//filter the list that match the ai trund buy point
+			for (CommonViewVO vo : list) {
+				AiTrendPredictVO aiVo = aiTrendPredictTableHelper.getByStockIdAndDate(vo.getStockId(), vo.getDate());
+				if (aiVo !=null && aiVo.getResult() < AiTrendPredictVO.buyPoint){
+					rtnList.add(vo);
+				}
+			}
+			return gson.toJson(this.fliterCiXinGu(cixin, rtnList));
+		}
+
+
 		// else get result for checkpoint data, since they are analyse daily and
 		// save to daily table
+		return gson.toJson(this.fliterCiXinGu(cixin, getAllCheckPointDailySelection(viewname, date)));
+	}
+
+	private List<CommonViewVO> getAllCheckPointDailySelection(String viewName, String date){
 		List<CommonViewVO> list = new ArrayList<CommonViewVO>();
-		String checkpoint = viewname;
 		List<CheckPointDailySelectionVO> cps = checkPointDailySelectionCache
-				.queryByDateAndCheckPoint(date, checkpoint);
+				.queryByDateAndCheckPoint(date, viewName);
 		for (CheckPointDailySelectionVO cp : cps) {
 			CommonViewVO cvo = new CommonViewVO();
 			cvo.stockId = cp.stockId;
@@ -72,7 +169,7 @@ public class ViewEndPoint {
 			list.add(cvo);
 		}
 
-		return gson.toJson(this.fliterCiXinGu(cixin, list));
+		return list;
 	}
 
 	// fliter cixin

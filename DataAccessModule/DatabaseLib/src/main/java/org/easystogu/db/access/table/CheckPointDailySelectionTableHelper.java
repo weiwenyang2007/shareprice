@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.easystogu.db.ds.PostgreSqlDataSourceFactory;
 import org.easystogu.db.vo.table.CheckPointDailySelectionVO;
+import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.log.LogHelper;
 import org.slf4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -34,6 +35,8 @@ public class CheckPointDailySelectionTableHelper {
 			+ " WHERE date = :date AND checkpoint = :checkpoint";
 	protected String QUERY_BY_STOCKID_AND_DATE_SQL = "SELECT * FROM " + tableName
 			+ " WHERE stockid = :stockid AND date = :date";
+	protected String QUERY_BY_STOCKID_AND_CKP_SQL = "SELECT * FROM " + tableName
+			+ " WHERE stockid = :stockid AND checkpoint = :checkpoint ORDER BY DATE";
 	protected String QUERY_LATEST_BY_STOCKID_AND_NOT_CHECKPOINT_SQL = "SELECT * FROM " + tableName
 			+ " WHERE stockid = :stockid AND checkpoint != :checkpoint ORDER BY DATE DESC LIMIT 1";
 	protected String DELETE_BY_DATE_SQL = "DELETE FROM " + tableName + " WHERE date = :date";
@@ -150,6 +153,25 @@ public class CheckPointDailySelectionTableHelper {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public List<CheckPointDailySelectionVO> getCheckPointSelectionByCkp(String stockId, String checkPoint) {
+		try {
+
+			MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+			namedParameters.addValue("stockid", stockId);
+			namedParameters.addValue("checkpoint", checkPoint);
+
+			List<CheckPointDailySelectionVO> list = this.namedParameterJdbcTemplate.query(QUERY_BY_STOCKID_AND_CKP_SQL,
+					namedParameters, new IndEventVOMapper());
+
+			return list;
+		} catch (EmptyResultDataAccessException ee) {
+			return new ArrayList<CheckPointDailySelectionVO>();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<CheckPointDailySelectionVO>();
 	}
 
 	public CheckPointDailySelectionVO getDifferentLatestCheckPointSelection(String stockId, String checkPoint) {

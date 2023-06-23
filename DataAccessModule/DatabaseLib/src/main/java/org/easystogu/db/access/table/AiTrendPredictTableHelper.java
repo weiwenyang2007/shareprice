@@ -24,6 +24,9 @@ public class AiTrendPredictTableHelper {
   protected String INSERT_SQL = "INSERT INTO " + tableName
       + " (stockId, date, result) VALUES (:stockId, :date, :result)";
   protected String QUERY_BY_STOCKID_SQL = "SELECT * FROM " + tableName + " WHERE stockId = :stockId ORDER BY date";
+  protected String QUERY_BY_STOCKID_AND_DATE_SQL = "SELECT * FROM " + tableName + " WHERE stockId = :stockId AND date = :date";
+  protected String QUERY_BY_DATE_AND_RESULT_BOTTOM_SQL = "SELECT * FROM " + tableName + " WHERE date = :date AND result >= :result";
+  protected String QUERY_BY_DATE_AND_RESULT_TOP_SQL = "SELECT * FROM " + tableName + " WHERE date = :date AND result < :result";
 
   protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -93,7 +96,58 @@ public class AiTrendPredictTableHelper {
       namedParameters.addValue("stockId", stockId);
 
       List<AiTrendPredictVO> list = this.namedParameterJdbcTemplate.query(QUERY_BY_STOCKID_SQL, namedParameters,
-          new AiTrendPredictTableHelper.AiTrendPredictVOMapper());
+          new AiTrendPredictVOMapper());
+
+      return list;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return new ArrayList<AiTrendPredictVO>();
+  }
+
+  public AiTrendPredictVO getByStockIdAndDate(String stockId, String date) {
+    try {
+
+      MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+      namedParameters.addValue("stockId", stockId);
+      namedParameters.addValue("date", date);
+
+      AiTrendPredictVO vo = this.namedParameterJdbcTemplate.queryForObject(QUERY_BY_STOCKID_AND_DATE_SQL, namedParameters,
+          new AiTrendPredictVOMapper());
+
+      return vo;
+    } catch (Exception e) {
+      //e.printStackTrace();
+    }
+    return null;
+  }
+
+  public List<AiTrendPredictVO> getByDateAndResultBottom(String date) {
+    try {
+
+      MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+      namedParameters.addValue("date", date);
+      namedParameters.addValue("result", AiTrendPredictVO.buyPoint);
+
+      List<AiTrendPredictVO> list = this.namedParameterJdbcTemplate.query(QUERY_BY_DATE_AND_RESULT_BOTTOM_SQL, namedParameters,
+          new AiTrendPredictVOMapper());
+
+      return list;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return new ArrayList<AiTrendPredictVO>();
+  }
+
+  public List<AiTrendPredictVO> getByDateAndResultTop(String date) {
+    try {
+
+      MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+      namedParameters.addValue("date", date);
+      namedParameters.addValue("result", AiTrendPredictVO.buyPoint);
+
+      List<AiTrendPredictVO> list = this.namedParameterJdbcTemplate.query(QUERY_BY_DATE_AND_RESULT_TOP_SQL, namedParameters,
+          new AiTrendPredictVOMapper());
 
       return list;
     } catch (Exception e) {
