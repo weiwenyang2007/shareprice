@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.easystogu.analyse.CombineAnalyseHelper;
 import org.easystogu.analyse.util.IndProcessHelper;
 import org.easystogu.checkpoint.DailyCombineCheckPoint;
@@ -42,7 +43,7 @@ public class HistoryAnalyseReport {
   private String[] specifySelectCheckPoints = specifySelectCheckPoint.split(";");
   private String[] generalCheckPoints = config.getString("general_CheckPoint", "").split(";");
   // date, count
-  private Map<String, Integer> generalCheckPointStatisticsMap = new HashMap<String, Integer>();
+  private Map<String, Integer> generalCheckPointStatisticsMap = new ConcurrentHashMap<String, Integer>();
 
   // public ForkJoinPool myForkJoinPool = new ForkJoinPool(8);
 
