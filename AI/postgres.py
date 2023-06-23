@@ -25,6 +25,7 @@ class PostgresDBHandler():
             print("Error while fetching data from PostgreSQL", error)
 
     def get_all_stockIds(self, prefix=None, sufix=None, desc=None):
+        #do not use get_all_stockIds due to AI spend much time for train and prediction, use the filter one (about 1250 Ids)
         query='select DISTINCT stockId from qian_fuquan_stockprice order by stockId'
         if desc:
             query = query + ' ' + desc
@@ -46,7 +47,33 @@ class PostgresDBHandler():
             else:        
                 new_records.append(sid)
 
-        print('Total sufix filter stockId len is ' + str(len(new_records)))
+        print('Will process stockId len is ' + str(len(new_records)))
+        return new_records
+    
+    def get_favorites_ai_filter_stockIds(self, prefix=None, sufix=None, desc=None):
+        #do not use get_all_stockIds due to AI spend much time for train and prediction, use the filter one (about 1250 Ids)
+        query="select stockId from favorites_filter_stock where filter='AI_Earn' order by stockId"
+        if desc:
+            query = query + ' ' + desc
+            
+        self.cursor.execute(query)
+        records = self.cursor.fetchall()
+        print('Total favorites AI filter stockId len is ' + str(len(records)))
+        new_records = []
+
+        for stock_id in records:
+            sid = stock_id[0]            
+            if prefix or sufix:
+                if prefix:
+                    if sid.startswith(prefix):
+                        new_records.append(sid)
+                if sufix:
+                    if sid.endswith(sufix):
+                        new_records.append(sid)
+            else:        
+                new_records.append(sid)
+
+        print('Will process favorites AI filter stockId len is ' + str(len(new_records)))
         return new_records
     
     def get_price_data_length(self, stock_id):

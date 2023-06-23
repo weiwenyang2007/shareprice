@@ -927,6 +927,24 @@ ALTER TABLE favorites_stock
 GRANT ALL ON TABLE favorites_stock TO public;
 GRANT ALL ON TABLE favorites_stock TO postgres;
 
+-- Table: favorites_ai_stock
+
+-- DROP TABLE favorites_ai_stock;
+
+CREATE TABLE favorites_filter_stock
+(
+  stockid text NOT NULL,
+  filter text NOT NULL,
+  CONSTRAINT favorites_filter_stock_pkey PRIMARY KEY (stockid, filter)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE favorites_filter_stock
+  OWNER TO postgres;
+GRANT ALL ON TABLE favorites_filter_stock TO public;
+GRANT ALL ON TABLE favorites_filter_stock TO postgres;
+
 -- Table: stock_behavior_statistics
 
 -- DROP TABLE stock_behavior_statistics;

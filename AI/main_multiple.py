@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser.add_argument("-desc", "--OrderByDesc", default=None) #temp args, remove it once all stockId complate pre-train
     #sufix and desc is used for batch process the pre-train or predict async, into multiple gpu system
     parser.add_argument("-preictLen", "--predictTestDateLength", type=int, default=-1)#Length of test date for predict, -1 means this args is ignore (10% pct is use for test);0 means predict the next date, 1 means predict today and next date... 
+    parser.add_argument("-seqLen", "--sequenceLength", type=int, default=43)#default use 43 days price date to predict the next 20 days trend
     
     # Read arguments from command line
     args = parser.parse_args()
@@ -31,6 +32,7 @@ if __name__ == "__main__":
     useCkpId = args.UseCheckPointId
     desc = args.OrderByDesc
     preictLen = args.predictTestDateLength
+    seqLen = args.sequenceLength
     
     if prefix and sufix:
         print('Only prefix or sufix is allow, not both')
@@ -55,7 +57,7 @@ if __name__ == "__main__":
     all_start_ts = time.time()
 
     postgres = PostgresDBHandler()
-    stock_ids = postgres.get_all_stockIds(prefix, sufix, desc)
+    stock_ids = postgres.get_favorites_ai_filter_stockIds(prefix, sufix, desc)
     counter = 0
     for stock_id in stock_ids:
         start_ts = time.time() 
@@ -69,17 +71,17 @@ if __name__ == "__main__":
                 print(stock_id + ' pre-train checkpoint already exist, remove this line to train the model from scratch')
                 continue
                
-            data_length = postgres.get_price_data_length(stock_id)
-            if  data_length < 500:   
+            length = postgres.get_price_data_length(stock_id)
+            if  (length < 500 and seqLen == 43) or (length < 1000 and seqLen == 86):   
                 #data len less than about 2 years, not enough data for train
-                print(stock_id + ' price data length is ' + str(data_length) + ', less than 500, then skip the pre-train')
+                print(stock_id + ' price data length is ' + str(length) + ', less than 500, then skip the pre-train')
                 continue
             elif data_length >= 2500:   
                 #Continue to process
                 postgres.get_stock_price_and_save_to_file(stock_id)
             else:
                 # data length is between 500~2500
-                print(stock_id + ' price data length is ' + str(data_length) + ', between 500 ~ 2500, currently no action for it :)')
+                print(stock_id + ' price data length is ' + str(length) + ', between 500 ~ 2500, currently no action for it :)')
                 continue
                 
         #end if 
@@ -92,10 +94,10 @@ if __name__ == "__main__":
                 postgres.get_stock_price_and_save_to_file(stock_id)
             else:       
                 #neither has it own pre-train nor has specify the useCkpId:                    
-                data_length = postgres.get_price_data_length(stock_id)                    
-                if data_length < 500:
-                    #data len less than about 2 years, not enough data for train
-                    print(stock_id + ' price data length is ' + str(data_length) + ', less than 500, then skip the predict')
+                length = postgres.get_price_data_length(stock_id)                    
+                if (length < 500 and seqLen == 43) or (length < 1000 and seqLen == 86) :
+                    #data len less than about 2 years, not enough data for predict
+                    print(stock_id + ' price data length is ' + str(length) + ', less than 500, then skip the predict')
                     continue
 
                 if stock_id.startswith('6'):
@@ -113,7 +115,7 @@ if __name__ == "__main__":
             #end else                
         #end else
                        
-        train = StockTrainHandler(stock_id, train_from_scratch, tmp_useCkpId, preictLen)            
+        train = StockTrainHandler(stock_id, train_from_scratch, tmp_useCkpId, preictLen, seqLen)            
             
         test_pred, df_test_with_date = train.train_model()
         postgres.save_predict_result_to_db(stock_id, test_pred, df_test_with_date)

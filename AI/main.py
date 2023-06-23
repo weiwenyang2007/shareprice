@@ -15,6 +15,7 @@ if __name__ == "__main__":
     parser.add_argument("-mem", "--gpuMemory", type=int, default=1024) #limit the gpu memory for each process
     parser.add_argument("-ckp", "--UseCheckPointId", default='') # Use other checkpoint Id for predict (TrainFromScratch is False)
     parser.add_argument("-preictLen", "--predictTestDateLength", type=int, default=-1)#Length of test date for predict, -1 means this args is ignore (10% pct is use for test);0 means predict the next date, 1 means predict today and next date... 
+    parser.add_argument("-seqLen", "--sequenceLength", type=int, default=43)#default use 43 days price date to predict the next 20 days trend
 
     # Read arguments from command line
     args = parser.parse_args()
@@ -25,6 +26,7 @@ if __name__ == "__main__":
     gpuMemory = args.gpuMemory
     useCkpId = args.UseCheckPointId
     preictLen = args.predictTestDateLength
+    seqLen = args.sequenceLength
 
     if train_from_scratch == 'True' and useCkpId != '':
         print('Invalid args: TrainFromScratch is True but UseCheckPointId is Not null, exit')
@@ -48,10 +50,10 @@ if __name__ == "__main__":
     start_ts = time.time()
 
     postgres = PostgresDBHandler()
-    train = StockTrainHandler(stock_id, train_from_scratch, useCkpId, preictLen)
+    train = StockTrainHandler(stock_id, train_from_scratch, useCkpId, preictLen, seqLen)
 
     length = postgres.get_stock_price_and_save_to_file(stock_id)
-    if length < 500 and train_from_scratch == 'True':
+    if train_from_scratch == 'True' and ((length < 500 and seqLen == 43) or (length < 1000 and seqLen == 86)):
         print('Length of stock price ' + stock_id + ' is too small (len=' + str(length) + ') for train, pls use other checkpoint for predict')
         sys.exit()
 

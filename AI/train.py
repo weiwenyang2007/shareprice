@@ -10,7 +10,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class StockTrainHandler():
-    def __init__(self, stock_id, train_from_scratch, useCkpId, preictLen):
+    def __init__(self, stock_id, train_from_scratch, useCkpId, preictLen, seq_len):
         #
         self.stock_id = stock_id
         self.stock_price_path = 'stockData/' + stock_id + '.csv'
@@ -20,7 +20,7 @@ class StockTrainHandler():
 
         #Hyperparameters
         self.batch_size = 32
-        self.seq_len = 43 # seq_len=43 意思是用43天的数据预测第44天后的趋势.第44天后的趋势，如果19天内的close是最高，而且第19天的close也高于当前close,则认为是上涨趋势，result预测为1 (或者>=0.75这个阈值)
+        self.seq_len = seq_len # seq_len=43 意思是用43天的数据预测第44天后的趋势.第44天后的趋势，如果19天内的close是最高，而且第19天的close也高于当前close,则认为是上涨趋势，result预测为1 (或者>=0.75这个阈值)
         self.max_close_price_in_next_n_days = 19 #计算后面20天的close
         self.moving_avg_window_len = 10 #default 10.moving average with a window of 10 days to all columns        
         self.column_len = 6 #the number of column
