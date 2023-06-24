@@ -16,7 +16,7 @@ class StockTrainHandler():
         self.stock_price_path = 'stockData/' + stock_id + '.csv'
         self.train_from_scratch = train_from_scratch # True: Train the model, False: Use the pre-train checkpoints
         self.useCkpId = useCkpId # When train_from_scratch is False and use other checkpoint Id for prediction
-        self.preictLen = preictLen # Length of test date for predict, 0 means predict the next date, 1 means predict today and next date...
+        self.preictLen = preictLen #Length of test date for predict, -1 means this args is ignore (10% pct is use for test);0 means predict the next date, 1 means predict today and next date... 
 
         #Hyperparameters
         self.batch_size = 32

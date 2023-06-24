@@ -126,4 +126,6 @@ if __name__ == "__main__":
     #end for    
 
     stop_ts = time.time()
-    print('Total time usage: ' + str(round(stop_ts - all_start_ts)) + ' seconds')
+    seconds = round(stop_ts - all_start_ts)
+    minutes = seconds/60
+    print('Total time usage: ' + str(seconds) + ' seconds, or ' + str(minutes) + ' minutes')
