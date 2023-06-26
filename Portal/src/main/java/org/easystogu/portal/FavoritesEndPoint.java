@@ -231,8 +231,7 @@ public class FavoritesEndPoint {
 		// second check recent view
 		for (CheckPointDailySelectionVO cp : cps) {
 			if (cp.stockId.equals(stockId)) {
-				if (cp.checkPoint.equals("luzao_phaseII_ddx_2_of_5_days_bigger_05")
-						|| cp.checkPoint.equals("luzao_phaseII_zijinliu_3_days_top300")
+				if (cp.checkPoint.equals("luzao_phaseII_zijinliu_3_days_top300")
 						|| cp.checkPoint.equals("luzao_phaseII_zijinliu_3_of_5_days_top300")
 						|| cp.checkPoint.equals("luzao_phaseIII_ddx_2_of_5_days_bigger_05")
 						|| cp.checkPoint.equals("luzao_phaseIII_zijinliu_3_days_top300")

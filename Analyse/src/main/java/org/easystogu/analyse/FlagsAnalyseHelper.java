@@ -25,7 +25,7 @@ public class FlagsAnalyseHelper {
       {"luzao_phaseII_zijinliu_top300", "luzao_phaseIII_zijinliu_top300",
           "luzao_phaseII_ddx_bigger_05", "luzao_phaseIII_ddx_bigger_05",
           "luzao_phaseII_zijinliu_3_days_top300", "luzao_phaseII_zijinliu_3_of_5_days_top300",
-          "luzao_phaseII_ddx_2_of_5_days_bigger_05", "luzao_phaseIII_zijinliu_3_days_top300",
+          "luzao_phaseIII_zijinliu_3_days_top300",
           "luzao_phaseIII_zijinliu_3_of_5_days_top300", "luzao_phaseIII_ddx_2_of_5_days_bigger_05"};
 
   //just for legacy using, instead of using @Component

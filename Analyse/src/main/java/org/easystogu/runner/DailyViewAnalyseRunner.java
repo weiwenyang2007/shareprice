@@ -61,14 +61,11 @@ public class DailyViewAnalyseRunner implements Runnable {
 	public void run() {
 		//this.fastExtractForView("luzao_phaseII_zijinliu_top300");
 		//this.fastExtractForView("luzao_phaseIII_zijinliu_top300");
-		
-		this.slowAnalyseForView("zijinliu_3_days_top300");
-		this.slowAnalyseForView("zijinliu_3_of_5_days_top300");
+
 		this.slowAnalyseForView("luzao_phaseIII_zijinliu_3_days_top300");
 		this.slowAnalyseForView("luzao_phaseIII_zijinliu_3_of_5_days_top300");
 		this.slowAnalyseForView("luzao_phaseII_zijinliu_3_days_top300");
 		this.slowAnalyseForView("luzao_phaseII_zijinliu_3_of_5_days_top300");
-		this.slowAnalyseForView("luzao_phaseII_ddx_2_of_5_days_bigger_05");
 		this.slowAnalyseForView("luzao_phaseIII_ddx_2_of_5_days_bigger_05");
 		
 		this.slowAnalyseForView("luzao_phaseII_wr_all_ind_same");
@@ -81,7 +78,6 @@ public class DailyViewAnalyseRunner implements Runnable {
 	public static void main(String[] args) {
 		DailyViewAnalyseRunner runner = new DailyViewAnalyseRunner();
 		runner.run();
-		//runner.slowAnalyseForView("luzao_phaseII_ddx_2_of_5_days_bigger_05");
 	}
 
 }
