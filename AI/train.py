@@ -25,10 +25,10 @@ class StockTrainHandler():
         self.moving_avg_window_len = 10 #default 10.moving average with a window of 10 days to all columns        
         self.column_len = 6 #the number of column
         self.predict_column = 5 #which column to be predict, from 0 to column_len-1
-        self.d_k = 256
-        self.d_v = 256
-        self.n_heads = 12
-        self.ff_dim = 256        
+        self.d_k = 256 #256
+        self.d_v = 256 #256
+        self.n_heads = 12 #12
+        self.ff_dim = 256 #256       
 
 
     def load_stock_data(self):
