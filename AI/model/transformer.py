@@ -1,3 +1,5 @@
+#Refer to https://towardsdatascience.com/stock-predictions-with-state-of-the-art-transformer-and-time-embeddings-3a4485237de6
+#Refer to: https://github.com/JanSchm/CapMarket/blob/master/bot_experiments/IBM_Transformer%2BTimeEmbedding.ipynb
 import numpy as np
 import pandas as pd
 import os, datetime
@@ -34,7 +36,9 @@ class Time2Vector(Layer):
 
   def call(self, x):
     '''Calculate linear and periodic time features'''
-    x = tf.math.reduce_mean(x[:,:,:4], axis=-1) 
+    #print('call='+str(x[0]))#call=Tensor("model/time2_vector/strided_slice:0", shape=(4, 4), dtype=float32)
+    x = tf.math.reduce_mean(x[:,:,:4], axis=-1) #[:,:,:4]
+    #print('call='+str(x[0]))#call=Tensor("model/time2_vector/strided_slice_2:0", shape=(4,), dtype=float32)
     time_linear = self.weights_linear * x + self.bias_linear # Linear time feature
     time_linear = tf.expand_dims(time_linear, axis=-1) # Add dimension (batch, seq_len, 1)
     
@@ -123,13 +127,13 @@ class TransformerEncoder(Layer):
   def build(self, input_shape):
     self.attn_multi = MultiAttention(self.d_k, self.d_v, self.n_heads)
     self.attn_dropout = Dropout(self.dropout_rate)
-    self.attn_normalize = LayerNormalization(input_shape=input_shape, epsilon=1e-6)
+    self.attn_normalize = LayerNormalization(input_shape=input_shape, epsilon=1e-6)# 1e-6
 
     self.ff_conv1D_1 = Conv1D(filters=self.ff_dim, kernel_size=1, activation='relu')
     # input_shape[0]=(batch, seq_len, 7), input_shape[0][-1] = 7 
     self.ff_conv1D_2 = Conv1D(filters=input_shape[0][-1], kernel_size=1) 
     self.ff_dropout = Dropout(self.dropout_rate)
-    self.ff_normalize = LayerNormalization(input_shape=input_shape, epsilon=1e-6)    
+    self.ff_normalize = LayerNormalization(input_shape=input_shape, epsilon=1e-6)# 1e-6    
   
   def call(self, inputs): # inputs = (in_seq, in_seq, in_seq)
     attn_layer = self.attn_multi(inputs)

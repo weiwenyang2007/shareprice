@@ -85,7 +85,7 @@ class PostgresDBHandler():
     def get_stock_price_and_save_to_file(self, stock_id):
         #It will skip the earlier stock date (the first record) and append the mock 9999-01-01 to the end.
         stock_price_path = 'stockData/' + stock_id + '.csv'
-        query = "select date,open,high,low,close,Volume from qian_fuquan_stockprice where stockid='" + stock_id + "' order by date"
+        query = "select date,open,high,low,close,volume from qian_fuquan_stockprice where stockid='" + stock_id + "' order by date"
 
         outputquery = "COPY ({0}) TO STDOUT WITH CSV HEADER".format(query)
 
@@ -113,10 +113,10 @@ class PostgresDBHandler():
     def get_stock_price_indicator_and_save_to_file(self, stock_id):
         stock_price_path = 'stockData/' + stock_id + '_ind.csv'
         #query close price
-        query="select date,close from qian_fuquan_stockprice where stockid='" + stock_id + "' order by date"
+        query="select date,open,high,low,close,volume from qian_fuquan_stockprice where stockid='" + stock_id + "' order by date"
         self.cursor.execute(query)
         price = self.cursor.fetchall()
-        price_df = pd.DataFrame(data=price, columns=['date', 'close'])
+        price_df = pd.DataFrame(data=price, columns=['date', 'open', 'high', 'low', 'close', 'volume'])
         
         #query mscd ind
         query="select date,dif,dea,macd from ind_macd where stockid='" + stock_id + "' order by date"
@@ -153,7 +153,7 @@ class PostgresDBHandler():
             print(stock_id + ' length of price and indicators are different, pls run Sanity check.')
             if os.path.exists(stock_price_path):
                 os.remove(stock_price_path)
-            return
+            return 0
         
         #Check the len must be same before merge them into single df
         df = pd.merge(price_df, macd_df, left_on='date', right_on='date')
@@ -161,13 +161,58 @@ class PostgresDBHandler():
         df = pd.merge(df, qsdd_df, left_on='date', right_on='date')
         df = pd.merge(df, wr_df, left_on='date', right_on='date')
         df = pd.merge(df, shenxian_df, left_on='date', right_on='date')
-        print(df)
+        #print(df)
         print('save indicator to ' + stock_price_path)
         #do not save index column to csv file
         df.to_csv(stock_price_path, index=False)
         
         return len(df)        
-    
+
+    def get_stock_price_and_save_candlestick_to_file(self, stock_id):
+        #It will skip the earlier stock date (the first record) and append the mock 9999-01-01 to the end.
+        candlestick_path = 'stockData/' + stock_id + '_candlestick.csv'
+        query="select date,open,high,low,close,volume,lastclose from stockprice where stockid='" + stock_id + "' order by date"
+        self.cursor.execute(query)
+        records = self.cursor.fetchall()
+        df = pd.DataFrame(data=records, columns=['date', 'open', 'high', 'low', 'close', 'volume', 'lastclose'])
+        
+        #Remove the first row
+        df=df.drop(index=0)
+        print(df.head(2))
+
+        #process the candlestick
+        df['difC']=df['close'] - df['lastclose']
+        
+        #High shadow
+        df['hs'] = df[['open', 'high', 'low', 'close']].apply(lambda x: (x['high'] - x['close']) if (x['close']>=x['open']) else (x['high'] - x['open']), axis=1)
+        #Candelstick body
+        #df['body'] = df[['open', 'high', 'low', 'close', 'difC']].apply(lambda x: (x['close'] - x['open']) if (x['difC']>=0) else (x['open'] - x['close']), axis=1)
+        df['body']=df['close'] - df['open']
+        #Low shadow
+        df['ls'] = df[['open', 'high', 'low', 'close']].apply(lambda x: (x['open'] - x['low']) if (x['close']>=x['open']) else (x['close'] - x['low']), axis=1)
+
+        print(df.tail(10))
+        #Change to percentage (with precision is 0) and then change to int (0,1,2...9)
+        df['difC']=(df['difC'].astype('float')*100.0/df['lastclose'].astype('float')).round(2)#.astype('int')
+        df['hs']=(df['hs'].astype('float')*100.0/df['lastclose'].astype('float')).round(2)#.astype('int')
+        df['body']=(df['body'].astype('float')*100.0/df['lastclose'].astype('float')).round(2)#.astype('int')
+        df['ls']=(df['ls'].astype('float')*100.0/df['lastclose'].astype('float')).round(2)#.astype('int')
+        
+        #Change to words token
+        #df['difC']='difC_'+df['difC'].astype('string')
+        #df['hs']='hs_'+df['hs'].astype('string')
+        #df['body']='body_'+df['body'].astype('string')
+        #df['ls']='ls_'+df['ls'].astype('string')
+
+        print(df.head(2))
+        print(df.tail(2))
+        #end
+        print('save candlestick to ' + candlestick_path)
+        #do not save index column to csv file
+        df.to_csv(candlestick_path, index=False)
+        
+        return len(df)          
+        
     def save_predict_result_to_db(self, stock_id, test_pred, df_test_with_date):
         #First delete then insert
         index = 0
