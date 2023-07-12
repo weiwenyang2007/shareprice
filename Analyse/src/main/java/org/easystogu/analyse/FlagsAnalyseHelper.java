@@ -41,7 +41,8 @@ public class FlagsAnalyseHelper {
   }
   public List<ShenXianUIVO> shenXianBuySellFlagsAnalyse(List<StockPriceVO> spList,
       List<ShenXianUIVO> sxList, List<MacdVO> macdList, List<BBIVO> bbiList,
-      List<LuZaoVO> luzaoList, List<AiTrendPredictVO> aiTrendPredictVOList) {
+      List<LuZaoVO> luzaoList, List<AiTrendPredictVO> aiTrendPredictVOList,
+      List<CandleStickPatternVO> candleStickPatternVOList) {
 
     StockPriceVO spvoF = spList.get(spList.size() - 1);
     List<VolumeVO> volumeList = getMAVolumeList(spList);
@@ -56,7 +57,9 @@ public class FlagsAnalyseHelper {
       VolumeVO volumevo = getVolumeVOByDate(spvo.date, volumeList);
       AiTrendPredictVO aiVOCur= getAiTrendPredictVOByDate(spvo.date, aiTrendPredictVOList);
       AiTrendPredictVO aiVOBeforeCur= getAiTrendPredictVOByPreviousDate(spvo.date, aiTrendPredictVOList);
+      //9999-01-01 is the predicted date
       AiTrendPredictVO aiVOPredict= getAiTrendPredictVOByDate("9999-01-01", aiTrendPredictVOList);
+      CandleStickPatternVO candleStickPatternVOCur = getCandleStickVOByDate(spvo.date, candleStickPatternVOList);
       // below can be search from table checkpoint_daily_selection
       CheckPointFlagsVO cpfvo = this.checkPoints(spvo.date, checkPoints);
 
@@ -267,10 +270,10 @@ public class FlagsAnalyseHelper {
           if (aiVOCur.getResult() >= AiTrendPredictVO.buyPoint) {
             //yesterday is null, today is AI Buy
 
-            setAiTrendPoint(sxvo, aiVOCur, "AI B");
+            setAiTrendPoint(sxvo, String.format("%.2f", aiVOPredict.getResult()), "AI B");
           } else if (aiVOCur.getResult() < AiTrendPredictVO.buyPoint) {
             //yesterday is null, today is AI Sell
-            setAiTrendPoint(sxvo, aiVOCur, "AI S");
+            setAiTrendPoint(sxvo, String.format("%.2f", aiVOPredict.getResult()), "AI S");
           }
         } else if (aiVOBeforeCur != null && aiVOCur != null) {
           if (aiVOBeforeCur.getResult() >= AiTrendPredictVO.buyPoint && aiVOCur.getResult() >= AiTrendPredictVO.buyPoint) {
@@ -279,27 +282,48 @@ public class FlagsAnalyseHelper {
             //yesterday and today is AI sell, no necessarily to mark today, since yesterday should had been marked earlier
           } else if (aiVOBeforeCur.getResult() >= AiTrendPredictVO.buyPoint && aiVOCur.getResult() < AiTrendPredictVO.buyPoint) {
             //yesterday is AI buy, today is AI sell
-            setAiTrendPoint(sxvo, aiVOCur, "AI S");
+            setAiTrendPoint(sxvo, String.format("%.2f", aiVOPredict.getResult()), "AI S");
           } else if (aiVOBeforeCur.getResult() < AiTrendPredictVO.buyPoint && aiVOCur.getResult() >= AiTrendPredictVO.buyPoint) {
             //yesterday is AI sell, today is AI buy
-            setAiTrendPoint(sxvo, aiVOCur, "AI B");
+            setAiTrendPoint(sxvo, String.format("%.2f", aiVOPredict.getResult()), "AI B");
           }
         }
         //if current AI trend vo data is latest date, and the flags is not set, then set the predict next date AI trend point
         if(aiVOPredict !=null && aiVOCur!=null && aiVOCur.getDate().equals(spvoF.getDate())) {
           if (aiVOPredict.getResult() >= AiTrendPredictVO.buyPoint) {
-            setAiTrendPoint(sxvo, aiVOPredict, "PND AI B");//predict next date AI buy point
+            setAiTrendPoint(sxvo, String.format("%.2f", aiVOPredict.getResult()), "PND AI B");//predict next date AI buy point
           } else if (aiVOPredict.getResult() < AiTrendPredictVO.buyPoint){
-            setAiTrendPoint(sxvo, aiVOPredict, "PND AI S");//predict next date AI sell point
+            setAiTrendPoint(sxvo, String.format("%.2f", aiVOPredict.getResult()), "PND AI S");//predict next date AI sell point
           }
         }
-      }
-
-    }
+        //candlestick pattern: it is a string list seperated by comma
+        if(candleStickPatternVOCur != null) {
+          setCandleStickPatternToBuyFlags(sxvo, candleStickPatternVOCur.getPattern());
+        }
+      }//if
+    }//for
     return sxList;
   }
 
-  private void setAiTrendPoint(ShenXianUIVO sxvo, AiTrendPredictVO aiVOCur, String buyOrSell) {
+  private void setCandleStickPatternToBuyFlags(ShenXianUIVO sxvo, String pattern) {
+    if(Strings.isEmpty(pattern)){
+      return;
+    }
+
+    if(Strings.isNotEmpty(sxvo.getBuyFlagsTitle())) {
+      sxvo.setBuyFlagsTitle(sxvo.getBuyFlagsTitle() + ", CSP");//CandleStickPattern
+    } else {
+      sxvo.setBuyFlagsTitle("CSP");
+    }
+
+    if(Strings.isNotEmpty(sxvo.getBuyFlagsText())) {
+      sxvo.setBuyFlagsText(sxvo.getBuyFlagsText() + ", 蜡烛形态:"  + pattern);
+    } else {
+      sxvo.setBuyFlagsText("蜡烛形态:"  + pattern);
+    }
+  }
+
+  private void setAiTrendPoint(ShenXianUIVO sxvo, String result, String buyOrSell) {
     if(Strings.isNotEmpty(sxvo.getBuyFlagsTitle())) {
       sxvo.setBuyFlagsTitle(sxvo.getBuyFlagsTitle() + "," + buyOrSell);
     } else {
@@ -307,15 +331,24 @@ public class FlagsAnalyseHelper {
     }
 
     if(Strings.isNotEmpty(sxvo.getBuyFlagsText())) {
-      sxvo.setBuyFlagsText(sxvo.getBuyFlagsText() + "," + buyOrSell  + String.format(" %.2f", aiVOCur.getResult()));
+      sxvo.setBuyFlagsText(sxvo.getBuyFlagsText() + "," + buyOrSell  + result);
     } else {
-      sxvo.setBuyFlagsText("AI 预测点 置信度"  + String.format("%.2f", aiVOCur.getResult()));
+      sxvo.setBuyFlagsText("AI预测 置信度:"  + result);
     }
   }
 
   private AiTrendPredictVO getAiTrendPredictVOByDate(String date,
       List<AiTrendPredictVO> aiTrendPredictVOList) {
     for (AiTrendPredictVO vo : aiTrendPredictVOList) {
+      if (vo.date.equals(date))
+        return vo;
+    }
+    return null;
+  }
+
+  private CandleStickPatternVO getCandleStickVOByDate(String date,
+      List<CandleStickPatternVO> candleStickPatternVOList) {
+    for (CandleStickPatternVO vo : candleStickPatternVOList) {
       if (vo.date.equals(date))
         return vo;
     }

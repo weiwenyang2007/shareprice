@@ -23,3 +23,12 @@ Important:
 2. For price len is less than 2500 and bigger than 500 (2 years), do not have itself pre-train model yet, due to the train time is too much. You can use other checkpoint (such as 999999, 399001, 399006) for price prediction, the result should be good enough.
 3. For price len is less then 500 (2 year), reject to train the model, pls use other checkpoint for price prediction, the result should be good enough.
 4. The pre-train checkpoint 999999 can be use for 6xxxxx stock price prediction, 399001 for 0xxxxx stock price prediction and 399006 for 3xxxxx prediction.
+
+
+
+============================Candlestick Pattern====================================
+Run single stockIds and save to DB:(modify the stockId in file)
+python myCandleStickPattern.py 
+
+Run all stockIds and save to DB:
+python myAllCandleStickPattern.py

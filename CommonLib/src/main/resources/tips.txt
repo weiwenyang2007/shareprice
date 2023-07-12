@@ -27,6 +27,7 @@ docker-compose -f dc_cassandra.yaml down
    
    su postgres
    psql
+   \c easystogu
    ALTER USER postgres PASSWORD 'postgres';
    
    add hostname postgres.easystogu.cn to /etc/hosts
