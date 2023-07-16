@@ -154,6 +154,19 @@ def morning_star_doji(candles_df,
     cndl = __create_object('MorningStarDoji', target)
     return cndl.has_pattern(candles_df, ohlc, is_reversed)
 
+def evening_star(candles_df,
+                   ohlc=__default_ohlc,
+                   is_reversed=False,
+                   target=None):
+    cndl = __create_object('EveningStar', target)
+    return cndl.has_pattern(candles_df, ohlc, is_reversed)
+
+def evening_star_doji(candles_df,
+                   ohlc=__default_ohlc,
+                   is_reversed=False,
+                   target=None):
+    cndl = __create_object('EveningStarDoji', target)
+    return cndl.has_pattern(candles_df, ohlc, is_reversed)
 
 def piercing_pattern(candles_df,
                    ohlc=__default_ohlc,

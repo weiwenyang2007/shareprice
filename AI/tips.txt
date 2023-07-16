@@ -28,7 +28,9 @@ Important:
 
 ============================Candlestick Pattern====================================
 Run single stockIds and save to DB:(modify the stockId in file)
-python myCandleStickPattern.py 
+python -W ignore myCandleStickPattern.py 
+python pattern_detect.py
 
 Run all stockIds and save to DB:
-python myAllCandleStickPattern.py
+python -W ignore myAllCandleStickPattern.py
+python pattern_detect_all_stocks.py

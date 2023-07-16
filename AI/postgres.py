@@ -106,7 +106,7 @@ class PostgresDBHandler():
         with open(stock_price_path, 'w') as f:
             f.writelines(lines[:1] + lines[2:] + list(latest_record))
 
-        print('stock price ' + stock_id + ' is saved to ' + stock_price_path)
+        #print('stock price ' + stock_id + ' is saved to ' + stock_price_path)
 
         return len(lines)
 
@@ -226,57 +226,31 @@ class PostgresDBHandler():
         # Commit your changes in the database
         self.connection.commit()
 
-    def save_candlestick_pattern_to_db(self, stock_id, df):           
-       #date,open,high,low,close,volume,InvertedHammers,doji_star,bearish_harami,bullish_harami,dark_cloud_cover,doji,dragonfly_doji,hanging_man,gravestone_doji,bearish_engulfing,bullish_engulfing,hammer,morning_star,morning_star_doji,piercing_pattern,rain_drop,rain_drop_doji,star,shooting_star
-        #First delete then insert               
-        for index, row in df.iterrows():
+    def save_candlestick_pattern_to_db(self, stock_id, candel_df):   
+        excluded_columns = ['date','open','close','high','low','volume']
+        
+        for index, row in candel_df.iterrows():
             date = row['date']
             pattern = ''
-            if row['InvertedHammers']:#1
-                pattern += 'InvertedHammers,'
-            if row['doji_star']:#2
-                pattern += 'doji_star,'
-            if row['bearish_harami']:#3
-                pattern += 'bearish_harami,'
-            if row['bullish_harami']:#4
-                pattern += 'bullish_harami,'
-            if row['dark_cloud_cover']:#5
-                pattern += 'dark_cloud_cover,'
-            if row['doji']:#6
-                pattern += 'doji,'
-            if row['dragonfly_doji']:#7
-                pattern += 'dragonfly_doji,'
-            if row['hanging_man']:#8
-                pattern += 'hanging_man,'
-            if row['gravestone_doji']:#9
-                pattern += 'gravestone_doji,'
-            if row['bearish_engulfing']:#10
-                pattern += 'bearish_engulfing,'
-            if row['bullish_engulfing']:#11
-                pattern += 'bullish_engulfing,'
-            if row['hammer']:#12
-                pattern += 'hammer,'
-            if row['morning_star']:#13
-                pattern += 'morning_star,'
-            if row['morning_star_doji']:#14
-                pattern += 'morning_star_doji,'
-            if row['piercing_pattern']:#15
-                pattern += 'piercing_pattern,'
-            if row['rain_drop']:#16
-                pattern += 'rain_drop,'
-            if row['rain_drop_doji']:#17
-                pattern += 'rain_drop_doji,'
-            if row['star']:#18
-                pattern += 'star,'
-            if row['shooting_star']:#19
-                pattern += 'shooting_star,'
-                
+            
+            self.cursor.execute("select pattern from CANDLESTICK_PATTERN where stockid=%s and date=%s", (stock_id,date))
+            existing_pattern = self.cursor.fetchone()
+            if existing_pattern != None:
+                pattern = existing_pattern[0] + ','
+            #print('existing_patterns=' + pattern)
+                    
+            for ss in range(len(row.index)):
+                if row.index[ss] not in excluded_columns and row.values[ss] != 0 and row.index[ss] not in pattern:
+                    pattern += row.index[ss] + ','
+                    
             if pattern != '':    
+                pattern = pattern[:-1] #remove last character ,
+                #print('date=' +date+ ',pattern='+pattern)
                 self.cursor.execute("delete from CANDLESTICK_PATTERN where stockid=%s and date=%s", (stock_id,date))
                 self.cursor.execute("insert into CANDLESTICK_PATTERN (stockid,date,pattern) values(%s, %s, %s)", (stock_id, date, pattern))
 
         # Commit your changes in the database
-        self.connection.commit()        
+        self.connection.commit()               
 
     def close_db(self):
         # closing database connection.
