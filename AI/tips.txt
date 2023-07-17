@@ -28,3 +28,4 @@ Important:
 
 ============================Candlestick Pattern====================================
 python pattern_detect_all_stocks.py
+

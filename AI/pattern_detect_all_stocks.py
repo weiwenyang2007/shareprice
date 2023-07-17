@@ -216,7 +216,7 @@ def candle_pattern_by_simple(df):
 
 #Main run
 start_ts = time.time()
-stockIds = ['600547'] #postgres.get_all_stockIds()
+stockIds = postgres.get_all_stockIds()
 count = 0
 for stock_id in stockIds:
     count += 1
