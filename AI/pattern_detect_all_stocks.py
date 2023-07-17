@@ -1,3 +1,4 @@
+import time
 import talib
 import pandas as pd
 from postgres import PostgresDBHandler
@@ -7,6 +8,8 @@ postgres = PostgresDBHandler()
 #https://www.ig.com/en/trading-strategies/16-candlestick-patterns-every-trader-should-know-180615
 #https://blog.elearnmarkets.com/35-candlestick-patterns-in-stock-market/
 
+#Main run
+start_ts = time.time()
 stockIds = postgres.get_all_stockIds()
 count = 0
 for stock_id in stockIds:
@@ -93,8 +96,14 @@ for stock_id in stockIds:
         if pattern != '':    
             pattern = pattern[:-1] #remove last character ,
             candle_df['patterns'].iat[index]=pattern
-            print('date=' +date+ ',pattern='+pattern)
+            #print('date=' +date+ ',pattern='+pattern)
 
     #data.to_csv(stock_id + '_pattern_result.csv', index=False)
 
     postgres.save_candlestick_pattern_to_db(stock_id, candle_df)
+    
+#Print duration
+stop_ts = time.time()
+seconds = round(stop_ts - start_ts)
+minutes = seconds/60
+print('Total time usage: ' + str(seconds) + ' seconds, or ' + str(minutes) + ' minutes')

@@ -1,4 +1,5 @@
 #https://github.com/sunilgug/Candlestick_patterns/blob/master/candlestick_pattern_recognition_with_example.py
+import time
 import pandas as pd
 import numpy as np
 from postgres import PostgresDBHandler
@@ -126,7 +127,8 @@ def candle_df(df):
 
 
 #Main run
-stockIds = postgres.get_all_stockIds()
+start_ts = time.time()
+stockIds = postgres.get_all_stockIds(desc='desc')
 count = 0
 for stock_id in stockIds:
     count += 1
@@ -139,3 +141,9 @@ for stock_id in stockIds:
     #print(df[:][['patterns','score_rollsum']])
     #df.to_csv(stock_id + '_pattern_result.csv', index=False)
     postgres.save_candlestick_pattern_to_db(stock_id, df)
+    
+#Print duration
+stop_ts = time.time()
+seconds = round(stop_ts - start_ts)
+minutes = seconds/60
+print('Total time usage: ' + str(seconds) + ' seconds, or ' + str(minutes) + ' minutes')
