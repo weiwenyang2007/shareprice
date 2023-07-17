@@ -231,23 +231,28 @@ class PostgresDBHandler():
         
         for index, row in candel_df.iterrows():
             date = row['date']
-            pattern = ''
+            patterns = row['patterns']
+            
+            if patterns == None or patterns == '' or len(patterns) == 0:
+                continue
             
             self.cursor.execute("select pattern from CANDLESTICK_PATTERN where stockid=%s and date=%s", (stock_id,date))
-            existing_pattern = self.cursor.fetchone()
-            if existing_pattern != None:
-                pattern = existing_pattern[0] + ','
-            #print('existing_patterns=' + pattern)
+            query_result = self.cursor.fetchone()
+            existing_pattern_set = set()
+            if query_result != None:
+                existing_pattern_set = set(query_result[0].split(","))
+
+            print('existing_patterns=' + str(existing_pattern_set))
+            pattern_list = patterns.split(",")
+            #add new pattern list to existing pattern set
+            existing_pattern_set.update(pattern_list)
+            
+            patterns = ','.join(str(s) for s in existing_pattern_set)
                     
-            for ss in range(len(row.index)):
-                if row.index[ss] not in excluded_columns and row.values[ss] != 0 and row.index[ss] not in pattern:
-                    pattern += row.index[ss] + ','
-                    
-            if pattern != '':    
-                pattern = pattern[:-1] #remove last character ,
-                #print('date=' +date+ ',pattern='+pattern)
+            if patterns != '':    
+                print('date=' +date+ ',patterns='+patterns)
                 self.cursor.execute("delete from CANDLESTICK_PATTERN where stockid=%s and date=%s", (stock_id,date))
-                self.cursor.execute("insert into CANDLESTICK_PATTERN (stockid,date,pattern) values(%s, %s, %s)", (stock_id, date, pattern))
+                self.cursor.execute("insert into CANDLESTICK_PATTERN (stockid,date,pattern) values(%s, %s, %s)", (stock_id, date, patterns))
 
         # Commit your changes in the database
         self.connection.commit()               

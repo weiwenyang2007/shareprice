@@ -48,6 +48,19 @@ candles_df = candlestick.evening_star(candles_df, target="eveningStar")#20 Down
 #target='InvertedHammers'
 #print(candles_df[candles_df[target] == True][['date', target]])
 
+excluded_columns = ['date','open','close','high','low','volume','patterns']
+candles_df['patterns']=''
+for index, row in candles_df.iterrows():
+    date = row['date']
+    pattern = ''
+    for ss in range(len(row.index)):
+        if row.index[ss] not in excluded_columns and row.values[ss] == True:
+            pattern += row.index[ss] + ','    
+    if pattern != '':    
+        pattern = pattern[:-1] #remove last character ,
+        candles_df['patterns'].iat[index]=pattern
+        #print('date=' +date+ ',pattern='+pattern)
+
 #candles_df.to_csv(stock_id + '_pattern_result.csv', index=False)
 
-postgres.save_candlestick_pattern_to_db(stock_id, candles_df)
+#postgres.save_candlestick_pattern_to_db(stock_id, candles_df)
