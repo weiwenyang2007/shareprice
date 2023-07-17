@@ -15,6 +15,7 @@ register_adapter(numpy.float32, addapt_numpy_float32)
 register_adapter(numpy.float64, addapt_numpy_float64)
 register_adapter(numpy.int64, addapt_numpy_int64)
 
+
 class PostgresDBHandler():
     def __init__(self):
         try:
@@ -232,27 +233,22 @@ class PostgresDBHandler():
         for index, row in candel_df.iterrows():
             date = row['date']
             patterns = row['patterns']
+            score = row['score']
+            score_roll = row['score_roll']
             
             if patterns == None or patterns == '' or len(patterns) == 0:
                 continue
-            
-            self.cursor.execute("select pattern from CANDLESTICK_PATTERN where stockid=%s and date=%s", (stock_id,date))
-            query_result = self.cursor.fetchone()
-            existing_pattern_set = set()
-            if query_result != None:
-                existing_pattern_set = set(query_result[0].split(","))
-
-            print('existing_patterns=' + str(existing_pattern_set))
-            pattern_list = patterns.split(",")
-            #add new pattern list to existing pattern set
-            existing_pattern_set.update(pattern_list)
-            
-            patterns = ','.join(str(s) for s in existing_pattern_set)
+                        
+            pattern_set = set(patterns.split(","))            
+            #remove empty element '' if existed
+            pattern_set.discard('')
+            #conver set to a string separated by comma
+            patterns = ','.join(str(p) for p in pattern_set)
                     
             if patterns != '':    
-                print('date=' +date+ ',patterns='+patterns)
+                #print('date=' +date+ ', patterns='+patterns + ', score=' + str(score) + ', score_roll=' +str(score_roll))
                 self.cursor.execute("delete from CANDLESTICK_PATTERN where stockid=%s and date=%s", (stock_id,date))
-                self.cursor.execute("insert into CANDLESTICK_PATTERN (stockid,date,pattern) values(%s, %s, %s)", (stock_id, date, patterns))
+                self.cursor.execute("insert into CANDLESTICK_PATTERN (stockid,date,pattern,score,score_roll) values(%s, %s, %s, %s, %s)", (stock_id, date, patterns, score, score_roll))
 
         # Commit your changes in the database
         self.connection.commit()               

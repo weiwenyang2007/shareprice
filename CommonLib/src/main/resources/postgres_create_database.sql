@@ -1016,6 +1016,8 @@ CREATE TABLE CANDLESTICK_PATTERN
   stockId text NOT NULL,
   date text NOT NULL,
   pattern text,
+  score integer,
+  score_roll integer,
   CONSTRAINT CANDLESTICK_PATTERN_primary_key PRIMARY KEY (stockId, date)
 )
 WITH (

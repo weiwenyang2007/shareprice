@@ -22,7 +22,7 @@ public class CandleStickPatternTableHelper {
   protected String tableName = "CANDLESTICK_PATTERN";
   // please modify this SQL in all subClass
   protected String INSERT_SQL = "INSERT INTO " + tableName
-      + " (stockId, date, pattern) VALUES (:stockId, :date, :pattern)";
+      + " (stockId, date, pattern, score, score_roll) VALUES (:stockId, :date, :pattern, :score, :score_roll)";
   protected String QUERY_BY_STOCKID_SQL = "SELECT * FROM " + tableName + " WHERE stockId = :stockId ORDER BY date";
   protected String QUERY_BY_STOCKID_AND_DATE_SQL = "SELECT * FROM " + tableName + " WHERE stockId = :stockId AND date = :date";
 
@@ -52,6 +52,8 @@ public class CandleStickPatternTableHelper {
       vo.setStockId(rs.getString("stockId"));
       vo.setDate(rs.getString("date"));
       vo.setPattern(rs.getString("pattern"));
+      vo.setScore(rs.getInt("score"));
+      vo.setScoreRoll(rs.getInt("score_roll"));
       return vo;
     }
   }
@@ -72,6 +74,8 @@ public class CandleStickPatternTableHelper {
       namedParameters.addValue("stockId", vo.getStockId());
       namedParameters.addValue("date", vo.getDate());
       namedParameters.addValue("pattern", vo.getPattern());
+      namedParameters.addValue("score", vo.getScore());
+      namedParameters.addValue("score_roll", vo.getScoreRoll());
 
       namedParameterJdbcTemplate.execute(INSERT_SQL, namedParameters, new CandleStickPatternTableHelper.DefaultPreparedStatementCallback());
     } catch (Exception e) {

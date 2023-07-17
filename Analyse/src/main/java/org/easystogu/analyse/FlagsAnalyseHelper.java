@@ -298,28 +298,64 @@ public class FlagsAnalyseHelper {
         }
         //candlestick pattern: it is a string list seperated by comma
         if(candleStickPatternVOCur != null) {
-          setCandleStickPatternToBuyFlags(sxvo, candleStickPatternVOCur.getPattern());
+          setCandleStickPatternToBuyFlags(sxvo, candleStickPatternVOCur);
         }
       }//if
     }//for
     return sxList;
   }
 
-  private void setCandleStickPatternToBuyFlags(ShenXianUIVO sxvo, String pattern) {
-    if(Strings.isEmpty(pattern)){
+  private void setCandleStickPatternToBuyFlags(ShenXianUIVO sxvo, CandleStickPatternVO candleStickPatternVOCur) {
+    if (Strings.isEmpty(candleStickPatternVOCur.getPattern())) {
       return;
     }
 
+    if (candleStickPatternVOCur.getScore() == 0 && candleStickPatternVOCur.getScoreRoll() == 0) {
+      return;
+    }
+
+    String flag = "CP ";//candle stick pattern
+    if(candleStickPatternVOCur.getScore() == 1){
+      flag += "B";//buy
+    } else if(candleStickPatternVOCur.getScore() > 1){
+      flag += candleStickPatternVOCur.getScore() + "B";//buy
+    }
+
+    if(candleStickPatternVOCur.getScore() == -1){
+      flag += "S";//sell
+    } else if(candleStickPatternVOCur.getScore() < -1){
+      flag += Math.abs(candleStickPatternVOCur.getScore()) + "S";//sell
+    }
+
+    if(candleStickPatternVOCur.getScoreRoll() == 1){
+      //CP B+2B (many buy patterns)
+      flag += "+B";
+    } else if(candleStickPatternVOCur.getScoreRoll() > 1){
+      //CP B+2B (many buy patterns)
+      flag += "+" + candleStickPatternVOCur.getScoreRoll() + "B";
+    }
+
+    if(candleStickPatternVOCur.getScoreRoll() == -1){
+      //CP S-2S (many sell patterns)
+      flag += "-S";
+    } else if(candleStickPatternVOCur.getScoreRoll() < -1){
+      //CP S-2S (many sell patterns)
+      flag += "-" + Math.abs(candleStickPatternVOCur.getScoreRoll()) + "S";
+    }
+    //can ignore below combinations???
+    //B-S,B-2S
+    //S-B,S-2B
+
     if(Strings.isNotEmpty(sxvo.getBuyFlagsTitle())) {
-      sxvo.setBuyFlagsTitle(sxvo.getBuyFlagsTitle() + ", CSP");//CandleStickPattern
+      sxvo.setBuyFlagsTitle(sxvo.getBuyFlagsTitle() + ", " + flag);//CandleStickPattern
     } else {
-      sxvo.setBuyFlagsTitle("CSP");
+      sxvo.setBuyFlagsTitle(flag);
     }
 
     if(Strings.isNotEmpty(sxvo.getBuyFlagsText())) {
-      sxvo.setBuyFlagsText(sxvo.getBuyFlagsText() + ", 蜡烛形态:"  + pattern);
+      sxvo.setBuyFlagsText(sxvo.getBuyFlagsText() + ", 蜡烛形态:"  + candleStickPatternVOCur.getPatternWithScore());
     } else {
-      sxvo.setBuyFlagsText("蜡烛形态:"  + pattern);
+      sxvo.setBuyFlagsText("蜡烛形态:"  + candleStickPatternVOCur.getPatternWithScore());
     }
   }
 
