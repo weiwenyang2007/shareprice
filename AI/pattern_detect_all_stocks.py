@@ -186,7 +186,7 @@ def candle_pattern_by_batch(lst_0,lst_1,lst_2):
         strCandle=strCandle + 'piercingLineBullish' + ','
     if hangingManBearish:
         strCandle=strCandle + 'hangingManBearish' + ','
-    if hangingManBearish:
+    if hangingManBullish:
         strCandle=strCandle + 'hangingManBullish' + ','
     if darkCloudCover:
         strCandle=strCandle + 'darkCloudCover' + ','
@@ -224,14 +224,14 @@ for stock_id in stockIds:
     postgres.get_stock_price_and_save_to_file(stock_id)
     data = pd.read_csv('./stockData/' + stock_id + '.csv', delimiter=',', usecols=['date', 'open', 'high', 'low', 'close'])
 
-    candle_df1 = candle_pattern_by_talib(data)    
+    #candle_df1 = candle_pattern_by_talib(data)    
     candle_df2 = candle_pattern_by_simple(data)
     
     candle_df = pd.DataFrame([])
     candle_df['date'] = data['date']
-    candle_df['patterns'] = candle_df1['patterns'] + ',' + candle_df2['patterns']
+    candle_df['patterns'] = candle_df2['patterns'] #+ ',' + candle_df1['patterns']
     candle_df['score'] = list(map(patterns_score, candle_df['patterns']))
-    candle_df['score_roll'] = candle_df['score'].rolling(3).sum()
+    candle_df['score_roll'] = 0 #candle_df['score'].rolling(3).sum()
 
     postgres.save_candlestick_pattern_to_db(stock_id, candle_df)
     

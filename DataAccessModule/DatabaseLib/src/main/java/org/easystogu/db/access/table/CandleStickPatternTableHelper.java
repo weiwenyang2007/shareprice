@@ -25,6 +25,7 @@ public class CandleStickPatternTableHelper {
       + " (stockId, date, pattern, score, score_roll) VALUES (:stockId, :date, :pattern, :score, :score_roll)";
   protected String QUERY_BY_STOCKID_SQL = "SELECT * FROM " + tableName + " WHERE stockId = :stockId ORDER BY date";
   protected String QUERY_BY_STOCKID_AND_DATE_SQL = "SELECT * FROM " + tableName + " WHERE stockId = :stockId AND date = :date";
+  protected String DELETE_BY_STOCKID_AND_DATE_SQL = "DELETE FROM " + tableName + " WHERE stockId = :stockId AND date = :date";
 
   protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -122,6 +123,18 @@ public class CandleStickPatternTableHelper {
       //e.printStackTrace();
     }
     return null;
+  }
+
+  public void delete(String stockId, String date) {
+    try {
+      MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+      namedParameters.addValue("stockId", stockId);
+      namedParameters.addValue("date", date);
+      namedParameterJdbcTemplate.execute(DELETE_BY_STOCKID_AND_DATE_SQL, namedParameters,
+          new CandleStickPatternTableHelper.DefaultPreparedStatementCallback());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public static void main(String[] args) {

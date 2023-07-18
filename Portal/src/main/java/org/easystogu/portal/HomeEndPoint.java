@@ -23,6 +23,7 @@ import org.easystogu.file.FileReaderAndWriter;
 import org.easystogu.file.access.CompanyInfoFileHelper;
 import org.easystogu.indicator.runner.history.IndicatorHistortOverAllRunner;
 import org.easystogu.report.HistoryAnalyseReport;
+import org.easystogu.runner.DailyCandleStickPatternRunner;
 import org.easystogu.runner.DailyOverAllRunner;
 import org.easystogu.runner.DailySelectionRunner;
 import org.easystogu.runner.DailyUpdateAllStockRunner;
@@ -418,8 +419,8 @@ public class HomeEndPoint {
   public String test() {
     Thread t = new Thread(new Runnable() {
       public void run() {
-        AiTrendBuySellPointAnalyse ins = new AiTrendBuySellPointAnalyse();
-        ins.processAll();
+        DailyCandleStickPatternRunner ins = new DailyCandleStickPatternRunner();
+        ins.run();
       }
     });
     t.start();

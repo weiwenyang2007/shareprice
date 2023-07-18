@@ -13,6 +13,7 @@ import org.easystogu.file.access.CompanyInfoFileHelper;
 import org.easystogu.indicator.runner.AllDailyIndCountAndSaveDBRunner;
 import org.easystogu.log.LogHelper;
 import org.easystogu.report.HistoryAnalyseReport;
+import org.easystogu.runner.DailyCandleStickPatternRunner;
 import org.easystogu.runner.DailyOverAllRunner;
 import org.easystogu.runner.DailySelectionRunner;
 import org.easystogu.runner.DailyUpdateStockPriceAndDDXRunner;
@@ -67,8 +68,8 @@ public class DailyScheduler implements SchedulingConfigurer {
 		}
 	}
 
-	// run at 19:00 DailyOverAllRunner
-	@Scheduled(cron = "0 0 19 * * MON-FRI")
+	// run at 18:30 DailyOverAllRunner
+	@Scheduled(cron = "0 30 18 * * MON-FRI")
 	public void _3_DailyOverAllRunner() {
 		if (Constants.ZONE_OFFICE.equalsIgnoreCase(zone)) {
 //		  DailyOverAllRunner runner = new DailyOverAllRunner(false);
@@ -93,18 +94,20 @@ public class DailyScheduler implements SchedulingConfigurer {
 
 	          // alaylse by view names
 	          new DailyViewAnalyseRunner().run();
+	          // candle pattern
+						new DailyCandleStickPatternRunner().run();
 	          //
 	          new AllCacheRunner().refreshAll();
-			  //
-			  ShenXianSellAnalyseHelper.main(null);
+			  		//
+			  		ShenXianSellAnalyseHelper.main(null);
 	        }
 	      });
 	      t.start();
 		}
 	}
 
-	// run at 20:30
-	@Scheduled(cron = "0 30 20 * * MON-FRI")
+	// run at 20:00
+	@Scheduled(cron = "0 0 20 * * MON-FRI")
 	public void _0_DataBaseSanityCheck() {
 		// only run at office, since at aliyun, there is daily santy after price
 		// update
