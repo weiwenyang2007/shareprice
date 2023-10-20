@@ -200,20 +200,20 @@ public class FlagsAnalyseHelper {
         }
 
         // 多头做T
-        // if ((sxvo.h1 >= sxvo.h2)) {
-        // buy point
-        //太多这种诱多诱空的标记，暂时去掉
-        //if (spvo.low <= sxvo.hc6) {
-        //  sxvo.setBuyFlagsTitle("B");
-        //  sxvo.setBuyFlagsText(sxvo.hc6 + " HC6支撑,增仓1/3");
-        //}
+        if ((sxvo.h1 >= sxvo.h2)) {
+          // buy point
+          //太多这种诱多诱空的标记，暂时去掉
+          if (spvo.low <= sxvo.hc6) {
+            sxvo.setBuyFlagsTitle("B");
+            sxvo.setBuyFlagsText(sxvo.hc6 + " HC6支撑,增仓1/3");
+          }
 
-        // sell point
-        //if (spvo.high >= sxvo.hc5) {
-        //  sxvo.setSellFlagsTitle("S");
-        //  sxvo.setSellFlagsText(sxvo.hc5 + " HC5压力, 减仓1/3");
-        //}
-        // }
+          // sell point
+          if (spvo.high >= sxvo.hc5) {
+            sxvo.setSellFlagsTitle("S");
+            sxvo.setSellFlagsText(sxvo.hc5 + " HC5压力, 减仓1/3");
+          }
+        }
 
         // 86天缩量
         if (volumevo.maVolume < volumevo.hhvVolume / 10) {
