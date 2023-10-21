@@ -48,11 +48,13 @@ public class DailyStockPriceDownloadHelper2 {
 	}
 
 	public List<SinaQuoteStockPriceVO> fetchAllStockPriceFromWeb() {
+		long beginTs = System.currentTimeMillis();
 		List<SinaQuoteStockPriceVO> list = new ArrayList<SinaQuoteStockPriceVO>();
 		for (int pageNumber = 1; pageNumber <= totalNumberPage; pageNumber++) {
 			list.addAll(this.fetchAPageDataFromWeb(pageNumber));
 		}
-		System.out.println("Total fetch size=" + list.size());
+		long endTs = System.currentTimeMillis();
+		System.out.println("End fetchAllStockPriceFromWeb, Total fetch size=" + list.size() + ", spent seconds=" + (endTs - beginTs)/1000);
 		return list;
 	}
 
