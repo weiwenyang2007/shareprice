@@ -44,8 +44,21 @@ public class HistoryStockPriceDownloadAndStoreDBRunner {
     private CompanyInfoFileHelper companyInfoHelper = CompanyInfoFileHelper.getInstance();
     private CompanyInfoTableHelper companyInfoTable = CompanyInfoTableHelper.getInstance();
     private static Map<String, Class> classMap = new HashMap<String, Class>();
+    private static RestTemplate restTemplate = null;
     static {
         classMap.put("hq", List.class);
+
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(10000);
+        requestFactory.setReadTimeout(10000);
+
+        if (Strings.isNotEmpty(configure.getString(Constants.httpProxyServer))) {
+            Proxy proxy = new Proxy(Type.HTTP, new InetSocketAddress(configure.getString(Constants.httpProxyServer),
+                    configure.getInt(Constants.httpProxyPort)));
+            requestFactory.setProxy(proxy);
+        }
+
+        restTemplate = new RestTemplate(requestFactory);
     }
 
     public HistoryStockPriceDownloadAndStoreDBRunner() {
@@ -87,18 +100,6 @@ public class HistoryStockPriceDownloadAndStoreDBRunner {
             url = url.replaceFirst("endDate", this.endDate.replaceAll("-", ""));
 
             System.out.println("Fetch Sohu History Data for " + stockId);
-
-            SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-            requestFactory.setConnectTimeout(10000);
-            requestFactory.setReadTimeout(10000);
-
-            if (Strings.isNotEmpty(configure.getString(Constants.httpProxyServer))) {
-                Proxy proxy = new Proxy(Type.HTTP, new InetSocketAddress(configure.getString(Constants.httpProxyServer),
-                        configure.getInt(Constants.httpProxyPort)));
-                requestFactory.setProxy(proxy);
-            }
-
-            RestTemplate restTemplate = new RestTemplate(requestFactory);
 
             // System.out.println("url=" + urlStr.toString());
             String contents = restTemplate.getForObject(url.toString(), String.class).trim();

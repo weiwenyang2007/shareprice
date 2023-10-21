@@ -31,6 +31,22 @@ public class DailyStockPriceDownloadHelper2 {
 			+ numberPerPage + "&sort=symbol&asc=1&node=hs_a";
 	private static ConfigurationService configure = FileConfigurationService.getInstance();
 
+	private static RestTemplate restTemplate = null;
+
+	static {
+		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+		requestFactory.setConnectTimeout(20000);
+		requestFactory.setReadTimeout(20000);
+
+		if (Strings.isNotEmpty(configure.getString(Constants.httpProxyServer))) {
+			Proxy proxy = new Proxy(Type.HTTP, new InetSocketAddress(configure.getString(Constants.httpProxyServer),
+					configure.getInt(Constants.httpProxyPort)));
+			requestFactory.setProxy(proxy);
+		}
+
+		restTemplate = new RestTemplate(requestFactory);
+	}
+
 	public List<SinaQuoteStockPriceVO> fetchAllStockPriceFromWeb() {
 		List<SinaQuoteStockPriceVO> list = new ArrayList<SinaQuoteStockPriceVO>();
 		for (int pageNumber = 1; pageNumber <= totalNumberPage; pageNumber++) {
@@ -46,18 +62,6 @@ public class DailyStockPriceDownloadHelper2 {
 
 			String url = baseUrl.replaceFirst("page=1", "page=" + pageNumber);
 			System.out.print("Fetch Sina Daily Data for page= " + pageNumber);
-
-			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-			requestFactory.setConnectTimeout(20000);
-			requestFactory.setReadTimeout(20000);
-
-			if (Strings.isNotEmpty(configure.getString(Constants.httpProxyServer))) {
-				Proxy proxy = new Proxy(Type.HTTP, new InetSocketAddress(configure.getString(Constants.httpProxyServer),
-						configure.getInt(Constants.httpProxyPort)));
-				requestFactory.setProxy(proxy);
-			}
-
-			RestTemplate restTemplate = new RestTemplate(requestFactory);
 
 			// System.out.println("url=" + urlStr.toString());
 			String contents = restTemplate.getForObject(url.toString(), String.class);
