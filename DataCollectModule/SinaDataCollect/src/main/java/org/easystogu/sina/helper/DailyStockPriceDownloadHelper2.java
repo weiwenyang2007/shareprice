@@ -58,12 +58,12 @@ public class DailyStockPriceDownloadHelper2 {
 		return list;
 	}
 
-	private List<SinaQuoteStockPriceVO> fetchAPageDataFromWeb(int pageNumber) {
+	public List<SinaQuoteStockPriceVO> fetchAPageDataFromWeb(int page) {
 		List<SinaQuoteStockPriceVO> list = new ArrayList<SinaQuoteStockPriceVO>();
 		try {
 
-			String url = baseUrl.replaceFirst("page=1", "page=" + pageNumber);
-			System.out.print("Fetch Sina Daily Data for page= " + pageNumber);
+			String url = baseUrl.replaceFirst("page=1", "page=" + page);
+			System.out.print("Fetch Sina Daily Data for page= " + page);
 
 			// System.out.println("url=" + urlStr.toString());
 			String contents = restTemplate.getForObject(url.toString(), String.class);

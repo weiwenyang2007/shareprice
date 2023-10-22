@@ -41,6 +41,12 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.5</version>
 		</dependency>
+        <dependency>
+            <groupId>org.albertyang2007.easystogu</groupId>
+            <artifactId>easystogu-cache</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 </project>
