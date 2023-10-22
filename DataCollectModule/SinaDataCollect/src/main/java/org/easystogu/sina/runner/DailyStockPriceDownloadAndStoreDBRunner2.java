@@ -55,14 +55,11 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
     }
 
     //download specific stockIds realTime price, the url is save into WSFCONFIG
-    public void downloadTradeTodayRealTimePriceAndSave2DB(){
+    public void downloadTradeTodayRealTimePriceAndSave2DB(String pages){
         String today = WeekdayUtil.currentDate();
-        String pages = config.getString("realtime_stock_quota_service_page_number_list");//example: 7 or 7,10
-        if(pages != null && pages.trim().length() > 0){
             String[] str = pages.split(",");
             for(int i=0; i<str.length; i++){
                 downloadDataAndSaveIntoDB(today, Integer.parseInt(str[i]));
-            }
         }
     }
 
