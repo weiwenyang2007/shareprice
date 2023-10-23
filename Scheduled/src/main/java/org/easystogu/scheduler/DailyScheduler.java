@@ -97,7 +97,13 @@ public class DailyScheduler implements SchedulingConfigurer {
 
 			// update indicators for part of the stockIds
 			if(Strings.isNotEmpty(stockIds)) {
-				sanityCheck.sanityDailyCheck(Arrays.asList(stockIds.split(",")));
+				List<String> stocks = Arrays.asList(stockIds.split(",");
+				// day ind
+				new AllDailyIndCountAndSaveDBRunner().runDailyIndForStockIds(stocks);
+				// week
+				new DailyWeeklyStockPriceCountAndSaveDBRunner().countAndSave(stocks);
+				// week ind
+				new AllDailyIndCountAndSaveDBRunner().runDailyWeekIndForStockIds(stocks);
 				// update cache
 				AllCacheRunner cacheRunner = new AllCacheRunner();
 				cacheRunner.refreshAll();
