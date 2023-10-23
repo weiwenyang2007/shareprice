@@ -48,6 +48,7 @@ public class CandleStickPatternVO {
   }
 
   public String getPatternWithScore() {
-    return String.format("s=%d r=%d p=%s", score, scoreRoll, pattern);
+    //return String.format("s=%d r=%d p=%s", score, scoreRoll, pattern);
+    return String.format("sc=%d p=%s", score, pattern);
   }
 }

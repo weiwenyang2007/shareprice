@@ -91,7 +91,7 @@ public class HomeEndPoint {
   @Path("/DailyUpdateAllStockRunner")
   public String dailyUpdateOverAllRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       boolean isGetZiJinLiu = false;
       Thread t = new Thread(new DailyUpdateAllStockRunner(isGetZiJinLiu));
       t.start();
@@ -104,7 +104,7 @@ public class HomeEndPoint {
   @Path("/DailySelectionRunner")
   public String dailySelectionRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       Thread t = new Thread(new DailySelectionRunner());
       t.start();
       return "DailySelectionRunner already running, please check folder result.";
@@ -123,7 +123,7 @@ public class HomeEndPoint {
   @Path("/DailyZiJinLiuRunner")
   public String dailyZiJinLiuRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       Thread t = new Thread(new DailyZiJinLiuRunner());
       t.start();
       return "DailyZiJinLiuRunner already running, please check DB result.";
@@ -135,7 +135,7 @@ public class HomeEndPoint {
   @Path("/OverAllZiJinLiuAndDDXRunner")
   public String overAllZiJinLiuAndDDXRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       Thread t = new Thread(new OverAllZiJinLiuAndDDXRunner());
       t.start();
       return "OverAllZiJinLiuAndDDXRunner already running, please check DB result.";
@@ -147,7 +147,7 @@ public class HomeEndPoint {
   @Path("/OverAllZiJinLiuAndDDXRunnerForAllStockId")
   public String overAllZiJinLiuAndDDXRunnerForAllStockId() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       OverAllZiJinLiuAndDDXRunner runner = new OverAllZiJinLiuAndDDXRunner();
       Thread t = new Thread(runner);
       t.start();
@@ -160,7 +160,7 @@ public class HomeEndPoint {
   @Path("/DailyZiJinLiuRunnerForAllStockId")
   public String dailyZiJinLiuRunnerForAllStockId() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       DailyZiJinLiuRunner runner = new DailyZiJinLiuRunner();
       Thread t = new Thread(runner);
       t.start();
@@ -173,7 +173,7 @@ public class HomeEndPoint {
   @Path("/DailyZhuLiJingLiuRuRunner")
   public String dailyZhuLiJingLiuRuRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       Thread t = new Thread(new DailyZhuLiJingLiuRuRunner());
       t.start();
       return "DailyZhuLiJingLiuRuRunner already running, please check DB result.";
@@ -185,7 +185,7 @@ public class HomeEndPoint {
   @Path("/DataBaseSanityCheck")
   public String dataBaseSanityCheck() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       Thread t = new Thread(new DataBaseSanityCheck());
       t.start();
       return "DataBaseSanityCheck already running, please check DB result.";
@@ -206,7 +206,7 @@ public class HomeEndPoint {
     }
     final String date1 = startDate;
     final String date2 = endDate;
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       Thread t = new Thread(new Runnable() {
         public void run() {
           DataBaseSanityCheck ins = new DataBaseSanityCheck();
@@ -223,7 +223,7 @@ public class HomeEndPoint {
   @Path("/DailyOverAllRunner")
   public String dailyOverAllRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
 //      boolean isGetZiJinLiu = true;
 //      Thread t = new Thread(new DailyOverAllRunner(isGetZiJinLiu));
 //      t.start();
@@ -246,7 +246,7 @@ public class HomeEndPoint {
   @Path("/FastDailyOverAllRunner")
   public String fastDailyOverAllRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       boolean isGetZiJinLiu = false;
       Thread t = new Thread(new DailyOverAllRunner(isGetZiJinLiu));
       t.start();
@@ -259,7 +259,7 @@ public class HomeEndPoint {
   @Path("/RecentlySelectionRunner")
   public String recentlySelectionRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       Thread t = new Thread(new RecentlySelectionRunner());
       t.start();
       return "RecentlySelectionRunner already running, please check DB result.";
@@ -271,7 +271,7 @@ public class HomeEndPoint {
   @Path("/DailyUpdatePriceAndIndicatorRunner")
   public String dailyUpdatePriceAndIndicatorRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       Thread t = new Thread(new DailyUpdateStockPriceAndIndicatorRunner());
       t.start();
       return "DailyUpdatePriceAndIndicatorRunner already running, please check DB result.";
@@ -283,7 +283,7 @@ public class HomeEndPoint {
   @Path("/DailyDDXRunner")
   public String dailyDDXRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       Thread t = new Thread(new DailyDDXRunner());
       t.start();
       return "DailyDDXRunner already running, please check DB result.";
@@ -295,7 +295,7 @@ public class HomeEndPoint {
   @Path("/DailyViewAnalyseRunner")
   public String dailyViewAnalyseRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       Thread t = new Thread(new DailyViewAnalyseRunner());
       t.start();
       return "DailyViewAnalyseRunner already running, please check folder result.";
@@ -308,7 +308,7 @@ public class HomeEndPoint {
   public String downloadStockPrice() {
     String zone = config.getString("zone", "");
     // day (download all stockIds price)
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       DailyStockPriceDownloadAndStoreDBRunner2 runner =
           new DailyStockPriceDownloadAndStoreDBRunner2();
       Thread t = new Thread(runner);
@@ -323,7 +323,7 @@ public class HomeEndPoint {
   public String updateCompanyFromFileToDB() {
     String zone = config.getString("zone", "");
     // update the total GuBen and LiuTong GuBen
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       CompanyInfoFileHelper ins = new CompanyInfoFileHelper();
       ins.updateCompanyFromFileToDB();
       return "UpdateCompanyFromFileToDB already running, please check folder result.";
@@ -336,7 +336,7 @@ public class HomeEndPoint {
   public String updateStockPriceHistoryOverAllRunner(@PathParam("date") String dateParm) {
     String zone = config.getString("zone", "");
     // update the total GuBen and LiuTong GuBen
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       String startDate = null, endDate = null;
       if (Pattern.matches(fromToRegex, dateParm)) {
         startDate = dateParm.split("_")[0];
@@ -356,7 +356,7 @@ public class HomeEndPoint {
   @Path("/IndicatorHistortOverAllRunner")
   public String indicatorHistortOverAllRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       Thread t = new Thread(new IndicatorHistortOverAllRunner());
       t.start();
       return "IndicatorHistortOverAllRunner already running, please check folder result.";
@@ -368,7 +368,7 @@ public class HomeEndPoint {
   @Path("/DailyReplicateRunner")
   public String dailyReplicateRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       Thread t = new Thread(new DailyReplicateRunner());
       t.start();
       return "DailyReplicateRunner already running, please check folder result.";
@@ -380,7 +380,7 @@ public class HomeEndPoint {
   @Path("/OneTimeDynamicRunner")
   public String oneTimeDynamicRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       DynamicRunner.main(null);
       return "OneTimeDynamicRunner already running, please check folder result.";
     }
@@ -391,7 +391,7 @@ public class HomeEndPoint {
   @Path("/HistoryAnalyseReport")
   public String oneTimeTempRunner() {
     String zone = config.getString("zone", "");
-    if (Constants.ZONE_OFFICE.equals(zone)) {
+    if (Constants.ZONE_HOME.equals(zone)) {
       Thread t = new Thread(new Runnable() {
         public void run() {
           HistoryAnalyseReport reporter = new HistoryAnalyseReport();

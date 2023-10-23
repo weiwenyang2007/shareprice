@@ -9,9 +9,7 @@ import org.easystogu.log.LogHelper;
 import org.easystogu.analyse.vo.CheckPointFlagsVO;
 import org.easystogu.analyse.vo.ShenXianUIVO;
 import org.easystogu.utils.Strings;
-import org.easystogu.utils.WeekdayUtil;
 import org.slf4j.Logger;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,14 +109,14 @@ public class FlagsAnalyseHelper {
         // 空头
         if (isBBIDead(spvo.date, bbiList)) {
           if (isMacdDead(spvo.date, macdList) && isShenXianDead(spvo.date, sxList)) {
-            sxvo.setSellFlagsTitle("空D2");
-            sxvo.setSellFlagsText(spvo.close + " " + macdStr + "Macd神仙死叉,清仓2/3");
+            sxvo.setSellFlagsTitle(combine(sxvo.getSellFlagsTitle(), "空D2"));
+            sxvo.setSellFlagsText(combine(sxvo.getSellFlagsText(),macdStr + "Macd神仙死叉,清仓2/3"));
           } else if (isMacdDead(spvo.date, macdList)) {
-            sxvo.setSellFlagsTitle("空D");
-            sxvo.setSellFlagsText(spvo.close + " " + macdStr + "Macd死叉,清仓2/3");
+            sxvo.setSellFlagsTitle(combine(sxvo.getSellFlagsTitle(),"空D"));
+            sxvo.setSellFlagsText(combine(sxvo.getSellFlagsText(),macdStr + "Macd死叉,清仓2/3"));
           } else if (isShenXianDead(spvo.date, sxList)) {
-            sxvo.setSellFlagsTitle("空D");
-            sxvo.setSellFlagsText(spvo.close + " 神仙死叉,清仓2/3");
+            sxvo.setSellFlagsTitle(combine(sxvo.getSellFlagsTitle(),"空D"));
+            sxvo.setSellFlagsText(combine(sxvo.getSellFlagsText(),"神仙死叉,清仓2/3"));
           } else {
             // do not print it since too many occurs
             // sxvo.setSellFlagsTitle("空");
@@ -128,14 +126,14 @@ public class FlagsAnalyseHelper {
         // 多头
         if (isBBIGordon(spvo.date, bbiList)) {
           if (isMacdGordon(spvo.date, macdList) && isShenXianGordon(spvo.date, sxList)) {
-            sxvo.setDuoFlagsTitle("多金2");
-            sxvo.setDuoFlagsText(macdStr + " Macd神仙金叉,试仓1/3");
+            sxvo.setDuoFlagsTitle(combine(sxvo.getDuoFlagsTitle(),"多金2"));
+            sxvo.setDuoFlagsText(combine(sxvo.getDuoFlagsText(),macdStr + " Macd神仙金叉,试仓1/3"));
           } else if (isShenXianGordon(spvo.date, sxList)) {
-            sxvo.setDuoFlagsTitle("多金");
-            sxvo.setDuoFlagsText("神仙金叉,试仓1/3");
+            sxvo.setDuoFlagsTitle(combine(sxvo.getDuoFlagsTitle(),"多金"));
+            sxvo.setDuoFlagsText(combine(sxvo.getDuoFlagsText(),"神仙金叉,试仓1/3"));
           } else if (isMacdGordon(spvo.date, macdList)) {
-            sxvo.setDuoFlagsTitle("多金");
-            sxvo.setDuoFlagsText(macdStr + " MACD金叉,试仓1/3");
+            sxvo.setDuoFlagsTitle(combine(sxvo.getDuoFlagsTitle(),"多金"));
+            sxvo.setDuoFlagsText(combine(sxvo.getDuoFlagsText(),macdStr + " MACD金叉,试仓1/3"));
           } else {
             // most of time come here
             // do not print it since too many occurs
@@ -199,19 +197,22 @@ public class FlagsAnalyseHelper {
           sxvo.setDuoFlagsText(text);
         }
 
+        //太多这种诱多诱空的标记，暂时去掉
         // 多头做T
         if ((sxvo.h1 >= sxvo.h2)) {
           // buy point
-          //太多这种诱多诱空的标记，暂时去掉
           if (spvo.low <= sxvo.hc6) {
-            sxvo.setBuyFlagsTitle("B");
-            sxvo.setBuyFlagsText(sxvo.hc6 + " HC6支撑,增仓1/3");
+            //sxvo.setBuyFlagsTitle("B");
+            //sxvo.setBuyFlagsText(sxvo.hc6 + " HC6支撑,增仓1/3");
+            //统一使用SellFlags显示B/S信号
+            sxvo.setSellFlagsTitle("B");
+            sxvo.setSellFlagsText(sxvo.hc6 + " HC6支撑,增仓1/3");
           }
 
           // sell point
           if (spvo.high >= sxvo.hc5) {
             sxvo.setSellFlagsTitle("S");
-            sxvo.setSellFlagsText(sxvo.hc5 + " HC5压力, 减仓1/3");
+            sxvo.setSellFlagsText("HC5压力, 减仓1/3");
           }
         }
 
@@ -785,5 +786,12 @@ public class FlagsAnalyseHelper {
 
   private List<CheckPointDailySelectionVO> getCheckPoints(String stockId) {
     return checkPointDailySelectionCache.getCheckPointByStockId(stockId);
+  }
+
+  private String combine(String meyBeExistText, String newText){
+    if(Strings.isNotEmpty(meyBeExistText)){
+      return meyBeExistText + "," + newText;
+    }
+    return newText;
   }
 }

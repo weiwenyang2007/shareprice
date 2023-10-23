@@ -12,7 +12,7 @@ import org.easystogu.sina.runner.DailyWeeklyStockPriceCountAndSaveDBRunner;
 
 public class DailyUpdateAllStockRunner implements Runnable {
 	private WSFConfigTableHelper wsfConfig = WSFConfigTableHelper.getInstance();
-	private String zone = wsfConfig.getValue("zone", Constants.ZONE_OFFICE);
+	private String zone = wsfConfig.getValue("zone", Constants.ZONE_HOME);
 	private CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
 	private List<String> allStockIds = stockConfig.getAllStockId();
 	private DailySelectionRunner dailySelectionRunner = null;
@@ -25,7 +25,7 @@ public class DailyUpdateAllStockRunner implements Runnable {
 	public void run() {
 		String[] args = null;
 		long st = System.currentTimeMillis();
-		// day (download all stockIds price)
+		// day (download all stockIds price from sina realtime stock price)
 		DailyStockPriceDownloadAndStoreDBRunner2.main(args);
 		// day ind
 		new AllDailyIndCountAndSaveDBRunner().runDailyIndForStockIds(allStockIds);
@@ -47,7 +47,7 @@ public class DailyUpdateAllStockRunner implements Runnable {
 		// alaylse by view names
 		new DailyViewAnalyseRunner().run();
 
-		System.out.println("stop using " + (System.currentTimeMillis() - st) / 1000 + " seconds");
+		System.out.println("End DailyUpdateAllStockRunner, spent " + (System.currentTimeMillis() - st) / 1000 + " seconds");
 	}
 
 	public static void main(String[] args) {

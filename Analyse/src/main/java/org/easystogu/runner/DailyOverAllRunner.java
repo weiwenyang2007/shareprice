@@ -4,7 +4,7 @@ import org.easystogu.cache.runner.AllCacheRunner;
 
 public class DailyOverAllRunner implements Runnable {
 
-	public boolean isGetZiJinLiu = true;
+	public boolean isGetZiJinLiu = false;
 
 	public DailyOverAllRunner(boolean isGetZiJinLiu) {
 		this.isGetZiJinLiu = isGetZiJinLiu;

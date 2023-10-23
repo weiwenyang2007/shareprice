@@ -1,6 +1,7 @@
 package org.easystogu.scheduler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.easystogu.analyse.ShenXianSellAnalyseHelper;
@@ -8,7 +9,6 @@ import org.easystogu.cache.ConfigurationServiceCache;
 import org.easystogu.cache.runner.AllCacheRunner;
 import org.easystogu.checkpoint.DailyCombineCheckPoint;
 import org.easystogu.config.Constants;
-import org.easystogu.easymoney.runner.OverAllZiJinLiuAndDDXRunner;
 import org.easystogu.file.access.CompanyInfoFileHelper;
 import org.easystogu.indicator.runner.AllDailyIndCountAndSaveDBRunner;
 import org.easystogu.log.LogHelper;
@@ -16,7 +16,6 @@ import org.easystogu.report.HistoryAnalyseReport;
 import org.easystogu.runner.DailyCandleStickPatternRunner;
 import org.easystogu.runner.DailyOverAllRunner;
 import org.easystogu.runner.DailySelectionRunner;
-import org.easystogu.runner.DailyUpdateStockPriceAndDDXRunner;
 import org.easystogu.runner.DailyViewAnalyseRunner;
 import org.easystogu.runner.DataBaseSanityCheck;
 import org.easystogu.sina.runner.DailyStockPriceDownloadAndStoreDBRunner2;
@@ -25,7 +24,7 @@ import org.easystogu.sina.runner.history.HistoryQianFuQuanStockPriceDownloadAndS
 import org.easystogu.sina.runner.history.HistoryStockPriceDownloadAndStoreDBRunner;
 import org.easystogu.sina.runner.history.HistoryWeekStockPriceCountAndSaveDBRunner;
 import org.easystogu.sina.runner.history.StockPriceHistoryOverAllRunner;
-import org.easystogu.database.replicate.DailyReplicateRunner;
+import org.easystogu.utils.Strings;
 import org.easystogu.utils.WeekdayUtil;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +41,10 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 public class DailyScheduler implements SchedulingConfigurer {
 	private static Logger logger = LogHelper.getLogger(DailyScheduler.class);
 	private ConfigurationServiceCache config = ConfigurationServiceCache.getInstance();
-	private String zone = config.getString("zone", Constants.ZONE_OFFICE);
+	private String zone = config.getString("zone", Constants.ZONE_HOME);
 	private boolean dailyUpdateStockPriceByBatch = config.getBoolean(Constants.DailyUpdateStockPriceByBatch, false);
 	private CompanyInfoFileHelper companyInfoHelper = CompanyInfoFileHelper.getInstance();
-	
+	private DataBaseSanityCheck sanityCheck = new DataBaseSanityCheck();
 	private CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
 
 	@Autowired
@@ -59,10 +58,63 @@ public class DailyScheduler implements SchedulingConfigurer {
 	// refer to:
 	// http://www.quartz-scheduler.org/documentation/quartz-1.x/tutorials/crontrigger
 
-	// run at 11:31 DailyOverAllRunner
-	//@Scheduled(cron = "0 31 11 * * MON-FRI")
+	// every 2 mins from 9:25 to 9:40, Monday to Friday
+	@Scheduled(cron = "0 0/2 09 * * MON-FRI")
+	public void updateStockPriceOnlyEvery2Mins() {
+		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
+			String time = WeekdayUtil.currentTime();
+			if ((time.compareTo("09-25-00") >= 0 && time.compareTo("09-40-00") <= 0)) {
+				logger.info("Start updateStockPriceOnlyEvery2Mins");
+				long startTs = System.currentTimeMillis();
+				updateRealtimeStockPriceForEasyTrader();
+				logger.info("End updateStockPriceOnlyEvery2Mins, spent " + (System.currentTimeMillis() - startTs)/1000 + " seconds");
+			}
+		}
+	}
+
+	// every 10 mins from 9:40 to 15:00, Monday to Friday
+	@Scheduled(cron = "0 0/10 09,10,11,13,14 * * MON-FRI")
+	public void updateStockPriceOnlyEvery10Mins() {
+		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
+			String time = WeekdayUtil.currentTime();
+			if ((time.compareTo("09-40-00") >= 0 && time.compareTo("11-30-00") <= 0)
+					|| (time.compareTo("13-00-00") >= 0 && time.compareTo("15-00-00") <= 0)) {
+				logger.info("Start updateStockPriceOnlyEvery10Mins");
+				long startTs = System.currentTimeMillis();
+				updateRealtimeStockPriceForEasyTrader();
+				logger.info("End updateStockPriceOnlyEvery10Mins, spent " + (System.currentTimeMillis() - startTs)/1000 + " seconds");
+			}
+		}
+	}
+
+	public void updateRealtimeStockPriceForEasyTrader() {
+		// day (download all stockIds price from sina realtime stock price)
+		String pages = config.getString("realtime_stock_quota_service_page_number_list");//example: 7 or 7,10
+		String stockIds = config.getString("easytrader_stock_list");//example: 600547 or 600547,300059
+		if(Strings.isNotEmpty(pages)) {
+			DailyStockPriceDownloadAndStoreDBRunner2 runner = new DailyStockPriceDownloadAndStoreDBRunner2();
+			runner.downloadTradeTodayRealTimePriceAndSave2DB(pages);
+
+			// update indicators for part of the stockIds
+			if(Strings.isNotEmpty(stockIds)) {
+				List<String> stocks = Arrays.asList(stockIds.split(","));
+				// day ind
+				new AllDailyIndCountAndSaveDBRunner().runDailyIndForStockIds(stocks);
+				// week
+				new DailyWeeklyStockPriceCountAndSaveDBRunner().countAndSave(stocks);
+				// week ind
+				new AllDailyIndCountAndSaveDBRunner().runDailyWeekIndForStockIds(stocks);
+				// update cache
+				AllCacheRunner cacheRunner = new AllCacheRunner();
+				cacheRunner.refreshAll();
+			}
+		}
+	}
+
+	// run at 11:40 DailyOverAllRunner
+	@Scheduled(cron = "0 40 11 * * MON-FRI")
 	public void _1_DailyOverAllRunner() {
-		if (Constants.ZONE_OFFICE.equalsIgnoreCase(zone)) {
+		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			boolean isGetZiJinLiu = false;
 			this.DailyOverAllRunner(isGetZiJinLiu);
 		}
@@ -71,12 +123,10 @@ public class DailyScheduler implements SchedulingConfigurer {
 	// run at 18:30 DailyOverAllRunner
 	@Scheduled(cron = "0 30 18 * * MON-FRI")
 	public void _3_DailyOverAllRunner() {
-		if (Constants.ZONE_OFFICE.equalsIgnoreCase(zone)) {
-//		  DailyOverAllRunner runner = new DailyOverAllRunner(false);
-//		  runner.runForSchedule();
-		  
+		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 		  Thread t = new Thread(new Runnable() {
 	        public void run() {
+	        	//This will use sohu history stock data
 	          new StockPriceHistoryOverAllRunner(WeekdayUtil.currentDate(), WeekdayUtil.currentDate()).run();
 	          
 	          List<String> allStockIds = stockConfig.getAllStockId();
@@ -111,51 +161,16 @@ public class DailyScheduler implements SchedulingConfigurer {
 	public void _0_DataBaseSanityCheck() {
 		// only run at office, since at aliyun, there is daily santy after price
 		// update
-		if (Constants.ZONE_OFFICE.equalsIgnoreCase(zone)) {
+		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			logger.info("DataBaseSanityCheck already running.");
 			Thread t = new Thread(new DataBaseSanityCheck());
 			t.start();
 		}
 	}
 
-	// run at 16:30
-	//@Scheduled(cron = "0 30 16 * * MON-FRI")
-	public void _3_DailyReplicateRunnerFromAliyun() {
-		if (Constants.ZONE_OFFICE.equalsIgnoreCase(zone)) {
-			logger.info("DailyReplicateRunnerFromAliyun already running.");
-			new DailyReplicateRunner().run();
-
-			// after update price, do the sanity test
-			new DataBaseSanityCheck().run();
-		}
-	}
-
-	// run at 21:45
-	// @Scheduled(cron = "0 45 21 * * MON-FRI")
-	public void _0_DailyZiJinLiuAndDDX() {
-		logger.info("OverAllZiJinLiuAndDDXRunner and DDX for all StockId already running.");
-		if (Constants.ZONE_OFFICE.equalsIgnoreCase(zone)) {
-			OverAllZiJinLiuAndDDXRunner runner = new OverAllZiJinLiuAndDDXRunner();
-			Thread t = new Thread(runner);
-			t.start();
-		}
-	}
-
-	// run at 15:06
-	// @Scheduled(cron = "0 06 15 * * MON-FRI")
-	public void _0_DailyUpdateStockPriceAndDDXRunner() {
-		logger.info("DailyUpdateStockPriceAndDDXRunner already running, please check DB result.");
-		if (Constants.ZONE_ALIYUN.equalsIgnoreCase(zone)) {
-			// daily (download all stockIds price and all zijinliu for ddx)
-			DailyUpdateStockPriceAndDDXRunner runner = new DailyUpdateStockPriceAndDDXRunner();
-			runner.setFetchAllZiJinLiu(true);
-			Thread t = new Thread(runner);
-			t.start();
-		}
-	}
-
 	private void DailyOverAllRunner(boolean isGetZiJinLiu) {
 		logger.info("DailyOverAllRunner already running, please check DB result.");
+		//This will use sina realtime stock data
 		DailyOverAllRunner runner = new DailyOverAllRunner(isGetZiJinLiu);
 		Thread t = new Thread(runner);
 		t.start();
@@ -173,7 +188,7 @@ public class DailyScheduler implements SchedulingConfigurer {
 			return;
 		}
 
-		if (Constants.ZONE_ALIYUN.equalsIgnoreCase(zone)) {
+		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			logger.info("DailyUpdateStockPriceByBatch already running, please check DB result.");
 			List<String> allStockIds = companyInfoHelper.getAllStockId();
 			List<String> stockIds = new ArrayList<String>();
@@ -215,26 +230,6 @@ public class DailyScheduler implements SchedulingConfigurer {
 			// after update price, do the sanity test
 			new DataBaseSanityCheck().run();
 		}
-	}
-
-	// every 15 mins from 9 to 15, Monday to Friday
-	//@Scheduled(cron = "0 0/15 09,10,11,13,14 * * MON-FRI")
-	public void updateStockPriceOnlyEveryMins() {
-		if (Constants.ZONE_ALIYUN.equalsIgnoreCase(zone)) {
-			String time = WeekdayUtil.currentTime();
-			if ((time.compareTo("09-25-00") >= 0 && time.compareTo("11-30-00") <= 0)
-					|| (time.compareTo("13-00-00") >= 0 && time.compareTo("15-00-00") <= 0)) {
-				logger.info("updateStockPriceOnlyEvery15Mins start at " + time);
-				// day (download all stockIds price)
-				DailyStockPriceDownloadAndStoreDBRunner2 runner = new DailyStockPriceDownloadAndStoreDBRunner2();
-				runner.run();
-				// update cache
-				AllCacheRunner cacheRunner = new AllCacheRunner();
-				cacheRunner.refreshAll();
-				logger.info("updateStockPriceOnlyEvery15Mins stop at " + WeekdayUtil.currentTime());
-			}
-		}
-
 	}
 
 	// just run onece
