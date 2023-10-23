@@ -90,7 +90,7 @@ public class DailyScheduler implements SchedulingConfigurer {
 	public void updateRealtimeStockPriceForEasyTrader() {
 		// day (download all stockIds price from sina realtime stock price)
 		String pages = config.getString("realtime_stock_quota_service_page_number_list");//example: 7 or 7,10
-		String stockIds = config.getString("realtime_stock_quota_service_page_number_list");//example: 600547 or 600547,300059
+		String stockIds = config.getString("easytrader_stock_list");//example: 600547 or 600547,300059
 		if(Strings.isNotEmpty(pages)) {
 			DailyStockPriceDownloadAndStoreDBRunner2 runner = new DailyStockPriceDownloadAndStoreDBRunner2();
 			runner.downloadTradeTodayRealTimePriceAndSave2DB(pages);
