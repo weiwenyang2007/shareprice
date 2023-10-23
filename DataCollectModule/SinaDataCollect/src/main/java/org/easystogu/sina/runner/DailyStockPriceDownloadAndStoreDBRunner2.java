@@ -65,6 +65,9 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
 
     //specify the latestDate and pageNumber to get the specify stockId's realtime price from sina (result contains many stockId's price, should filter them by code)
     //for example: https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?page=7&num=100&sort=symbol&asc=1&node=hs_a
+
+    //another api to get realtime stock price is :
+    //https://vip.stock.finance.sina.com.cn/quotes_service/view/vML_DataList.php?asc=j&symbol=sh600547&num=5
     public void downloadDataAndSaveIntoDB(String latestDate, int page) {
 
         if (Strings.isEmpty(latestDate)) {

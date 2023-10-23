@@ -21,6 +21,9 @@ import net.sf.json.JSONObject;
 
 //get real time stock price from http://vip.stock.finance.sina.com.cn/quotes_service/api/
 //it will get all the stockId from the web, including the new on board stockId
+
+//another api to get realtime stock price is :
+//https://vip.stock.finance.sina.com.cn/quotes_service/view/vML_DataList.php?asc=j&symbol=sh600547&num=5
 public class DailyStockPriceDownloadHelper2 {
 	private CompanyInfoTableHelper companyInfoTable = CompanyInfoTableHelper.getInstance();
 	// currently total stock number is less then 3000, if increase, then enlarge
