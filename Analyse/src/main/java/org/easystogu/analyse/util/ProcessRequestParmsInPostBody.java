@@ -49,7 +49,7 @@ public class ProcessRequestParmsInPostBody {
 		return instance;
 	}
 
-	//根据trendMode预计算股价
+	//根据trendMode预计算
 	public List<StockPriceVO> updateStockPriceAccordingToRequest(String stockId, JSONObject jsonParm) {
 
 		List<StockPriceVO> spList = fetchAllPrices(stockId);
@@ -59,20 +59,59 @@ public class ProcessRequestParmsInPostBody {
 		try {
 			// parms has process priority, do not change the order
 			int repeatTimes = 1;
-			String repeatTimesParms = jsonParm.getString("repeatTimes");
-			if (Strings.isNotEmpty(repeatTimesParms) && Strings.isNumeric(repeatTimesParms)) {
-				repeatTimes = Integer.parseInt(repeatTimesParms);
+			if(jsonParm.has("repeatTimes")) {
+				String repeatTimesParms = jsonParm.getString("repeatTimes");
+				if (Strings.isNotEmpty(repeatTimesParms) && Strings.isNumeric(repeatTimesParms)) {
+					repeatTimes = Integer.parseInt(repeatTimesParms);
+				}
 			}
 
-			String trendModeName = jsonParm.getString("trendModeName");
-			if (Strings.isNotEmpty(trendModeName)) {
-				spList = this.appendTrendModePrice(trendModeName, repeatTimes, spList);
+			if(jsonParm.has("trendModeName")) {
+				String trendModeName = jsonParm.getString("trendModeName");
+				if (Strings.isNotEmpty(trendModeName)) {
+					spList = this.appendTrendModePrice(trendModeName, repeatTimes, spList);
+				}
 			}
 
-			String nDays = jsonParm.getString("nDays");
-			if (Strings.isNotEmpty(nDays) && Strings.isNumeric(nDays)) {
-				spList = this.mergeNDaysPrice(Integer.parseInt(nDays), spList);
+			if(jsonParm.has("nDays")) {
+				String nDays = jsonParm.getString("nDays");
+				if (Strings.isNotEmpty(nDays) && Strings.isNumeric(nDays)) {
+					spList = this.mergeNDaysPrice(Integer.parseInt(nDays), spList);
+				}
 			}
+
+			// based currently realtime stock price data (O,H,L,C),
+			// mock to change the current Close price and predict today's Buy,Sell indicator
+			if(jsonParm.has("mockCurPriceAndPredictTodayBSInd")) {
+				String mockCurPriceAndPredictTodayBSInd = jsonParm
+						.getString("mockCurPriceAndPredictTodayBSInd");
+				if (Strings.isNotEmpty(mockCurPriceAndPredictTodayBSInd)) {
+					//close price change percentage
+					//increase percentage such as: 0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.10
+					//decrease percentage such as: 0,-0.01,-0.02,-0.03,-0.04,-0.05,-0.06,-0.07,-0.08,-0.09,-0.10
+					double mockClosePricePercent = Double.parseDouble(mockCurPriceAndPredictTodayBSInd);
+					StockPriceVO curVo = spList.get(spList.size() - 1).copy();
+					//System.out.println("before mockCurPriceAndPredictTodayBSInd="+mockCurPriceAndPredictTodayBSInd + ", update vo="+curVo.toString());
+					if (WeekdayUtil.currentDate().equals(curVo.date) && curVo.open > 0 && curVo.close > 0) {
+						curVo.close = curVo.close * (1.0 + mockClosePricePercent);
+						//keep open price, since at this time the open price had been known
+						//adjust the high and low price accordingly
+						if (curVo.close > curVo.high) {
+							curVo.high = curVo.close;
+						}
+						if (curVo.close < curVo.low) {
+							curVo.low = curVo.close;
+						}
+						//override it
+						spList.set(spList.size() - 1, curVo);
+						//System.out.println("after mockCurPriceAndPredictTodayBSInd="+mockCurPriceAndPredictTodayBSInd + ", update vo="+curVo.toString());
+					} else {
+						System.out.println(
+								"mockCurPriceAndPredictTodayBSInd error, either today is not a trader day, nor the stock price is not updated");
+					}
+				}
+			}
+
 		}catch(org.json.JSONException e){
 			e.printStackTrace();
 		}
@@ -163,23 +202,27 @@ public class ProcessRequestParmsInPostBody {
 			if (jsonParm != null) {
 				try{
 					int repeatTimes = 1;
-					String repeatTimesParms = jsonParm.getString("repeatTimes");
-					if (Strings.isNotEmpty(repeatTimesParms) && Strings.isNumeric(repeatTimesParms)) {
-						repeatTimes = Integer.parseInt(repeatTimesParms);
+					if(jsonParm.has("repeatTimes")) {
+						String repeatTimesParms = jsonParm.getString("repeatTimes");
+						if (Strings.isNotEmpty(repeatTimesParms) && Strings.isNumeric(repeatTimesParms)) {
+							repeatTimes = Integer.parseInt(repeatTimesParms);
+						}
 					}
 
-					String trendModeName = jsonParm.getString("trendModeName");
-					if (Strings.isNotEmpty(trendModeName)) {
-						TrendModeVO tmo = trendModeLoader.loadTrendMode(trendModeName).copy();
+					if(jsonParm.has("trendModeName")) {
+						String trendModeName = jsonParm.getString("trendModeName");
+						if (Strings.isNotEmpty(trendModeName)) {
+							TrendModeVO tmo = trendModeLoader.loadTrendMode(trendModeName).copy();
 
-						List<SimplePriceVO> origList = tmo.getPricesByCopy();
-						for (int i = 1; i < repeatTimes; i++) {
-							tmo.prices.addAll(origList);
-						}
+							List<SimplePriceVO> origList = tmo.getPricesByCopy();
+							for (int i = 1; i < repeatTimes; i++) {
+								tmo.prices.addAll(origList);
+							}
 
-						if (tmo.prices.size() > 0) {
-							String newEndDate = WeekdayUtil.nextNWorkingDate(endDate, tmo.prices.size());
-							return fromDate + "_" + newEndDate;
+							if (tmo.prices.size() > 0) {
+								String newEndDate = WeekdayUtil.nextNWorkingDate(endDate, tmo.prices.size());
+								return fromDate + "_" + newEndDate;
+							}
 						}
 					}
 				}catch(org.json.JSONException e){

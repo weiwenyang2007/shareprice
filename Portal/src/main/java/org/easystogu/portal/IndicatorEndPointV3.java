@@ -1,8 +1,12 @@
 package org.easystogu.portal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -34,7 +38,6 @@ import org.easystogu.trendmode.TrendModeLoader;
 import org.easystogu.analyse.vo.ShenXianUIVO;
 import org.easystogu.utils.Strings;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.easystogu.cache.ConfigurationServiceCache;
 import com.google.common.primitives.Doubles;
 import com.google.gson.Gson;
@@ -215,6 +218,50 @@ public class IndicatorEndPointV3 {
 		}
 		List<ShenXianUIVO> rtnList = shenXianSellAnalyseHelper.queryShenXianSellById(stockIdParm, dateParm, jsonParm);
 		return gson.toJson(rtnList);
+	}
+
+	@POST
+	@Path("/predictTodayBuySell/{stockId}/{date}")
+	@Produces("application/json")
+	public String mockCurPriceAndPredictTodayBSInd(@PathParam("stockId") String stockIdParm,
+			@PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
+		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
+		//stockIdParm is like: 603999
+		//dateParm is like: 2016-11-29_2022-05-22
+		//postBody is like: {"mockCurPriceAndPredictTodayBSInd":"0.02"}
+
+		Map<String, ShenXianUIVO> buySellMap = new HashMap<String, ShenXianUIVO>();
+		boolean buyPointFind = false;
+		boolean sellPointFind = false;
+
+		String bodyTemplate = "{'mockCurPriceAndPredictTodayBSInd':'changeTmpl'}";
+		String[] percent = {"0.0", "0.010", "-0.010", "0.015", "-0.015","0.020", "-0.020", "0.025", "-0.025","0.030", "-0.030", "0.035", "-0.035","0.040", "-0.040", "0.045", "-0.045", "0.050", "-0.050"};
+		//loop from the minimum price change to a larger change, only return the first occurrence
+		for(int i=0; i < percent.length; i++){
+					String change = percent[i];
+					String realPostBody = bodyTemplate.replaceFirst("changeTmpl",change);
+					JSONObject jsonParm = null;
+					try {
+							jsonParm = new JSONObject(realPostBody);
+					}catch(org.json.JSONException e){
+						e.printStackTrace();
+					}
+					List<ShenXianUIVO> rtnList = shenXianSellAnalyseHelper.queryShenXianSellById(stockIdParm, dateParm, jsonParm);
+					ShenXianUIVO curVo = rtnList.get(rtnList.size() - 1);
+					//System.out.println("change="+change + ", curVo="+curVo.toString());
+					if(!buyPointFind && (curVo.sellFlagsTitle.contains("B") || curVo.buyFlagsTitle.contains("B"))){
+						buyPointFind = true;
+						buySellMap.put("Buy@"+change,  curVo);
+					}
+					if(!sellPointFind && (curVo.sellFlagsTitle.contains("S") || curVo.buyFlagsTitle.contains("S"))){
+						sellPointFind = true;
+						buySellMap.put("Sell@"+change,  curVo);
+					}
+					if(buyPointFind && sellPointFind){
+						break;
+					}
+		}
+		return gson.toJson(buySellMap);
 	}
 
 	@POST
