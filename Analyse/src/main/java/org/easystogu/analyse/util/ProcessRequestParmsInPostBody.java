@@ -87,8 +87,7 @@ public class ProcessRequestParmsInPostBody {
 						.getString("mockCurPriceAndPredictTodayBSInd");
 				if (Strings.isNotEmpty(mockCurPriceAndPredictTodayBSInd)) {
 					//close price change percentage
-					//increase percentage such as: 0,0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.10
-					//decrease percentage such as: 0,-0.01,-0.02,-0.03,-0.04,-0.05,-0.06,-0.07,-0.08,-0.09,-0.10
+					//increase percentage such as: "0.0", "0.010", "-0.010", "0.015", "-0.015","0.020", "-0.020", "0.025", "-0.025"
 					double mockClosePricePercent = Double.parseDouble(mockCurPriceAndPredictTodayBSInd);
 					StockPriceVO curVo = spList.get(spList.size() - 1).copy();
 					//System.out.println("before mockCurPriceAndPredictTodayBSInd="+mockCurPriceAndPredictTodayBSInd + ", update vo="+curVo.toString());

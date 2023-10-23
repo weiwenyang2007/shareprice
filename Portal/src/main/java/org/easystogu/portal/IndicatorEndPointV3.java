@@ -221,47 +221,49 @@ public class IndicatorEndPointV3 {
 	}
 
 	@POST
-	@Path("/predictTodayBuySell/{stockId}/{date}")
+	@Path("/predictTodayBuy/{stockId}/{date}")
 	@Produces("application/json")
-	public String mockCurPriceAndPredictTodayBSInd(@PathParam("stockId") String stockIdParm,
-			@PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
+	public String mockCurPriceAndPredictTodayBuyInd(@PathParam("stockId") String stockIdParm,
+												   @PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
-		//stockIdParm is like: 603999
-		//dateParm is like: 2016-11-29_2022-05-22
-		//postBody is like: {"mockCurPriceAndPredictTodayBSInd":"0.02"}
+		return gson.toJson(mockCurPriceAndPredictTodayInd(stockIdParm, dateParm, postBody, "B"));
+	}
 
-		Map<String, ShenXianUIVO> buySellMap = new HashMap<String, ShenXianUIVO>();
-		boolean buyPointFind = false;
-		boolean sellPointFind = false;
+	@POST
+	@Path("/predictTodaySell/{stockId}/{date}")
+	@Produces("application/json")
+	public String mockCurPriceAndPredictTodaySellInd(@PathParam("stockId") String stockIdParm,
+													@PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
+		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
+		return gson.toJson(mockCurPriceAndPredictTodayInd(stockIdParm, dateParm, postBody, "S"));
+	}
 
+	private ShenXianUIVO mockCurPriceAndPredictTodayInd(String stockIdParm, String dateParm, String postBody, String buyOrSell) {
 		String bodyTemplate = "{'mockCurPriceAndPredictTodayBSInd':'changeTmpl'}";
-		String[] percent = {"0.0", "0.010", "-0.010", "0.015", "-0.015","0.020", "-0.020", "0.025", "-0.025","0.030", "-0.030", "0.035", "-0.035","0.040", "-0.040", "0.045", "-0.045", "0.050", "-0.050"};
+		String[] percent = {"0.0",
+				"0.010", "-0.010", "0.015", "-0.015", "0.020", "-0.020", "0.025", "-0.025",
+				"0.030", "-0.030", "0.035", "-0.035", "0.040", "-0.040", "0.045", "-0.045",
+				"0.050", "-0.050", "0.055", "-0.055", "0.060", "-0.060", "0.065", "-0.065",
+				"0.070", "-0.070", "0.075", "-0.075", "0.080", "-0.080", "0.085", "-0.085",
+				"0.090", "-0.090", "0.095", "-0.095", "0.100", "-0.100"};
 		//loop from the minimum price change to a larger change, only return the first occurrence
 		for(int i=0; i < percent.length; i++){
-					String change = percent[i];
-					String realPostBody = bodyTemplate.replaceFirst("changeTmpl",change);
-					JSONObject jsonParm = null;
-					try {
-							jsonParm = new JSONObject(realPostBody);
-					}catch(org.json.JSONException e){
-						e.printStackTrace();
-					}
-					List<ShenXianUIVO> rtnList = shenXianSellAnalyseHelper.queryShenXianSellById(stockIdParm, dateParm, jsonParm);
-					ShenXianUIVO curVo = rtnList.get(rtnList.size() - 1);
-					//System.out.println("change="+change + ", curVo="+curVo.toString());
-					if(!buyPointFind && (curVo.sellFlagsTitle.contains("B") || curVo.buyFlagsTitle.contains("B"))){
-						buyPointFind = true;
-						buySellMap.put("Buy@"+change,  curVo);
-					}
-					if(!sellPointFind && (curVo.sellFlagsTitle.contains("S") || curVo.buyFlagsTitle.contains("S"))){
-						sellPointFind = true;
-						buySellMap.put("Sell@"+change,  curVo);
-					}
-					if(buyPointFind && sellPointFind){
-						break;
-					}
+			String change = percent[i];
+			String realPostBody = bodyTemplate.replaceFirst("changeTmpl",change);
+			JSONObject jsonParm = null;
+			try {
+					jsonParm = new JSONObject(realPostBody);
+			}catch(org.json.JSONException e){
+				e.printStackTrace();
+			}
+			List<ShenXianUIVO> rtnList = shenXianSellAnalyseHelper.queryShenXianSellById(stockIdParm, dateParm, jsonParm);
+			ShenXianUIVO curVo = rtnList.get(rtnList.size() - 1);
+			//System.out.println("change="+change + ", curVo="+curVo.toString());
+			if(curVo.sellFlagsTitle.contains(buyOrSell)){
+				return curVo;
+			}
 		}
-		return gson.toJson(buySellMap);
+		return new ShenXianUIVO();
 	}
 
 	@POST
