@@ -5,12 +5,15 @@ import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
 import org.easystogu.db.access.table.ScheduleActionTableHelper;
 import org.easystogu.db.vo.table.ScheduleActionVO;
 import org.easystogu.indicator.runner.history.IndicatorHistortOverAllRunner;
+import org.easystogu.log.LogHelper;
 import org.easystogu.sina.runner.history.HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner;
 import org.easystogu.sina.runner.history.HistoryStockPriceDownloadAndStoreDBRunner;
 import org.easystogu.sina.runner.history.HistoryWeekStockPriceCountAndSaveDBRunner;
 import org.easystogu.utils.WeekdayUtil;
+import org.slf4j.Logger;
 
 public class DailyScheduleActionRunner implements Runnable {
+  private static Logger logger = LogHelper.getLogger(DailyScheduleActionRunner.class);
   private String currentDate = WeekdayUtil.currentDate();
   private ScheduleActionTableHelper scheduleActionTable = ScheduleActionTableHelper.getInstance();
   private QianFuQuanStockPriceTableHelper qianfuquanStockPriceTable =
@@ -32,7 +35,7 @@ public class DailyScheduleActionRunner implements Runnable {
       if (currentDate.compareTo(savo.getRunDate()) >= 0) {
 
         if (savo.actionDo.equals(ScheduleActionVO.ActionDo.refresh_history_stockprice.name())) {
-          System.out.println("refresh_history_stockprice for " + savo.stockId);
+          logger.debug("refresh_history_stockprice for " + savo.stockId);
           // fetch original history data
           this.priceHistoryRunner.countAndSave(savo.stockId);
           // for qian fuquan history data
@@ -48,7 +51,7 @@ public class DailyScheduleActionRunner implements Runnable {
           indicatorHistoryRunner.countAndSave(savo.stockId);
         } else if (savo.actionDo
             .equals(ScheduleActionVO.ActionDo.refresh_fuquan_history_stockprice.name())) {
-          System.out.println("refresh_fuquan_history_stockprice for " + savo.stockId);
+          logger.debug("refresh_fuquan_history_stockprice for " + savo.stockId);
           // fetch hou ququan history data
           // this.historyHouFuQuanRunner.countAndSave(savo.stockId);
           // for qian fuquan
@@ -68,7 +71,7 @@ public class DailyScheduleActionRunner implements Runnable {
   }
 
   public void run() {
-    this.runAllScheduleAction();
+    //this.runAllScheduleAction();
   }
 
   public static void main(String[] args) {

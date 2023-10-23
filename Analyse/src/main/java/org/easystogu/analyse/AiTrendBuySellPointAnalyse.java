@@ -16,10 +16,13 @@ import org.easystogu.db.vo.table.CheckPointDailySelectionVO;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.db.vo.view.FavoritesFilterStockVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
+import org.easystogu.log.LogHelper;
 import org.easystogu.utils.Strings;
+import org.slf4j.Logger;
 
 //analyse whether ai trend predicate is better for each stockId
 public class AiTrendBuySellPointAnalyse {
+  private static Logger logger = LogHelper.getLogger(AiTrendBuySellPointAnalyse.class);
   private AiTrendPredictTableHelper aiTrendPredictTableHelper = AiTrendPredictTableHelper.getInstance();
   private CheckPointDailySelectionTableHelper checkPointDailySelectionTable = CheckPointDailySelectionTableHelper
       .getInstance();
@@ -47,7 +50,7 @@ public class AiTrendBuySellPointAnalyse {
     double earn =  (selAvg/buyAvg);//盈利百分比
     //due to AI spend much time for prediction, filter out the stock by Earning, limit the number of stockId to about 1250 (instead of all 4800)
     if((buyCount >= 60 && earn >= 1.15) || (buyCount >= 30 && earn >= 1.20) || (buyCount >= 20 && earn >= 1.25)) {
-      System.out.println("stockId " + stockId + ", buyCount=" + buyCount + ", buyAvg=" + Strings
+      logger.debug("stockId " + stockId + ", buyCount=" + buyCount + ", buyAvg=" + Strings
           .convert2ScaleDecimalStr(buyAvg, 2) + ", selCount=" + selCount + ", selAvg=" + Strings
           .convert2ScaleDecimalStr(selAvg, 2) + ", earn=" + Strings
           .convert2ScaleDecimalStr(earn, 2));

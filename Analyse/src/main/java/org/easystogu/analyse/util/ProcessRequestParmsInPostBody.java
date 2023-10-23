@@ -7,6 +7,7 @@ import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.util.MergeNDaysPriceUtil;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
+import org.easystogu.log.LogHelper;
 import org.easystogu.sina.runner.history.HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner;
 import org.easystogu.trendmode.TrendModeLoader;
 import org.easystogu.trendmode.vo.SimplePriceVO;
@@ -14,6 +15,7 @@ import org.easystogu.trendmode.vo.TrendModeVO;
 import org.easystogu.utils.Strings;
 import org.easystogu.utils.WeekdayUtil;
 import org.json.JSONObject;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,7 @@ import java.util.regex.Pattern;
 
 //@Component
 public class ProcessRequestParmsInPostBody {
+	private static Logger logger = LogHelper.getLogger(ProcessRequestParmsInPostBody.class);
 	protected StockPriceTableHelper qianFuQuanStockPriceTable = QianFuQuanStockPriceTableHelper.getInstance();
 	protected StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
 	protected CompanyInfoFileHelper companyInfoHelper = CompanyInfoFileHelper.getInstance();
@@ -105,7 +108,7 @@ public class ProcessRequestParmsInPostBody {
 						spList.set(spList.size() - 1, curVo);
 						//System.out.println("after mockCurPriceAndPredictTodayBSInd="+mockCurPriceAndPredictTodayBSInd + ", update vo="+curVo.toString());
 					} else {
-						System.out.println(
+						logger.debug(
 								"mockCurPriceAndPredictTodayBSInd error, either today is not a trader day, nor the stock price is not updated");
 					}
 				}

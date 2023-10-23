@@ -1,5 +1,8 @@
 package org.easystogu.utils;
 
+import org.easystogu.log.LogHelper;
+import org.slf4j.Logger;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,6 +12,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class WeekdayUtil {
+	private static Logger logger = LogHelper.getLogger(WeekdayUtil.class);
 	public static final String yyyy = "yyyy";
 	public static final String MM = "MM";
 	public static final String dd = "dd";
@@ -193,7 +197,7 @@ public class WeekdayUtil {
 
 			return dates;
 		} catch(Exception e){
-			System.err.println("Exception getWorkingDaysOfWeek year=" + year + ", week="+week + ", msg=" +e.getMessage());
+			logger.error("Exception getWorkingDaysOfWeek year=" + year + ", week="+week + ", msg=" +e.getMessage());
 			//e.printStackTrace();
 		}
 		return null;
@@ -245,7 +249,7 @@ public class WeekdayUtil {
 
 			return getWorkingDaysOfWeek(Integer.parseInt(ymd[0]), weekNumber);
 		} catch (Exception e) {
-			System.out.print("Exception for " + date);
+			logger.error("Exception for " + date);
 			e.printStackTrace();
 		}
 		return null;

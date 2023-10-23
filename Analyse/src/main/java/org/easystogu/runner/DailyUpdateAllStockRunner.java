@@ -7,10 +7,13 @@ import org.easystogu.db.access.table.WSFConfigTableHelper;
 import org.easystogu.easymoney.runner.OverAllZiJinLiuAndDDXRunner;
 import org.easystogu.file.access.CompanyInfoFileHelper;
 import org.easystogu.indicator.runner.AllDailyIndCountAndSaveDBRunner;
+import org.easystogu.log.LogHelper;
 import org.easystogu.sina.runner.DailyStockPriceDownloadAndStoreDBRunner2;
 import org.easystogu.sina.runner.DailyWeeklyStockPriceCountAndSaveDBRunner;
+import org.slf4j.Logger;
 
 public class DailyUpdateAllStockRunner implements Runnable {
+	private static Logger logger = LogHelper.getLogger(DailyUpdateAllStockRunner.class);
 	private WSFConfigTableHelper wsfConfig = WSFConfigTableHelper.getInstance();
 	private String zone = wsfConfig.getValue("zone", Constants.ZONE_HOME);
 	private CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
@@ -47,7 +50,7 @@ public class DailyUpdateAllStockRunner implements Runnable {
 		// alaylse by view names
 		new DailyViewAnalyseRunner().run();
 
-		System.out.println("End DailyUpdateAllStockRunner, spent " + (System.currentTimeMillis() - st) / 1000 + " seconds");
+		logger.debug("End DailyUpdateAllStockRunner, spent " + (System.currentTimeMillis() - st) / 1000 + " seconds");
 	}
 
 	public static void main(String[] args) {

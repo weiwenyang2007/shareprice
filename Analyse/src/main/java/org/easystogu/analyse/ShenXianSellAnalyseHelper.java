@@ -17,14 +17,17 @@ import org.easystogu.db.access.table.CheckPointDailySelectionTableHelper;
 import org.easystogu.db.vo.table.*;
 import org.easystogu.indicator.*;
 import org.easystogu.indicator.runner.utils.StockPriceFetcher;
+import org.easystogu.log.LogHelper;
 import org.easystogu.utils.Strings;
 import org.easystogu.utils.WeekdayUtil;
 import org.json.JSONObject;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 //@Component
 public class ShenXianSellAnalyseHelper {
+    private static Logger logger = LogHelper.getLogger(ShenXianSellAnalyseHelper.class);
     protected MACDHelper macdHelper = new MACDHelper();
     protected ShenXianHelper shenXianHelper = new ShenXianHelper();
     protected BBIHelper bbiHelper = new BBIHelper();
@@ -196,7 +199,7 @@ public class ShenXianSellAnalyseHelper {
         //run for each stockId
         selectStockIds.parallelStream().forEach(stockId
                 -> {
-            System.out.println("analyseWithPredictStockPrice process "+ stockId);
+            logger.debug("analyseWithPredictStockPrice process "+ stockId);
             List<ShenXianUIVO> shenXianUIVOList = queryShenXianSellById(stockId, startDate+"_"+curDate, jsonParm);
             //flag, date
             Map<String, String> flagMap = new HashMap<>();
@@ -272,7 +275,7 @@ public class ShenXianSellAnalyseHelper {
                 if(basicMatch && flagMap.containsKey(LUZAO_KEY6) && flagMap.containsKey(LUZAO_KEY1)
                         && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY6), flagMap.get(LUZAO_KEY1))
                         && WeekdayUtil.isDate1BeforeOrEqualDate2(curDate, flagMap.get(LUZAO_KEY1))){
-                    System.out.println("analyseWithPredictStockPrice match 震出东方: " + stockId + " ,event Map:"+flagMap);
+                    logger.debug("analyseWithPredictStockPrice match 震出东方: " + stockId + " ,event Map:"+flagMap);
                     CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
                     cpvo.stockId = stockId;
                     cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseII_ZhenChuDongFang_In_Future_2_Days.name();
@@ -284,7 +287,7 @@ public class ShenXianSellAnalyseHelper {
                 if(basicMatch && flagMap.containsKey(LUZAO_KEY1) && flagMap.containsKey(LUZAO_KEY2)
                         && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY1), flagMap.get(LUZAO_KEY2))
                         && WeekdayUtil.isDate1BeforeOrEqualDate2(curDate, flagMap.get(LUZAO_KEY2))){
-                    System.out.println("analyseWithPredictStockPrice match 升越良山: " + stockId + " ,event Map:"+flagMap);
+                    logger.debug("analyseWithPredictStockPrice match 升越良山: " + stockId + " ,event Map:"+flagMap);
                     CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
                     cpvo.stockId = stockId;
                     cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseII_ShengYueLiangShan_In_Future_2_Days.name();
@@ -296,7 +299,7 @@ public class ShenXianSellAnalyseHelper {
                 if(basicMatch && flagMap.containsKey(LUZAO_KEY2) && flagMap.containsKey(LUZAO_KEY3)
                         && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY2), flagMap.get(LUZAO_KEY3))
                         && WeekdayUtil.isDate1BeforeOrEqualDate2(curDate, flagMap.get(LUZAO_KEY3))){
-                    System.out.println("analyseWithPredictStockPrice match 山腰乘凉: " + stockId + " ,event Map:"+flagMap);
+                    logger.debug("analyseWithPredictStockPrice match 山腰乘凉: " + stockId + " ,event Map:"+flagMap);
                     CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
                     cpvo.stockId = stockId;
                     cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIII_ShanYaoChengLiang_In_Future_2_Days.name();
@@ -308,7 +311,7 @@ public class ShenXianSellAnalyseHelper {
                 if(basicMatch && flagMap.containsKey(LUZAO_KEY3) && flagMap.containsKey(LUZAO_KEY4)
                         && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY3), flagMap.get(LUZAO_KEY4))
                         && WeekdayUtil.isDate1BeforeOrEqualDate2(curDate, flagMap.get(LUZAO_KEY4))){
-                    System.out.println("analyseWithPredictStockPrice match 三山重叠: " + stockId + " ,event Map:"+flagMap);
+                    logger.debug("analyseWithPredictStockPrice match 三山重叠: " + stockId + " ,event Map:"+flagMap);
                     CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
                     cpvo.stockId = stockId;
                     cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIII_SanShanChongDie_In_Future_2_Days.name();
@@ -320,7 +323,7 @@ public class ShenXianSellAnalyseHelper {
                 if(basicMatch && flagMap.containsKey(LUZAO_KEY4) && flagMap.containsKey(LUZAO_KEY5)
                         && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY4), flagMap.get(LUZAO_KEY5))
                         && WeekdayUtil.isDate1BeforeOrEqualDate2(curDate, flagMap.get(LUZAO_KEY5))){
-                    System.out.println("analyseWithPredictStockPrice match 跌到山腰: " + stockId + " ,event Map:"+flagMap);
+                    logger.debug("analyseWithPredictStockPrice match 跌到山腰: " + stockId + " ,event Map:"+flagMap);
                     CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
                     cpvo.stockId = stockId;
                     cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIV_DieDaoShanYao_In_Future_2_Days.name();
@@ -332,7 +335,7 @@ public class ShenXianSellAnalyseHelper {
                 if(basicMatch && flagMap.containsKey(LUZAO_KEY5) && flagMap.containsKey(LUZAO_KEY6)
                         && WeekdayUtil.isDate1BeforeDate2(flagMap.get(LUZAO_KEY5), flagMap.get(LUZAO_KEY6))
                         && WeekdayUtil.isDate1BeforeOrEqualDate2(curDate, flagMap.get(LUZAO_KEY6))){
-                    System.out.println("analyseWithPredictStockPrice match 跌到山脚: " + stockId + " ,event Map:"+flagMap);
+                    logger.debug("analyseWithPredictStockPrice match 跌到山脚: " + stockId + " ,event Map:"+flagMap);
                     CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
                     cpvo.stockId = stockId;
                     cpvo.checkPoint = DailyCombineCheckPoint.LuZao_PhaseIV_DieDaoShanJiao_In_Future_2_Days.name();
@@ -343,7 +346,7 @@ public class ShenXianSellAnalyseHelper {
         });
 
         //
-        System.out.println("analyseWithPredictStockPrice process complete");
+        logger.debug("analyseWithPredictStockPrice process complete");
     }
 
     private boolean isSelectedCheckPoint(String checkPoint) {

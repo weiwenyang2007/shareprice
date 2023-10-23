@@ -11,8 +11,11 @@ import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.vo.table.CandleStickPatternVO;
 import org.easystogu.db.vo.table.StockPriceVO;
+import org.easystogu.log.LogHelper;
+import org.slf4j.Logger;
 
 public class DailyCandleStickPatternRunner implements Runnable{
+  private static Logger logger = LogHelper.getLogger(DailyCandleStickPatternRunner.class);
   private StockPriceTableHelper stockPriceTable = QianFuQuanStockPriceTableHelper.getInstance();
   private CandleStickPatternTableHelper candlePatternTable = CandleStickPatternTableHelper.getInstance();
   protected AtomicInteger counter = new AtomicInteger();
@@ -133,7 +136,7 @@ public class DailyCandleStickPatternRunner implements Runnable{
 
       int current = this.counter.incrementAndGet();
       if (current %50 == 0) {
-        System.out.println("candleStickPattern complete:" + current + "/" + stockIds.size());
+        logger.debug("candleStickPattern complete:" + current + "/" + stockIds.size());
       }
     });
   }

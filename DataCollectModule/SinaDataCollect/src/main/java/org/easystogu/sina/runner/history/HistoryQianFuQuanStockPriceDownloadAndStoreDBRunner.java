@@ -7,9 +7,12 @@ import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
+import org.easystogu.log.LogHelper;
 import org.easystogu.utils.Strings;
+import org.slf4j.Logger;
 
 public class HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner {
+	private static Logger logger = LogHelper.getLogger(HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner.class);
 	private QianFuQuanStockPriceTableHelper qianfuquanStockPriceTable = QianFuQuanStockPriceTableHelper.getInstance();
 	private StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
 	private CompanyInfoFileHelper companyInfoHelper = CompanyInfoFileHelper.getInstance();
@@ -78,7 +81,7 @@ public class HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner {
 				this.qianfuquanStockPriceTable.delete(stockId);
 				this.qianfuquanStockPriceTable.insert(chuQuanSPList);
 			}else {
-				System.err.println("chuQuanSPList size is not equals to spList size. stockId=" + stockId);
+				logger.error("chuQuanSPList size is not equals to spList size. stockId=" + stockId);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

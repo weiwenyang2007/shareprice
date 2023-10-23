@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.easystogu.db.vo.table.StockSuperVO;
+import org.easystogu.log.LogHelper;
+import org.slf4j.Logger;
 
 public class LocalStaticCache {
+  private static Logger logger = LogHelper.getLogger(LocalStaticCache.class);
   private static Map<String, List<StockSuperVO>> dailyCache = new HashMap<String, List<StockSuperVO>>();
   private static Map<String, List<StockSuperVO>> weeklyCache = new HashMap<String, List<StockSuperVO>>();
   
@@ -32,6 +35,6 @@ public class LocalStaticCache {
   public static void emptyAllCache() {
     dailyCache.clear();
     weeklyCache.clear();
-    System.out.println("LocalStaticCache emptyAllCache completed.");
+    logger.debug("LocalStaticCache emptyAllCache completed.");
   }
 }

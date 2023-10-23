@@ -178,10 +178,6 @@ public class SimpleHelper {
             final Object[] inputs, Object[] outputs,
             MInteger outBegIdx, MInteger outNbElement)
                 throws IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-
-        //for (int i=startIndex; i<startIndex+endIndex; i++) {
-        //    System.err.println("input["+i+"]="+((double[])(inputs[0]))[i]);
-        //}
         
         // parse function name and optional arguments
         FuncInfo finfo = getMetaData().getFuncInfo();

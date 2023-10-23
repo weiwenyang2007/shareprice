@@ -10,8 +10,10 @@ import org.easystogu.config.ConfigurationService;
 import org.easystogu.config.Constants;
 import org.easystogu.config.FileConfigurationService;
 import org.easystogu.db.access.table.CompanyInfoTableHelper;
+import org.easystogu.log.LogHelper;
 import org.easystogu.sina.common.SinaQuoteStockPriceVO;
 import org.easystogu.utils.Strings;
+import org.slf4j.Logger;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,6 +27,7 @@ import net.sf.json.JSONObject;
 //another api to get realtime stock price is :
 //https://vip.stock.finance.sina.com.cn/quotes_service/view/vML_DataList.php?asc=j&symbol=sh600547&num=5
 public class DailyStockPriceDownloadHelper2 {
+	private static Logger logger = LogHelper.getLogger(DailyStockPriceDownloadHelper2.class);
 	private CompanyInfoTableHelper companyInfoTable = CompanyInfoTableHelper.getInstance();
 	// currently total stock number is less then 3000, if increase, then enlarge
 	// the numberPage
@@ -57,7 +60,7 @@ public class DailyStockPriceDownloadHelper2 {
 			list.addAll(this.fetchAPageDataFromWeb(pageNumber));
 		}
 		long endTs = System.currentTimeMillis();
-		System.out.println("End fetchAllStockPriceFromWeb, Total fetch size=" + list.size() + ", spent seconds=" + (endTs - beginTs)/1000);
+		logger.debug("End fetchAllStockPriceFromWeb, Total fetch size=" + list.size() + ", spent seconds=" + (endTs - beginTs)/1000);
 		return list;
 	}
 
@@ -66,13 +69,12 @@ public class DailyStockPriceDownloadHelper2 {
 		try {
 
 			String url = baseUrl.replaceFirst("page=1", "page=" + page);
-			System.out.print("Fetch Sina Daily Data for page= " + page);
+			logger.debug("Fetch Sina Daily Data for page= " + page);
 
-			// System.out.println("url=" + urlStr.toString());
 			String contents = restTemplate.getForObject(url.toString(), String.class);
 
 			if (Strings.isEmpty(contents)) {
-				System.out.println("Contents is empty");
+				logger.debug("Contents is empty");
 				return list;
 			}
 
@@ -90,10 +92,10 @@ public class DailyStockPriceDownloadHelper2 {
 				}
 			}
 
-			System.out.println(", result size= " + jsonArray.size());
+			logger.debug(", result size= " + jsonArray.size());
 
 		} catch (JSONException e) {
-			System.out.println("JSONException at fetchAPageDataFromWeb : " + e.getMessage());
+			logger.debug("JSONException at fetchAPageDataFromWeb : " + e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

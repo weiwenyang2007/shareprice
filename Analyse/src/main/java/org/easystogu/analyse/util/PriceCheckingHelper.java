@@ -3,16 +3,18 @@ package org.easystogu.analyse.util;
 import java.util.List;
 
 import org.easystogu.db.vo.table.StockSuperVO;
+import org.easystogu.log.LogHelper;
+import org.slf4j.Logger;
 
 public class PriceCheckingHelper {
-
+    private static Logger logger = LogHelper.getLogger(PriceCheckingHelper.class);
     // 判断是否突破平台(当日高于15日均价)
     // the overList is order by date
     public static void priceHigherThanNday(List<StockSuperVO> overList, int day) {
         int length = overList.size();
         StockSuperVO currentSuperVO = overList.get(length - 1);
         if (day > length) {
-            System.out.println("There is not enough data to count the priceHigherThanNday for "
+            logger.debug("There is not enough data to count the priceHigherThanNday for "
                     + currentSuperVO.priceVO.stockId);
             return;
         }

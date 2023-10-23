@@ -8,6 +8,8 @@ import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.vo.table.ChuQuanChuXiVO;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
+import org.easystogu.log.LogHelper;
+import org.slf4j.Logger;
 
 //if table event_gaosongzhuan has update, please run this runner 
 //to update all the gaoSongZhuan price data
@@ -16,6 +18,7 @@ import org.easystogu.file.access.CompanyInfoFileHelper;
 
 //do not use this class now, do not use the table EventChuQuanChuXiTableHelper now
 public class ChuQuanChuXiCheckerRunner implements Runnable {
+	private static Logger logger = LogHelper.getLogger(ChuQuanChuXiCheckerRunner.class);
 	protected StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
 	protected EventChuQuanChuXiTableHelper chuQuanChuXiTable = EventChuQuanChuXiTableHelper.getInstance();
 	protected CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
@@ -44,14 +47,14 @@ public class ChuQuanChuXiCheckerRunner implements Runnable {
 				vo.setRate(spvo.lastClose / yesterday_spvo.close);
 				vo.setAlreadyUpdatePrice(false);
 
-				System.out.println("ChuQuan happen for " + vo);
+				logger.debug("ChuQuan happen for " + vo);
 				chuQuanChuXiTable.insert(vo);
 			}
 		}
 	}
 
 	public void historyCheckChuQuanEvent(List<String> stockIds) {
-		System.out.println("Run chuQuan for all stocks.");
+		logger.debug("Run chuQuan for all stocks.");
 		for (String stockId : stockIds) {
 			if (stockId.equals(stockConfig.getSZZSStockIdForDB()) || stockId.equals(stockConfig.getSZCZStockIdForDB())
 					|| stockId.equals(stockConfig.getCYBZStockIdForDB())) {
@@ -89,7 +92,7 @@ public class ChuQuanChuXiCheckerRunner implements Runnable {
 	}
 
 	public void dailyCheckChuQuanEvent(List<String> stockIds) {
-		System.out.println("Run chuQuan for all stocks.");
+		logger.debug("Run chuQuan for all stocks.");
 		for (String stockId : stockIds) {
 			if (stockId.equals(stockConfig.getSZZSStockIdForDB()) || stockId.equals(stockConfig.getSZCZStockIdForDB())
 					|| stockId.equals(stockConfig.getCYBZStockIdForDB())) {

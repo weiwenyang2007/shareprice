@@ -23,11 +23,14 @@ import org.easystogu.db.vo.table.DDXVO;
 import org.easystogu.db.vo.table.ZhuLiJingLiuRuVO;
 import org.easystogu.db.vo.table.ZiJinLiuVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
+import org.easystogu.log.LogHelper;
 import org.easystogu.report.ReportTemplate;
 import org.easystogu.report.comparator.CheckPointEventComparator;
+import org.slf4j.Logger;
 
 //recently (10 days) select stock that checkpoint is satisfied
 public class RecentlySelectionRunner implements Runnable {
+	private static Logger logger = LogHelper.getLogger(RecentlySelectionRunner.class);
 	private ConfigurationService config = DBConfigurationService.getInstance();
 	private CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
 	private StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
@@ -136,7 +139,7 @@ public class RecentlySelectionRunner implements Runnable {
 				ziJinLius, liuTongShiZhi, zhuLiJingLiuRus);
 
 		String file = config.getString("report.recent.analyse.html.file").replaceAll("currentDate", latestDate);
-		System.out.println("\nSaving report to " + file);
+		logger.debug("\nSaving report to " + file);
 		try {
 			BufferedWriter fout = new BufferedWriter(new FileWriter(file));
 			fout.write(ReportTemplate.htmlStart);

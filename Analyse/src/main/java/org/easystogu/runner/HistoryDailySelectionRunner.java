@@ -3,16 +3,19 @@ package org.easystogu.runner;
 import java.util.ArrayList;
 import java.util.List;
 import org.easystogu.db.vo.view.FavoritesStockVO;
+import org.easystogu.log.LogHelper;
+import org.slf4j.Logger;
 
 // DailySelectionRunner is only run for today, so this job is to go back to
 // history and run favorites stockId (not all stockIds) then save into checkpoint_daily_selection
 public class HistoryDailySelectionRunner extends DailySelectionRunner {
+  private static Logger logger = LogHelper.getLogger(HistoryDailySelectionRunner.class);
   public void runTask(int cpuIndex) {
-    System.out.println("HistoryDailySelectionRunner for cpuIndex:" + cpuIndex);
+    logger.debug("HistoryDailySelectionRunner for cpuIndex:" + cpuIndex);
     HistoryDailySelectionRunner runner = new HistoryDailySelectionRunner();
     int totalSotckDay = runner.stockPriceTable.getCounterDaysOfStockDate();
     List<String> allDates = runner.stockPriceTable.getLatestNStockDate(totalSotckDay);
-    System.out.println("allDates size: " + allDates.size());
+    logger.debug("allDates size: " + allDates.size());
     // System.out.println(dates.get(dates.size() - 1));//first day of stock: 1990-12-19
     // System.out.println(dates.get(0));//current day of stock
 
@@ -32,16 +35,16 @@ public class HistoryDailySelectionRunner extends DailySelectionRunner {
     int stopIndex = getStopIndexFromDates(allDates, cpuIndex);
     List<String> sudDateGroups = allDates.subList(startIndex, stopIndex);
 
-    System.out.println(
+    logger.debug(
         "cpuIndex: " + cpuIndex + ", startIndex: " + startIndex + ", stopIndex: " + stopIndex);
 
     //
     for (int index = 0; index < sudDateGroups.size(); index++) {
       String date = sudDateGroups.get(index);
-      System.out.println("Process of data:" + date);
+      logger.debug("Process of data:" + date);
       this.runForDate(date, stockIds);
     }
-    System.out.println("HistoryDailySelectionRunner Complete for cpuIndex:" + cpuIndex);
+    logger.debug("HistoryDailySelectionRunner Complete for cpuIndex:" + cpuIndex);
   }
 
   // split into number of logic CPU async run

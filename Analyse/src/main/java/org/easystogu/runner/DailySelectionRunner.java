@@ -34,6 +34,7 @@ import org.easystogu.db.vo.table.StockSuperVO;
 import org.easystogu.db.vo.table.ZiJinLiuVO;
 import org.easystogu.easymoney.helper.RealTimeZiJinLiuFatchDataHelper;
 import org.easystogu.file.access.CompanyInfoFileHelper;
+import org.easystogu.log.LogHelper;
 import org.easystogu.report.HistoryAnalyseReport;
 import org.easystogu.report.HistoryReportDetailsVO;
 import org.easystogu.report.RangeHistoryReportVO;
@@ -41,9 +42,11 @@ import org.easystogu.report.ReportTemplate;
 import org.easystogu.report.comparator.ZiJinLiuComparator;
 import org.easystogu.utils.Strings;
 import org.easystogu.utils.WeekdayUtil;
+import org.slf4j.Logger;
 
 // daily select stock that checkpoint is satisfied
 public class DailySelectionRunner implements Runnable {
+  private static Logger logger = LogHelper.getLogger(DailySelectionRunner.class);
   private ConfigurationService config = DBConfigurationService.getInstance();
   private StockSuperVOHelper stockOverAllHelper = new StockSuperVOHelper();
   private WeekStockSuperVOHelper weekStockOverAllHelper = new WeekStockSuperVOHelper();
@@ -93,7 +96,7 @@ public class DailySelectionRunner implements Runnable {
       List<StockSuperVO> overWeekList = weekStockOverAllHelper.getAllStockSuperVO(stockId);
 
       if (addToScheduleActionTable && overDayList.size() == 0) {
-        System.out.println("No stockprice data for " + stockId + ", add to Schedule Action.");
+        logger.debug("No stockprice data for " + stockId + ", add to Schedule Action.");
         // next action should be fetch all the data from web, it must be
         // a new board id
         ScheduleActionVO vo = new ScheduleActionVO();
@@ -106,7 +109,7 @@ public class DailySelectionRunner implements Runnable {
       }
 
       if (addToScheduleActionTable && overWeekList.size() == 0) {
-        System.out.println("No stockprice data for " + stockId + ", add to Schedule Action.");
+        logger.debug("No stockprice data for " + stockId + ", add to Schedule Action.");
         // next action should be fetch all the data from web, it must be
         // a new board id
         ScheduleActionVO vo = new ScheduleActionVO();
@@ -150,14 +153,14 @@ public class DailySelectionRunner implements Runnable {
       StockSuperVO weekSuperVO = overWeekListTmp.get(overWeekListTmp.size() - 1);
 
       if (checkDayPriceEqualWeekPrice && !superVO.priceVO.date.equals(weekSuperVO.priceVO.date)) {
-        System.out.println(stockId + " DayPrice VO date (" + superVO.priceVO.date
+        logger.debug(stockId + " DayPrice VO date (" + superVO.priceVO.date
             + ") is not equal WeekPrice VO date (" + weekSuperVO.priceVO.date + ")");
         return;
       }
 
       // exclude ting pai
       if (!superVO.priceVO.date.equals(latestDate)) {
-        System.out.println(stockId + " priveVO date (" + superVO.priceVO.date
+        logger.debug(stockId + " priveVO date (" + superVO.priceVO.date
             + " ) is not equal latestDate (" + latestDate + ")");
         return;
       }
@@ -224,7 +227,7 @@ public class DailySelectionRunner implements Runnable {
         }
       }
     } catch (Exception e) {
-      System.out.println("Exception for " + stockId);
+      logger.error("Exception for " + stockId);
       e.printStackTrace();
     }
   }
@@ -342,7 +345,7 @@ public class DailySelectionRunner implements Runnable {
       }
     }
 
-    System.out.println(recommandStr.toString());
+    logger.debug(recommandStr.toString());
   }
 
   public void reportSelectedHistoryReport() {
@@ -372,10 +375,10 @@ public class DailySelectionRunner implements Runnable {
   }
 
   public void reportToConsole(List<RangeHistoryReportVO> rangeList) {
-    System.out.println("\nHistory range report: ");
+    logger.debug("\nHistory range report: ");
     for (RangeHistoryReportVO rangeVO : rangeList) {
       // if (rangeVO.currentSuperVO.isAllMajorNetPerIn()) {
-      System.out.println(rangeVO.toSimpleString() + " WeekLen("
+      logger.debug(rangeVO.toSimpleString() + " WeekLen("
           + rangeVO.currentSuperVO.hengPanWeekLen + ") KDJ(" + (int) rangeVO.currentSuperVO.kdjVO.k
           + ") " + rangeVO.currentSuperVO.genZiJinLiuInfo() + " "
           + rangeVO.currentSuperVO.getZhuLiJingLiuRu());
@@ -386,7 +389,7 @@ public class DailySelectionRunner implements Runnable {
   public void reportToHtml(List<RangeHistoryReportVO> rangeList) {
     String file =
         config.getString("report.analyse.html.file").replaceAll("currentDate", latestDate);
-    System.out.println("\nSaving report to " + file);
+    logger.debug("\nSaving report to " + file);
     try {
       BufferedWriter fout = new BufferedWriter(new FileWriter(file));
       fout.write(ReportTemplate.htmlStart);
@@ -449,7 +452,7 @@ public class DailySelectionRunner implements Runnable {
   }
 
   private void addGeneralCheckPointStatisticsResultToDB() {
-    System.out.println("==================General CheckPoint Statistics=====================");
+    logger.debug("==================General CheckPoint Statistics=====================");
     Set<DailyCombineCheckPoint> keys = this.generalCheckPointGordonMap.keySet();
     Iterator<DailyCombineCheckPoint> keysIt = keys.iterator();
     while (keysIt.hasNext()) {
@@ -475,7 +478,7 @@ public class DailySelectionRunner implements Runnable {
       if (lastVO != null) {
         diff = Integer.toString(cpdsvo.count - lastVO.count);
       }
-      System.out.println(cpdsvo.checkPoint + " = " + cpdsvo.count + " (Diff: " + diff + ")");
+      logger.debug(cpdsvo.checkPoint + " = " + cpdsvo.count + " (Diff: " + diff + ")");
     }
   }
 
@@ -513,13 +516,13 @@ public class DailySelectionRunner implements Runnable {
   }
 
   public void runForStockIds(List<String> stockIds) {    
-    System.out.println("DailySelection runForStockIds start for date " + this.latestDate);
+    logger.debug("DailySelection runForStockIds start for date " + this.latestDate);
     this.counter.set(0);
     stockIds.parallelStream().forEach(stockId -> {
       this.doAnalyse(stockId);
       int current = this.counter.incrementAndGet();
       if (current %50 == 0) {
-        System.out.println("doAnalyse complete:" + current + "/" + stockIds.size());
+        logger.debug("doAnalyse complete:" + current + "/" + stockIds.size());
       }
     });
     
@@ -537,7 +540,7 @@ public class DailySelectionRunner implements Runnable {
     //reportSelectedHistoryReport();
     addGeneralCheckPointStatisticsResultToDB();
     
-    System.out.println("DailySelection runForStockIds stop for date " + this.latestDate);
+    logger.debug("DailySelection runForStockIds stop for date " + this.latestDate);
   }
 
   public void run() {

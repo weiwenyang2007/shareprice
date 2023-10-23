@@ -22,10 +22,13 @@ import org.easystogu.db.vo.table.CheckPointDailyStatisticsVO;
 import org.easystogu.db.vo.table.CheckPointHistoryAnalyseVO;
 import org.easystogu.db.vo.table.StockSuperVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
+import org.easystogu.log.LogHelper;
 import org.easystogu.utils.CrossType;
 import org.easystogu.utils.SellPointType;
+import org.slf4j.Logger;
 
 public class HistoryAnalyseReport {
+  private static Logger logger = LogHelper.getLogger(HistoryAnalyseReport.class);
   private ConfigurationService config = DBConfigurationService.getInstance();
   private CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
   private CheckPointHistorySelectionTableHelper checkPointHistorySelectionTable =
@@ -65,12 +68,10 @@ public class HistoryAnalyseReport {
     List<StockSuperVO> overWeekList = weekStockOverAllHelper.getAllStockSuperVO(stockId);
 
     if (overDayList.size() == 0) {
-      // System.out.println("doAnalyseReport overDayList size=0 for " + stockId);
       return historyReportList;
     }
 
     if (overWeekList.size() == 0) {
-      // System.out.println("doAnalyseReport overWeekList size=0 for " + stockId);
       return historyReportList;
     }
 
@@ -84,27 +85,16 @@ public class HistoryAnalyseReport {
       if (reportVO == null) {
         String startDate = overDayList.get(index - 120).priceVO.date;
         String endDate = overDayList.get(index).priceVO.date;
-        // System.out.println(startDate + " ~~ " + endDate);
         // include the startDate, not include the endDate
         List<StockSuperVO> subOverWeekList =
             this.getSubWeekVOList(overWeekList, startDate, endDate);
-        // System.out.println(subOverWeekList.get(0).priceVO.date +
-        // " week "
-        // + subOverWeekList.get(subOverWeekList.size() -
-        // 1).priceVO.date);
 
         List<StockSuperVO> subOverDayList = overDayList.subList(index - 120, index + 1);
-
-        // System.out.println(subOverDayList.get(0).priceVO.date +
-        // " day "
-        // + subOverDayList.get(subOverDayList.size() -
-        // 1).priceVO.date);
 
         if (combineAanalyserHelper.isConditionSatisfy(checkPoint, subOverDayList,
             subOverWeekList)) {
           reportVO = new HistoryReportDetailsVO(overDayList);
           reportVO.setBuyPriceVO(superVO.priceVO);
-          // System.out.println(superVO.priceVO.date + " buy");
           continue;
         }
       }
@@ -159,14 +149,10 @@ public class HistoryAnalyseReport {
     List<StockSuperVO> overWeekList = weekStockOverAllHelper.getAllStockSuperVO(stockId);
 
     if (overDayList.size() == 0) {
-      // System.out.println("doAnalyseReport overDayList size=0 for " +
-      // stockId);
       return historyReportList;
     }
 
     if (overWeekList.size() == 0) {
-      // System.out.println("doAnalyseReport overWeekList size=0 for " +
-      // stockId);
       return historyReportList;
     }
 
@@ -179,20 +165,10 @@ public class HistoryAnalyseReport {
       // buy point
       String startDate = overDayList.get(index - 120).priceVO.date;
       String endDate = overDayList.get(index).priceVO.date;
-      // System.out.println(startDate + " ~~ " + endDate);
       // include the startDate, not include the endDate
       List<StockSuperVO> subOverWeekList = this.getSubWeekVOList(overWeekList, startDate, endDate);
-      // System.out.println(subOverWeekList.get(0).priceVO.date +
-      // " week "
-      // + subOverWeekList.get(subOverWeekList.size() -
-      // 1).priceVO.date);
 
       List<StockSuperVO> subOverDayList = overDayList.subList(index - 120, index + 1);
-
-      // System.out.println(subOverDayList.get(0).priceVO.date +
-      // " day "
-      // + subOverDayList.get(subOverDayList.size() -
-      // 1).priceVO.date);
 
       if (combineAanalyserHelper.isConditionSatisfy(checkPoint, subOverDayList, subOverWeekList)) {
         HistoryReportDetailsVO reportVO = new HistoryReportDetailsVO(overDayList);
@@ -220,7 +196,7 @@ public class HistoryAnalyseReport {
     int index = 0;
     List<String> stockIds = stockConfig.getAllStockId();
 
-    System.out.println("\n===============================" + checkPoint + " (sellPoint:"
+    logger.debug("\n===============================" + checkPoint + " (sellPoint:"
         + checkPoint.getSellPointType() + ")==========================");
 
     for (String stockId : stockIds) {
@@ -231,7 +207,7 @@ public class HistoryAnalyseReport {
       // }
 
       if (index++ % 100 == 0) {
-        System.out.println(checkPoint.name() + " Analyse of " + index + "/" + stockIds.size());
+        logger.debug(checkPoint.name() + " Analyse of " + index + "/" + stockIds.size());
       }
 
       List<HistoryReportDetailsVO> historyReportList =
@@ -256,16 +232,11 @@ public class HistoryAnalyseReport {
           // print the high earn percent if larger than 25%
           if ((reportVO.earnPercent[1] >= 50.0) && (reportVO.earnPercent[0] >= 25.0)) {
             totalHighCount++;
-            // System.out.println("High earn: " + reportVO);
           } else if ((reportVO.earnPercent[1] <= -10.0) || (reportVO.earnPercent[0] <= -10.0)) {
             totalLowCount++;
-            // System.out.println("Low earn: " + reportVO);
           }
 
           if (!reportVO.completed) {
-            // System.out.println("Not Completed: " + reportVO + "\tIndex=" + index + "\tCurrent
-            // highPercent="
-            // + (earnPercent[1] / totalCount));
             // save to checkpint daily selection table
             if (isCheckPointSelected(checkPoint)) {
               this.saveToCheckPointDailySelectionDB(reportVO.stockId, reportVO.buyPriceVO.date,
@@ -274,7 +245,6 @@ public class HistoryAnalyseReport {
           } else {
             // for completed VO
             // remove it from daily selection
-            // System.out.println("Completed: " + reportVO);
             // this.checkPointDailySelectionTable.delete(stockId, reportVO.buyPriceVO.date,
             // checkPoint.toString());
             // save case into history DB
@@ -293,16 +263,15 @@ public class HistoryAnalyseReport {
       totalCount = 1;
     }
 
-    System.out.println(
+    logger.debug(
         "Total satisfy: " + totalCount + "\t earnPercent[close]=" + (earnPercent[0] / totalCount)
             + "\t earnPercent[high]=" + (earnPercent[1] / totalCount) + "\t earnPercent[low]="
             + (earnPercent[2] / totalCount) + "\noldEarn=" + checkPoint.getEarnPercent());
 
-    System.out.println("Avg hold stock days when sell point: " + (holdDays / totalCount));
-    System.out
-        .println("Avg hold stock days when high price: " + (holdDaysWhenHighPrice / totalCount));
-    System.out.println("Total high earn between (25, 50): " + totalHighCount);
-    System.out.println("Total low  earn between (10, 10): " + totalLowCount);
+    logger.debug("Avg hold stock days when sell point: " + (holdDays / totalCount));
+    logger.debug("Avg hold stock days when high price: " + (holdDaysWhenHighPrice / totalCount));
+    logger.debug("Total high earn between (25, 50): " + totalHighCount);
+    logger.debug("Total low  earn between (10, 10): " + totalLowCount);
 
     CheckPointHistoryAnalyseVO vo = new CheckPointHistoryAnalyseVO();
     vo.setCheckPoint(checkPoint.toString());
@@ -325,7 +294,7 @@ public class HistoryAnalyseReport {
   // statistics all stockIds and count checkpoint, save into
   // checkpoint_daily_statistics
   public void searchAllStockIdStatisticsCheckPoint(DailyCombineCheckPoint checkPoint) {
-    System.out.println("\n===============================" + checkPoint + " (sellPoint:"
+    logger.debug("\n===============================" + checkPoint + " (sellPoint:"
         + checkPoint.getSellPointType() + ")==========================");
 
     this.checkPointDailyStatisticsTable.deleteByCheckPoint(checkPoint.name());
@@ -350,7 +319,7 @@ public class HistoryAnalyseReport {
       //}
 
       if (index++ % 100 == 0) {
-        System.out.println(checkPoint.name() + " Analyse of " + index + "/" + stockIds.size());
+        logger.debug(checkPoint.name() + " Analyse of " + index + "/" + stockIds.size());
       }
 
       analyseOneStock(checkPoint, stockId);
@@ -365,11 +334,10 @@ public class HistoryAnalyseReport {
       cpdsvo.date = entry.getKey().toString();
       cpdsvo.count = (Integer) entry.getValue();
 
-      // System.out.println(cpdsvo);
       checkPointDailyStatisticsTable.insert(cpdsvo);
     }
 
-    System.out.println("===============================Job done for " + checkPoint
+    logger.debug("===============================Job done for " + checkPoint
         + "===============================");
   }
 

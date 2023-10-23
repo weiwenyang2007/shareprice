@@ -77,7 +77,7 @@ public class DailyScheduler implements SchedulingConfigurer {
 	public void updateStockPriceOnlyEvery10Mins() {
 		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			String time = WeekdayUtil.currentTime();
-			if ((time.compareTo("09-39-00") >= 0 && time.compareTo("11-31-00") <= 0)
+			if ((time.compareTo("09-39-00") >= 0 && time.compareTo("11-32-00") <= 0)
 					|| (time.compareTo("13-00-00") >= 0 && time.compareTo("15-02-00") <= 0)) {
 				logger.info("Start updateStockPriceOnlyEvery10Mins");
 				long startTs = System.currentTimeMillis();
@@ -94,7 +94,6 @@ public class DailyScheduler implements SchedulingConfigurer {
 		if(Strings.isNotEmpty(pages)) {
 			DailyStockPriceDownloadAndStoreDBRunner2 runner = new DailyStockPriceDownloadAndStoreDBRunner2();
 			runner.downloadTradeTodayRealTimePriceAndSave2DB(pages);
-
 			// update indicators for part of the stockIds
 			if(Strings.isNotEmpty(stockIds)) {
 				List<String> stocks = Arrays.asList(stockIds.split(","));
@@ -111,8 +110,8 @@ public class DailyScheduler implements SchedulingConfigurer {
 		}
 	}
 
-	// run at 11:40 DailyOverAllRunner
-	@Scheduled(cron = "0 40 11 * * MON-FRI")
+	// run at 15:10 DailyOverAllRunner
+	@Scheduled(cron = "0 10 15 * * MON-FRI")
 	public void _1_DailyOverAllRunner() {
 		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			boolean isGetZiJinLiu = false;
@@ -120,13 +119,13 @@ public class DailyScheduler implements SchedulingConfigurer {
 		}
 	}
 
-	// run at 18:30 DailyOverAllRunner
-	@Scheduled(cron = "0 30 18 * * MON-FRI")
+	// run at 21:10 DailyOverAllRunner
+	@Scheduled(cron = "0 10 21 * * MON-FRI")
 	public void _3_DailyOverAllRunner() {
 		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 		  Thread t = new Thread(new Runnable() {
 	        public void run() {
-	        	//This will use sohu history stock data
+	        	//This will use sohu history stock data, sohu is much late to update today's data, so do not run it earlier
 	          new StockPriceHistoryOverAllRunner(WeekdayUtil.currentDate(), WeekdayUtil.currentDate()).run();
 	          
 	          List<String> allStockIds = stockConfig.getAllStockId();
@@ -180,8 +179,8 @@ public class DailyScheduler implements SchedulingConfigurer {
 	// 每周更新一下stockprice，每次选择一部分
 	// please do not change the SAT-SUN, will impact the selected stockId
 	// 请不要随意更改这个时间，跟选出的stockid算法有关。
-	// run at 20:00 every day
-	//@Scheduled(cron = "0 00 20 * * ?")
+	// run at 02:00 every day
+	@Scheduled(cron = "0 00 02 * * ?")
 	private void DailyUpdateStockPriceByBatch() {
 		if (!dailyUpdateStockPriceByBatch) {
 			logger.info("dailyUpdateStockPriceByBatch is false, not run.");

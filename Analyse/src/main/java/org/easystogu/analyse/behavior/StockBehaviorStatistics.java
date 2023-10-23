@@ -6,9 +6,12 @@ import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
 import org.easystogu.db.access.table.StockBehaviorStatisticsTableHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.vo.table.StockPriceVO;
+import org.easystogu.log.LogHelper;
+import org.slf4j.Logger;
 
 //跳空高开和低开当天回补缺口的统计
 public class StockBehaviorStatistics {
+    private static Logger logger = LogHelper.getLogger(StockBehaviorStatistics.class);
     private StockPriceTableHelper qianFuQuanStockPriceTable = QianFuQuanStockPriceTableHelper.getInstance();
     private StockBehaviorStatisticsTableHelper stockBehaviorStatisticsTable = StockBehaviorStatisticsTableHelper
             .getInstance();
@@ -44,7 +47,7 @@ public class StockBehaviorStatistics {
         }
 
         if (statistics[0] > 0) {
-            System.out.println(stockId + "高开: " + difRange[0] + "~" + difRange[1] + " 当天回补缺口概率="
+            logger.debug(stockId + "高开: " + difRange[0] + "~" + difRange[1] + " 当天回补缺口概率="
                     + formatNumber((double) statistics[1] / (double) statistics[0]) + " 第二三天回补缺口概率="
                     + formatNumber((double) statistics[2] / (double) statistics[0]) + ", 总样本数=" + statistics[0]);
         }
@@ -81,7 +84,7 @@ public class StockBehaviorStatistics {
         }
 
         if (statistics[0] > 0) {
-            System.out.println(stockId + "低开: " + difRange[0] + "~" + difRange[1] + " 当天回补缺口概率="
+            logger.debug(stockId + "低开: " + difRange[0] + "~" + difRange[1] + " 当天回补缺口概率="
                     + formatNumber((double) statistics[1] / (double) statistics[0]) + " 第二三天回补缺口概率="
                     + formatNumber((double) statistics[2] / (double) statistics[0]) + ", 总样本数=" + statistics[0]);
         }

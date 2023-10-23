@@ -14,14 +14,17 @@ import org.easystogu.db.access.table.HouFuQuanStockPriceTableHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
+import org.easystogu.log.LogHelper;
 import org.easystogu.utils.Strings;
 import org.easystogu.utils.WeekdayUtil;
+import org.slf4j.Logger;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 //never use hou fu quan stockproce now
 //get hou fuquan history stock price from sina
 public class HistoryHouFuQuanStockPriceDownloadAndStoreDBRunner {
+	private static Logger logger = LogHelper.getLogger(HistoryHouFuQuanStockPriceDownloadAndStoreDBRunner.class);
 	private static String baseUrl = "http://vip.stock.finance.sina.com.cn/api/json_v2.php/BasicStockSrv.getStockFuQuanData?symbol=stockId&type=hfq";
 	private static ConfigurationService configure = FileConfigurationService.getInstance();
 	private HouFuQuanStockPriceTableHelper houfuquanStockPriceTable = HouFuQuanStockPriceTableHelper.getInstance();
@@ -42,7 +45,7 @@ public class HistoryHouFuQuanStockPriceDownloadAndStoreDBRunner {
 		try {
 
 			String url = baseUrl.replaceFirst("stockId", stockId);
-			System.out.println("Fetch Sina FuQuan Data for " + stockId);
+			logger.debug("Fetch Sina FuQuan Data for " + stockId);
 
 			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
 			requestFactory.setConnectTimeout(10000);

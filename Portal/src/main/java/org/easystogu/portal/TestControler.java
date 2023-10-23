@@ -17,7 +17,6 @@ public class TestControler {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response holle(final String body, @Context HttpServletRequest request) {
-		System.out.println(request.getHeader("Content-Type"));
 		JSONObject json = JSONObject.fromObject(body);
 		System.out.println(json.get("subscriberId"));
 		return Response.ok().build();

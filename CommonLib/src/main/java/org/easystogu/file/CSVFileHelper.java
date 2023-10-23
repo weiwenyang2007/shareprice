@@ -5,17 +5,20 @@ import java.util.List;
 import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
 import com.google.common.base.Charsets;
+import org.easystogu.log.LogHelper;
+import org.slf4j.Logger;
 
 public class CSVFileHelper {
+  private static Logger logger = LogHelper.getLogger(CSVFileHelper.class);
   public static void read(String fileName) {
     try {
       CsvReader csvReader = new CsvReader(fileName);
       csvReader.readHeaders();
       while (csvReader.readRecord()) {
         // read first line
-        System.out.println(csvReader.getRawRecord());
+        logger.debug(csvReader.getRawRecord());
         // read column
-        System.out.println(csvReader.get("Link"));
+        logger.debug(csvReader.get("Link"));
       }
     } catch (IOException e) {
       e.printStackTrace();

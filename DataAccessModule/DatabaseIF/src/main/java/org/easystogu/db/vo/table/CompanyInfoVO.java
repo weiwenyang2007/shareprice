@@ -1,9 +1,12 @@
 package org.easystogu.db.vo.table;
 
+import org.easystogu.log.LogHelper;
 import org.easystogu.utils.Strings;
 import org.easystogu.utils.WeekdayUtil;
+import org.slf4j.Logger;
 
 public class CompanyInfoVO {
+  private static Logger logger = LogHelper.getLogger(CompanyInfoVO.class);
   public String stockId;
   public String name;
   public String suoShuHangYe;// 所属行业
@@ -33,7 +36,7 @@ public class CompanyInfoVO {
     try {
       String[] items = line.trim().split(",");
       if (items.length != 7) {
-        System.out.println("Bad format for CompanyInfoVO line: " + line);
+        logger.error("Bad format for CompanyInfoVO line: " + line);
         return;
       }
 
@@ -45,7 +48,7 @@ public class CompanyInfoVO {
       }
 
       if (!Strings.isNumeric(this.stockId)) {
-        System.out.println("Bad format for CompanyInfoVO stockId: " + this.stockId);
+        logger.error("Bad format for CompanyInfoVO stockId: " + this.stockId);
         return;
       }
 

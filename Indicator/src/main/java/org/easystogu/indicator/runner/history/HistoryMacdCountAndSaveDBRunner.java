@@ -26,7 +26,6 @@ public class HistoryMacdCountAndSaveDBRunner {
 	public void deleteMacd(List<String> stockIds) {
 		int index = 0;
 		for (String stockId : stockIds) {
-			System.out.println("Delete MACD for " + stockId + " " + (++index) + " of " + stockIds.size());
 			this.deleteMacd(stockId);
 		}
 	}
@@ -55,9 +54,6 @@ public class HistoryMacdCountAndSaveDBRunner {
 				double dif = macd[0][index];
 				double dea = macd[1][index];
 				double macdRtn = macd[2][index];
-				// System.out.println("DIF=" + dif);
-				// System.out.println("DEA=" + dea);
-				// System.out.println("MACD=" + macdRtn);
 
 				MacdVO macdVo = new MacdVO();
 				macdVo.setStockId(stockId);
@@ -77,19 +73,9 @@ public class HistoryMacdCountAndSaveDBRunner {
 	}
 
 	public void countAndSaved(List<String> stockIds) {
-	  System.out.println("MACD countAndSaved start");
 	  stockIds.parallelStream().forEach(stockId -> {
 	    this.countAndSaved(stockId);
 	  });
-	  
-//		int index = 0;
-//		for (String stockId : stockIds) {
-//			if (index++ % 100 == 0)
-//				System.out.println("MACD countAndSaved: " + stockId + " " + (index) + "/" + stockIds.size());
-//			this.countAndSaved(stockId);
-//		}
-	  
-	  System.out.println("MACD countAndSaved stop");
 	}
 
 	public static void main(String[] args) {

@@ -258,7 +258,6 @@ public class IndicatorEndPointV3 {
 			}
 			List<ShenXianUIVO> rtnList = shenXianSellAnalyseHelper.queryShenXianSellById(stockIdParm, dateParm, jsonParm);
 			ShenXianUIVO curVo = rtnList.get(rtnList.size() - 1);
-			//System.out.println("change="+change + ", curVo="+curVo.toString());
 			if(curVo.sellFlagsTitle.contains(buyOrSell)){
 				return curVo;
 			}

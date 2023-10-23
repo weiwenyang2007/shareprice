@@ -7,11 +7,14 @@ import java.net.Proxy.Type;
 import org.easystogu.config.ConfigurationService;
 import org.easystogu.config.Constants;
 import org.easystogu.config.FileConfigurationService;
+import org.easystogu.log.LogHelper;
 import org.easystogu.utils.Strings;
+import org.slf4j.Logger;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 public class RestTemplateHelper {
+	private static Logger logger = LogHelper.getLogger(RestTemplateHelper.class);
 	private static ConfigurationService configure = FileConfigurationService.getInstance();
 	private RestTemplate restTemplate = null;
 
@@ -35,10 +38,9 @@ public class RestTemplateHelper {
 
 	public String fetchDataFromWeb(String url) {
 		StringBuffer urlStr = new StringBuffer(url);
-		System.out.println("fetchDataFromWeb: url=" + urlStr);
+		logger.debug("fetchDataFromWeb: url=" + urlStr);
 		try {
 			String contents = restTemplate.getForObject(urlStr.toString(), String.class);
-			// System.out.println(contents);
 			return contents;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -27,7 +27,6 @@ public class HistoryBollCountAndSaveDBRunner {
 	public void deleteBoll(List<String> stockIds) {
 		int index = 0;
 		for (String stockId : stockIds) {
-			System.out.println("Delete Boll for " + stockId + " " + (++index) + " of " + stockIds.size());
 			this.deleteBoll(stockId);
 		}
 	}
@@ -56,9 +55,6 @@ public class HistoryBollCountAndSaveDBRunner {
 				double up = Strings.convert2ScaleDecimal(boll[0][index], 3);
 				double mb = Strings.convert2ScaleDecimal(boll[1][index], 3);
 				double dn = Strings.convert2ScaleDecimal(boll[2][index], 3);
-				// System.out.println("MB=" + mb);
-				// System.out.println("UP=" + up);
-				// System.out.println("DN=" + dn);
 
 				BollVO bollVO = new BollVO();
 				bollVO.setStockId(stockId);
@@ -78,19 +74,9 @@ public class HistoryBollCountAndSaveDBRunner {
 	}
 
 	public void countAndSaved(List<String> stockIds) {
-      System.out.println("Boll countAndSaved start");
       stockIds.parallelStream().forEach(stockId -> {
         this.countAndSaved(stockId);
       });
-      
-//      int index = 0;
-//      for (String stockId : stockIds) {
-//          if (index++ % 100 == 0)
-//              System.out.println("Boll countAndSaved: " + stockId + " " + (index) + "/" + stockIds.size());
-//          this.countAndSaved(stockId);
-//      }
-      
-      System.out.println("Boll countAndSaved stop");
     }
 
 	public static void main(String[] args) {

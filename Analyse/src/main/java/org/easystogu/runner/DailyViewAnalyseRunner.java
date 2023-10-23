@@ -7,9 +7,12 @@ import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.access.view.CommonViewHelper;
 import org.easystogu.db.vo.table.CheckPointDailySelectionVO;
 import org.easystogu.db.vo.view.CommonViewVO;
+import org.easystogu.log.LogHelper;
+import org.slf4j.Logger;
 
 //run analyse views and save selection to table checkpoint_daily_selection
 public class DailyViewAnalyseRunner implements Runnable {
+	private static Logger logger = LogHelper.getLogger(DailyViewAnalyseRunner.class);
 	private StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
 	private String latestDate = stockPriceTable.getLatestStockDate();
 	private CommonViewHelper commonViewHelper = CommonViewHelper.getInstance();
@@ -19,7 +22,7 @@ public class DailyViewAnalyseRunner implements Runnable {
 	// daily analyse, if miss one of date analyse, those view only have
 	// latestDate date, there will be no chose to get that date's data
 	private void slowAnalyseForView(String viewName) {
-		System.out.println("Analyse for viewName: " + viewName);
+		logger.debug("Analyse for viewName: " + viewName);
 		List<String> stockIds = commonViewHelper.queryAllStockIds(viewName);
 		
 		stockIds.parallelStream().forEach(stockId -> {
@@ -45,7 +48,7 @@ public class DailyViewAnalyseRunner implements Runnable {
 
 	// extract the currentDate from view, those view has many date's date
 	private void fastExtractForView(String viewName) {
-		System.out.println("Extract for viewName: " + viewName);
+		logger.debug("Extract for viewName: " + viewName);
 		List<CommonViewVO> list = commonViewHelper.queryByDateForCheckPoint(viewName, this.latestDate);
 		for (CommonViewVO vo : list) {
 			CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();

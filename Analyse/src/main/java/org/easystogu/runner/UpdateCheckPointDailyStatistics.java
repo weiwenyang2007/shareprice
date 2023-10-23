@@ -4,10 +4,13 @@ import java.util.List;
 import org.easystogu.db.access.table.CheckPointDailyStatisticsTableHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.vo.table.CheckPointDailyStatisticsVO;
+import org.easystogu.log.LogHelper;
 import org.easystogu.utils.Strings;
+import org.slf4j.Logger;
 
 //one time to update the CheckPointDailyStatistics table to set the rate (count/totalCompanyDeal)
 public class UpdateCheckPointDailyStatistics {
+  private static Logger logger = LogHelper.getLogger(UpdateCheckPointDailyStatistics.class);
   private static StockPriceTableHelper stockPriceTableHelper = StockPriceTableHelper.getInstance();
   private static CheckPointDailyStatisticsTableHelper checkPointDailyStatisticsTable =
       CheckPointDailyStatisticsTableHelper.getInstance();
@@ -18,7 +21,7 @@ public class UpdateCheckPointDailyStatistics {
       //if(!date.equals("2020-03-18")) {
       //  continue;
       //}
-      System.out.println("process "+ date);
+      logger.debug("process "+ date);
       //count the stock company has deal at that date
       int totalCompanyDeal = stockPriceTableHelper.countByDate(date);
       List<CheckPointDailyStatisticsVO> cpDSList = checkPointDailyStatisticsTable.getByDate(date);

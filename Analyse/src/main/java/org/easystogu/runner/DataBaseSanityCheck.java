@@ -23,10 +23,13 @@ import org.easystogu.indicator.runner.history.HistoryShenXianCountAndSaveDBRunne
 import org.easystogu.indicator.runner.history.HistoryWRCountAndSaveDBRunner;
 import org.easystogu.indicator.runner.history.HistoryWeeklyKDJCountAndSaveDBRunner;
 import org.easystogu.indicator.runner.history.HistoryWeeklyMacdCountAndSaveDBRunner;
+import org.easystogu.log.LogHelper;
 import org.easystogu.sina.runner.history.HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner;
 import org.easystogu.utils.Strings;
+import org.slf4j.Logger;
 
 public class DataBaseSanityCheck implements Runnable {
+  private static Logger logger = LogHelper.getLogger(DataBaseSanityCheck.class);
   protected StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
   protected QianFuQuanStockPriceTableHelper qianfuquanStockPriceTable =
       QianFuQuanStockPriceTableHelper.getInstance();
@@ -66,13 +69,13 @@ public class DataBaseSanityCheck implements Runnable {
   protected AtomicInteger counter = new AtomicInteger();
 
   public void sanityDailyCheck(List<String> stockIds) {
-    System.out.println("sanityDailyCheck start.");
+    logger.debug("sanityDailyCheck start.");
     this.counter.set(0);
     stockIds.parallelStream().forEach(stockId -> {
       this.sanityDailyCheck(stockId);
       int current = this.counter.incrementAndGet();
       if (current %50 == 0) {
-        System.out.println("sanityDailyCheck complete:" + current + "/" + stockIds.size());
+        logger.debug("sanityDailyCheck complete:" + current + "/" + stockIds.size());
       }
     });
 
@@ -83,7 +86,7 @@ public class DataBaseSanityCheck implements Runnable {
     // }
     // this.sanityDailyCheck(stockId);
     // }
-    System.out.println("sanityDailyCheck completed.");
+    logger.debug("sanityDailyCheck completed.");
   }
 
   public void sanityDailyCheck(String stockId) {
@@ -101,18 +104,18 @@ public class DataBaseSanityCheck implements Runnable {
     for (StockPriceVO vo : spList) {
       if (vo.close == 0 || vo.open == 0 || vo.high == 0 || vo.low == 0
           || Strings.isEmpty(vo.date)) {
-        System.err.println("Error Sanity Delete StockPrice " + vo);
+        logger.error("Error Sanity Delete StockPrice " + vo);
         this.stockPriceTable.delete(vo.stockId, vo.date);
       }
     }
 
     if (spList.size() != qianfuquan_spList) {
-      System.out.println(stockId + " StockPrice Length is not equal to Qian FuQuan StockPrice");
+      logger.debug(stockId + " StockPrice Length is not equal to Qian FuQuan StockPrice");
       this.historyQianFuQuanRunner.countAndSave(stockId);
     }
 
     if ((spList.size() != macdList)) {
-      System.out.println(
+      logger.debug(
           stockId + " size of macd is not equal:" + spList.size() + "!=" + macdList);
 
       // figureOutDifferenceDate(spList, macdList);
@@ -121,38 +124,35 @@ public class DataBaseSanityCheck implements Runnable {
       macdRunner.countAndSaved(stockId);
     }
     if ((spList.size() != kdjList)) {
-      System.out
-          .println(stockId + " size of kdj is not equal:" + spList.size() + "!=" + kdjList);
+      logger.debug(stockId + " size of kdj is not equal:" + spList.size() + "!=" + kdjList);
       //kdjTable.delete(stockId);
       kdjRunner.countAndSaved(stockId);
     }
     if ((spList.size() != bollList)) {
-      System.out.println(
+      logger.debug(
           stockId + " size of boll is not equal:" + spList.size() + "!=" + bollList);
       //bollTable.delete(stockId);
       boolRunner.countAndSaved(stockId);
     }
     if ((spList.size() != shenXianList)) {
-      System.out.println(
+      logger.debug(
           stockId + " size of shenXian is not equal:" + spList.size() + "!=" + shenXianList);
       //shenXianTable.delete(stockId);
       shenxianRunner.countAndSaved(stockId);
     }
     if ((spList.size() != qsddList)) {
-      System.out.println(
+      logger.debug(
           stockId + " size of QSDD is not equal:" + spList.size() + "!=" + qsddList);
       //qsddTable.delete(stockId);
       qsddRunner.countAndSaved(stockId);
     }
     if ((spList.size() != maList)) {
-      System.out
-          .println(stockId + " size of MA is not equal:" + spList.size() + "!=" + maList);
+      logger.debug(stockId + " size of MA is not equal:" + spList.size() + "!=" + maList);
       //maTable.delete(stockId);
       maRunner.countAndSaved(stockId);
     }
     if ((spList.size() != wrList)) {
-      System.out
-          .println(stockId + " size of WR is not equal:" + spList.size() + "!=" + wrList);
+      logger.debug(stockId + " size of WR is not equal:" + spList.size() + "!=" + wrList);
       //wrTable.delete(stockId);
       wrRunner.countAndSaved(stockId);
     }
@@ -160,13 +160,13 @@ public class DataBaseSanityCheck implements Runnable {
   }
 
   public void sanityWeekCheck(List<String> stockIds) {
-    System.out.println("sanityWeekCheck completed.");
+    logger.debug("sanityWeekCheck completed.");
     this.counter.set(0);
     stockIds.parallelStream().forEach(stockId -> {
       this.sanityWeekCheck(stockId);
       int current = this.counter.incrementAndGet();
       if (current %50 == 0) {
-        System.out.println("sanityWeekCheck complete:" + current + "/" + stockIds.size());
+        logger.debug("sanityWeekCheck complete:" + current + "/" + stockIds.size());
       }
     });
 
@@ -177,7 +177,7 @@ public class DataBaseSanityCheck implements Runnable {
     // }
     // this.sanityWeekCheck(stockId);
     // }
-    System.out.println("sanityWeekCheck completed.");
+    logger.debug("sanityWeekCheck completed.");
   }
 
   public void sanityWeekCheck(String stockId) {
@@ -189,7 +189,7 @@ public class DataBaseSanityCheck implements Runnable {
     for (StockPriceVO vo : spList) {
       if (vo.close == 0 || vo.open == 0 || vo.high == 0 || vo.low == 0
           || Strings.isEmpty(vo.date)) {
-        System.out.println("Sanity Delete WeekStockPrice " + vo);
+        logger.debug("Sanity Delete WeekStockPrice " + vo);
         this.weekStockPriceTable.delete(vo.stockId, vo.date);
         refresh = true;
       }
@@ -199,7 +199,7 @@ public class DataBaseSanityCheck implements Runnable {
       spList = weekStockPriceTable.getStockPriceById(stockId);
 
     if ((spList.size() != macdList)) {
-      System.out.println(
+      logger.debug(
           stockId + " size of week macd is not equal:" + spList.size() + "!=" + macdList);
 
       figureOutDifferenceDate(spList, weekMacdTable.getAll(stockId));
@@ -208,7 +208,7 @@ public class DataBaseSanityCheck implements Runnable {
       weekMacdRunner.countAndSaved(stockId);
     }
     if ((spList.size() != kdjList)) {
-      System.out.println(
+      logger.debug(
           stockId + " size of week kdj is not equal:" + spList.size() + "!=" + kdjList);
       //weekKdjTable.delete(stockId);
       weekKdjRunner.countAndSaved(stockId);
@@ -217,39 +217,37 @@ public class DataBaseSanityCheck implements Runnable {
   }
 
   public void sanityDailyStatisticsCheck(List<String> stockIds) {
-    System.out.println("sanityDailyStatisticsCheck start. Only run for date >= 2022-01-01");
+    logger.debug("sanityDailyStatisticsCheck start. Only run for date >= 2022-01-01");
     List<String> dates = stockPriceTable.getAllDealDate("999999");
     for (String date : dates) {
       // do not care the count date before 2000 year
       if (date.compareTo("2022-01-01") >= 0) {
         int rtn = checkPointDailyStatisticsTable.countByDate(date);
         if (rtn == 0) {
-          System.out
-              .println("Daily Statistics is all zero for date " + date + ", try to re-count it.");
+          logger.debug("Daily Statistics is all zero for date " + date + ", try to re-count it.");
           DailySelectionRunner dailySelectionRunner = new DailySelectionRunner();
           dailySelectionRunner.runForDate(date, stockIds);
         }
       }
     }
-    System.out.println("sanityDailyStatisticsCheck completed.");
+    logger.debug("sanityDailyStatisticsCheck completed.");
   }
 
   public void sanityHistoryStatisticsCheck(List<String> stockIds, String startDate, String endDate) {
-    System.out.println("sanityHistoryStatisticsCheck start. startDate=" + startDate + ", endDate="+endDate);
+    logger.debug("sanityHistoryStatisticsCheck start. startDate=" + startDate + ", endDate="+endDate);
     List<String> dates = stockPriceTable.getAllDealDate("999999");
     for (String date : dates) {
       // count history date between
       if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
         int rtn = checkPointDailyStatisticsTable.countByDate(date);
         if (rtn == 0) {
-          System.out
-              .println("Daily Statistics is all zero for date " + date + ", try to re-count it.");
+          logger.debug("Daily Statistics is all zero for date " + date + ", try to re-count it.");
           DailySelectionRunner dailySelectionRunner = new DailySelectionRunner();
           dailySelectionRunner.runForDate(date, stockIds);
         }
       }
     }
-    System.out.println("sanityDailyStatisticsCheck completed.");
+    logger.debug("sanityDailyStatisticsCheck completed.");
   }
 
   public void figureOutDifferenceDate(List<StockPriceVO> spList, List<MacdVO> macdList) {
@@ -259,15 +257,15 @@ public class DataBaseSanityCheck implements Runnable {
       StockPriceVO spvo = spList.get(index);
       MacdVO macdvo = macdList.get(index);
       if (!spvo.date.equals(macdvo.date)) {
-        System.out.println("spList date != macdList @" + spvo.date);
+        logger.debug("spList date != macdList @" + spvo.date);
       }
     }
     if (index == spList.size()) {
-      System.out.println("spList has, but macdList do not have @" + macdList.get(index).date);
+      logger.debug("spList has, but macdList do not have @" + macdList.get(index).date);
     }
 
     if (index == macdList.size()) {
-      System.out.println("macdList has, but spList do not have @" + spList.get(index).date);
+      logger.debug("macdList has, but spList do not have @" + spList.get(index).date);
     }
   }
 
@@ -300,6 +298,6 @@ public class DataBaseSanityCheck implements Runnable {
   public static void main(String[] args) {
     new DataBaseSanityCheck().run();
     new AllCacheRunner().refreshAll();
-    System.out.println("DataBaseSanityCheck done!");
+    logger.debug("DataBaseSanityCheck done!");
   }
 }
