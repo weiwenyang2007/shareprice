@@ -97,7 +97,7 @@ public class DailyScheduler implements SchedulingConfigurer {
 
 			// update indicators for part of the stockIds
 			if(Strings.isNotEmpty(stockIds)) {
-				List<String> stocks = Arrays.asList(stockIds.split(",");
+				List<String> stocks = Arrays.asList(stockIds.split(","));
 				// day ind
 				new AllDailyIndCountAndSaveDBRunner().runDailyIndForStockIds(stocks);
 				// week
