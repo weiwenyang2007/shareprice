@@ -241,14 +241,17 @@ public class IndicatorEndPointV3 {
 	private ShenXianUIVO mockCurPriceAndPredictTodayInd(String stockIdParm, String dateParm, String postBody, String buyOrSell) {
 		String bodyTemplate = "{'mockCurPriceAndPredictTodayBSInd':'changeTmpl'}";
 		String[] percent = {"0.0",
-				"0.010", "-0.010", "0.015", "-0.015", "0.020", "-0.020", "0.025", "-0.025",
-				"0.030", "-0.030", "0.035", "-0.035", "0.040", "-0.040", "0.045", "-0.045",
-				"0.050", "-0.050", "0.055", "-0.055", "0.060", "-0.060", "0.065", "-0.065",
-				"0.070", "-0.070", "0.075", "-0.075", "0.080", "-0.080", "0.085", "-0.085",
-				"0.090", "-0.090", "0.095", "-0.095", "0.100", "-0.100"};
+				"0.010", "0.015", "0.020", "0.025",
+				"0.030", "0.035", "0.040", "0.045",
+				"0.050", "0.055", "0.060", "0.065",
+				"0.070", "0.075", "0.080", "0.085",
+				"0.090", "0.095", "0.100", };
 		//loop from the minimum price change to a larger change, only return the first occurrence
 		for(int i=0; i < percent.length; i++){
 			String change = percent[i];
+			if(!"0.0".equals(change) && "B".equals(buyOrSell)){
+				change = "-" + change;//price is decreased
+			}
 			String realPostBody = bodyTemplate.replaceFirst("changeTmpl",change);
 			JSONObject jsonParm = null;
 			try {
