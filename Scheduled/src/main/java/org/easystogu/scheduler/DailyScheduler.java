@@ -63,7 +63,7 @@ public class DailyScheduler implements SchedulingConfigurer {
 	public void updateStockPriceOnlyEvery2Mins() {
 		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			String time = WeekdayUtil.currentTime();
-			if ((time.compareTo("09-25-00") >= 0 && time.compareTo("09-40-00") <= 0)) {
+			if ((time.compareTo("09-24-00") >= 0 && time.compareTo("09-41-00") <= 0)) {
 				logger.info("Start updateStockPriceOnlyEvery2Mins");
 				long startTs = System.currentTimeMillis();
 				updateRealtimeStockPriceForEasyTrader();
@@ -77,8 +77,8 @@ public class DailyScheduler implements SchedulingConfigurer {
 	public void updateStockPriceOnlyEvery10Mins() {
 		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			String time = WeekdayUtil.currentTime();
-			if ((time.compareTo("09-40-00") >= 0 && time.compareTo("11-30-00") <= 0)
-					|| (time.compareTo("13-00-00") >= 0 && time.compareTo("15-00-00") <= 0)) {
+			if ((time.compareTo("09-39-00") >= 0 && time.compareTo("11-31-00") <= 0)
+					|| (time.compareTo("13-00-00") >= 0 && time.compareTo("15-02-00") <= 0)) {
 				logger.info("Start updateStockPriceOnlyEvery10Mins");
 				long startTs = System.currentTimeMillis();
 				updateRealtimeStockPriceForEasyTrader();

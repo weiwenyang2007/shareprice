@@ -20,8 +20,8 @@ insert into WSFCONFIG (name, type, value) values ('Access-Control-Allow-Origin',
 insert into WSFCONFIG (name, type, value) values ('cixin_Stock_Length','Int   ','172');
 insert into WSFCONFIG (name, type, value) values ('indicatorDBType','String','SQL');
 insert into WSFCONFIG (name, type, value) values ('real_Time_Get_ZiJin_Liu_PageNumber','String','10');
-insert into WSFCONFIG (name, type, value, desc1) values ('realtime_stock_quota_service_page_number_list','String','7','example:7,10  For 600547, the page is 7. Separate by ,');
-insert into wsfconfig (name, type, value, desc1) values ('easytrader_stock_list','String','600547', 'StockId list for easyTrader. Separate by ,');
+insert into WSFCONFIG (name, type, value, desc1) values ('realtime_stock_quota_service_page_number_list','String','7,41','Separate by , For 600547, the page is 7; For 300059 is 41');
+insert into wsfconfig (name, type, value, desc1) values ('easytrader_stock_list','String','600547,300059', 'StockId list for easyTrader. Separate by ,');
 
 insert into favorites_stock (stockid,userid) values (300333,'admin');
 insert into favorites_stock (stockid,userid) values (300311,'admin');
