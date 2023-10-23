@@ -6,9 +6,9 @@ import org.easystogu.db.vo.table.ShenXianVO;
 public class ShenXianUIVO extends ShenXianVO {
 	public double hc5;
 	public double hc6;
-	public String sellFlagsTitle = "";// 卖点
+	public String sellFlagsTitle = "";// 买卖点, 由神仙指标和h5, h6决定, 如B, S
 	public String sellFlagsText = "";
-	public String buyFlagsTitle = "";// 买点
+	public String buyFlagsTitle = "";// 由蜡烛形态决定的, 如CP B, CP 2B, CP 3B; CP S, CP 2S, CP 3S
 	public String buyFlagsText = "";
 	public String duoFlagsTitle = "";// 金叉 死叉
 	public String duoFlagsText = "";
