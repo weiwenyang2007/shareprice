@@ -19,7 +19,7 @@ public class UpdateAllRunner {
 			return;
 
 		long startL = System.currentTimeMillis();
-		logger.debug(("Start datetime:" + WeekdayUtil.currentDateTime());
+		logger.debug(("Start datetime:" + WeekdayUtil.currentDateTime()));
 		// task started
 
 		// StockPriceHistoryOverAllRunner.main(args);
@@ -29,6 +29,6 @@ public class UpdateAllRunner {
 		// task end
 		long endL = System.currentTimeMillis();
 		long durationHours = (endL - startL) / (1000 * 60 * 60);
-		logger.debug(("Completed datetime:" + WeekdayUtil.currentDateTime() + ", it takes hours=" + durationHours);
+		logger.debug(("Completed datetime:" + WeekdayUtil.currentDateTime() + ", it takes hours=" + durationHours));
 	}
 }
