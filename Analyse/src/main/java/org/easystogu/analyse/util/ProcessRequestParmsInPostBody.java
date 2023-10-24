@@ -108,7 +108,7 @@ public class ProcessRequestParmsInPostBody {
 						spList.set(spList.size() - 1, curVo);
 						//System.out.println("after mockCurPriceAndPredictTodayBSInd="+mockCurPriceAndPredictTodayBSInd + ", update vo="+curVo.toString());
 					} else {
-						logger.debug(
+						logger.warn(
 								"mockCurPriceAndPredictTodayBSInd error, either today is not a trader day, nor the stock price is not updated");
 					}
 				}
