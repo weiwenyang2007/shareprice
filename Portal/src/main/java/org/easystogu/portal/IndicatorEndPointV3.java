@@ -37,6 +37,7 @@ import org.easystogu.indicator.runner.utils.StockPriceFetcher;
 import org.easystogu.trendmode.TrendModeLoader;
 import org.easystogu.analyse.vo.ShenXianUIVO;
 import org.easystogu.utils.Strings;
+import org.easystogu.utils.WeekdayUtil;
 import org.json.JSONObject;
 import org.easystogu.cache.ConfigurationServiceCache;
 import com.google.common.primitives.Doubles;
@@ -262,6 +263,7 @@ public class IndicatorEndPointV3 {
 			List<ShenXianUIVO> rtnList = shenXianSellAnalyseHelper.queryShenXianSellById(stockIdParm, dateParm, jsonParm);
 			ShenXianUIVO curVo = rtnList.get(rtnList.size() - 1);
 			if(curVo.sellFlagsTitle.contains(buyOrSell)){
+				curVo.updatedTime = WeekdayUtil.currentDateTime();
 				return curVo;
 			}
 		}
