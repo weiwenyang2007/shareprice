@@ -90,7 +90,7 @@ public class DailySelectionRunner implements Runnable {
   protected boolean checkDayPriceEqualWeekPrice = true;
   protected AtomicInteger counter = new AtomicInteger();
 
-  public void doAnalyse(String stockId) {
+  private void doAnalyse(String stockId) {
     try {
       List<StockSuperVO> overDayList = stockOverAllHelper.getAllStockSuperVO(stockId);
       List<StockSuperVO> overWeekList = weekStockOverAllHelper.getAllStockSuperVO(stockId);
@@ -331,126 +331,6 @@ public class DailySelectionRunner implements Runnable {
     return false;
   }
 
-  public void reportSelectedStockIds() {
-    Set<StockSuperVO> keys = this.selectedMaps.keySet();
-    Iterator<StockSuperVO> keysIt = keys.iterator();
-    while (keysIt.hasNext()) {
-      StockSuperVO superVO = keysIt.next();
-      List<DailyCombineCheckPoint> checkPointList = this.selectedMaps.get(superVO);
-      for (DailyCombineCheckPoint checkPoint : checkPointList) {
-        if (checkPoint.isSatisfyMinEarnPercent()) {
-          recommandStr.append(superVO.priceVO.stockId + " select :" + checkPointList.toString()
-              + " " + superVO.genZiJinLiuInfo() + " " + superVO.getZhuLiJingLiuRu() + "\n");
-        }
-      }
-    }
-
-    logger.debug(recommandStr.toString());
-  }
-
-  public void reportSelectedHistoryReport() {
-    List<RangeHistoryReportVO> rangeList = new ArrayList<RangeHistoryReportVO>();
-    Set<StockSuperVO> keys = this.selectedMaps.keySet();
-    Iterator<StockSuperVO> keysIt = keys.iterator();
-    while (keysIt.hasNext()) {
-      StockSuperVO superVO = keysIt.next();
-      List<DailyCombineCheckPoint> checkPointList = this.selectedMaps.get(superVO);
-
-      for (DailyCombineCheckPoint checkPoint : checkPointList) {
-        if (checkPoint.isSatisfyMinEarnPercent()) {
-          List<HistoryReportDetailsVO> hisReport = new ArrayList<HistoryReportDetailsVO>();
-          if (doHistoryAnalyzeInDailySelection) {
-            hisReport =
-                historyReportHelper.doAnalyseBuySellDate(superVO.priceVO.stockId, checkPoint);
-          }
-          RangeHistoryReportVO rangeVO = new RangeHistoryReportVO(superVO, hisReport, checkPoint);
-          rangeList.add(rangeVO);
-        }
-      }
-    }
-
-    this.sortRangeHistoryReport(rangeList);
-    this.reportToConsole(rangeList);
-    //this.reportToHtml(rangeList);
-  }
-
-  public void reportToConsole(List<RangeHistoryReportVO> rangeList) {
-    logger.debug("\nHistory range report: ");
-    for (RangeHistoryReportVO rangeVO : rangeList) {
-      // if (rangeVO.currentSuperVO.isAllMajorNetPerIn()) {
-      logger.debug(rangeVO.toSimpleString() + " WeekLen("
-          + rangeVO.currentSuperVO.hengPanWeekLen + ") KDJ(" + (int) rangeVO.currentSuperVO.kdjVO.k
-          + ") " + rangeVO.currentSuperVO.genZiJinLiuInfo() + " "
-          + rangeVO.currentSuperVO.getZhuLiJingLiuRu());
-      // }
-    }
-  }
-
-  public void reportToHtml(List<RangeHistoryReportVO> rangeList) {
-    String file =
-        config.getString("report.analyse.html.file").replaceAll("currentDate", latestDate);
-    logger.debug("\nSaving report to " + file);
-    try {
-      BufferedWriter fout = new BufferedWriter(new FileWriter(file));
-      fout.write(ReportTemplate.htmlStart);
-      fout.newLine();
-      fout.write(ReportTemplate.tableStart);
-      fout.newLine();
-
-      // fout.write(recommandStr.toString().replaceAll("\n", "<br>"));
-      // fout.newLine();
-
-      for (RangeHistoryReportVO rangeVO : rangeList) {
-
-        if (!rangeVO.checkPoint.isSatisfyMinEarnPercent()) {
-          continue;
-        }
-
-        // if (!rangeVO.currentSuperVO.isAllMajorNetPerIn()) {
-        // continue;
-        // }
-
-        String stockId = rangeVO.stockId;
-        String pre = stockId.startsWith("6") ? "sh" : "sz";
-
-        fout.write(ReportTemplate.tableTrStart);
-        fout.newLine();
-
-        fout.write(ReportTemplate.tableTdStart);
-        fout.write(
-            rangeVO.toSimpleString() + "&nbsp; WeekLen(" + rangeVO.currentSuperVO.hengPanWeekLen
-                + ") &nbsp; KDJ(" + (int) rangeVO.currentSuperVO.kdjVO.k + ") <br> "
-                + rangeVO.currentSuperVO.genZiJinLiuInfo()
-                + rangeVO.currentSuperVO.getZhuLiJingLiuRu());
-        fout.write(ReportTemplate.tableTdEnd);
-        fout.newLine();
-
-        fout.write(ReportTemplate.tableTdLink1Start.replace("[stockId]", stockId));
-        fout.write("Details 1");
-        fout.write(ReportTemplate.tableTdLinkEnd);
-        fout.newLine();
-
-        fout.write(ReportTemplate.tableTdLink2Start.replace("[prestockId]", pre + stockId));
-        fout.write("Details 2");
-        fout.write(ReportTemplate.tableTdLinkEnd);
-        fout.newLine();
-
-        fout.write(ReportTemplate.tableTrEnd);
-        fout.newLine();
-      }
-
-      fout.write(ReportTemplate.tableEnd);
-      fout.newLine();
-      fout.write(ReportTemplate.htmlEnd);
-      fout.newLine();
-
-      fout.flush();
-      fout.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
   private void addGeneralCheckPointStatisticsResultToDB() {
     logger.debug("==================General CheckPoint Statistics=====================");
     Set<DailyCombineCheckPoint> keys = this.generalCheckPointGordonMap.keySet();
@@ -495,27 +375,12 @@ public class DailySelectionRunner implements Runnable {
     return overList.size() - 1;
   }
 
-  // sort by avgHighEarnPercent
-  @SuppressWarnings("unchecked")
-  public void sortRangeHistoryReport(List<RangeHistoryReportVO> rangeList) {
-    // Collections.sort(rangeList, new CheckPointEarnPercentComparator());
-    Collections.sort(rangeList, new ZiJinLiuComparator());
-  }
-
-  public boolean isFetchRealTimeZiJinLiu() {
-    return fetchRealTimeZiJinLiu;
-  }
-
   public void setFetchRealTimeZiJinLiu(boolean fetchRealTimeZiJinLiu) {
     this.fetchRealTimeZiJinLiu = fetchRealTimeZiJinLiu;
   }
-  
-  public void resetGeneralCheckPointGordonMap() {
-    this.generalCheckPointGordonMap = 
-        new java.util.concurrent.ConcurrentHashMap<DailyCombineCheckPoint, List<String>>();
-  }
 
-  public void runForStockIds(List<String> stockIds) {    
+  public void runForStockIds(List<String> stockIds) {
+    latestDate = stockPriceTable.getLatestStockDate();
     logger.debug("DailySelection runForStockIds start for date " + this.latestDate);
     this.counter.set(0);
     stockIds.parallelStream().forEach(stockId -> {
@@ -525,19 +390,7 @@ public class DailySelectionRunner implements Runnable {
         logger.debug("doAnalyse complete:" + current + "/" + stockIds.size());
       }
     });
-    
-//    int index = 0;
-//    for (String stockId : stockIds) {
-//      // if (!stockId.equals("300300"))
-//      // continue;
-//      if (index++ % 500 == 0) {
-//        System.out.println("Analyse of " + index + "/" + stockIds.size());
-//      }
-//      doAnalyse(stockId);
-//    }
 
-    //reportSelectedStockIds();
-    //reportSelectedHistoryReport();
     addGeneralCheckPointStatisticsResultToDB();
     
     logger.debug("DailySelection runForStockIds stop for date " + this.latestDate);
@@ -554,19 +407,5 @@ public class DailySelectionRunner implements Runnable {
     this.addToScheduleActionTable = false;
     this.checkDayPriceEqualWeekPrice = false;
     this.runForStockIds(stockIds);
-  }
-  
-  //run for CHECKPOINT_DAILY_STATISTICS when all zero statistics for date
-  public void runForDate(String date) {
-    this.latestDate = date;
-    this.addToScheduleActionTable = false;
-    this.checkDayPriceEqualWeekPrice = false;
-    this.runForStockIds(stockConfig.getAllStockId());
-  }
-
-  public static void main(String[] args) {
-    // TODO Auto-generated method stub
-    new DailySelectionRunner().run();
-    //new DailySelectionRunner().runForDate("2020-04-17");
   }
 }

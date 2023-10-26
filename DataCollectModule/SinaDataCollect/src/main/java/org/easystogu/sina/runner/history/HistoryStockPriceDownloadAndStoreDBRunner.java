@@ -26,7 +26,7 @@ import org.springframework.web.client.RestTemplate;
 
 import net.sf.json.JSONObject;
 
-//history stock price from sohu, json format
+//history stock price from sohu, json format. 数据有延时，下班很久才能查到当天的数据
 //example: https://q.stock.sohu.com/hisHq?code=cn_002252&start=19990101&end=20170930&order=D&period=d&rt=json
 //         https://q.stock.sohu.com/hisHq?code=cn_600036&start=20200610&end=20200616&order=D&period=d&rt=json
 //if get one date's price, start=end
@@ -159,8 +159,7 @@ public class HistoryStockPriceDownloadAndStoreDBRunner {
             return;
         }
         // first delete all price for this stockId
-        System.out
-                .println("Delete stock price for " + stockId + " that between " + this.startDate + "~" + this.endDate);
+        logger.debug("Delete stock price for " + stockId + " that between " + this.startDate + "~" + this.endDate);
         this.stockPriceTable.deleteBetweenDate(stockId, this.startDate, this.endDate);
         this.qianFuQuanStockPriceTable.deleteBetweenDate(stockId, this.startDate, this.endDate);
         logger.debug("Save to database size=" + spList.size());
@@ -205,23 +204,28 @@ public class HistoryStockPriceDownloadAndStoreDBRunner {
     public static void main(String[] args) {
         String startDate = "2020-05-13";//1990-01-01
         String endDate = WeekdayUtil.currentDate();
-
+        String stockId = null;
         if (args != null && args.length == 2) {
             startDate = args[0];
             endDate = args[1];
+        }
+
+        if (args != null && args.length == 3) {
+            startDate = args[0];
+            endDate = args[1];
+            stockId = args[2];
         }
 
         logger.debug("startDate=" + startDate + " and endDate=" + endDate);
 
         HistoryStockPriceDownloadAndStoreDBRunner runner = new HistoryStockPriceDownloadAndStoreDBRunner(startDate,
                 endDate);
-        List<String> stockIds = runner.companyInfoHelper.getAllStockId();
-        // for all stockIds
-        runner.countAndSave(stockIds);
-        // for specify stockId
-        //runner.countAndSave("000001");
-
-        // finally re run for failure
-        //runner.reRunOnFailure();
+        if (Strings.isEmpty(stockId)) {
+            List<String> stockIds = runner.companyInfoHelper.getAllStockId();
+            // for all stockIds
+            runner.countAndSave(stockIds);
+        } else {
+            runner.countAndSave(stockId);
+        }
     }
 }

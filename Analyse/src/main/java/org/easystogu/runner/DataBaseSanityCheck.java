@@ -278,7 +278,16 @@ public class DataBaseSanityCheck implements Runnable {
     sanityDailyCheck(stockIds);
     sanityWeekCheck(stockIds);
     sanityDailyStatisticsCheck(stockIds);
+  }
 
+  public void runForIndicatorOnly() {
+    // TODO Auto-generated method stub
+    CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
+
+    List<String> stockIds = stockConfig.getAllStockId();
+
+    sanityDailyCheck(stockIds);
+    sanityWeekCheck(stockIds);
   }
   
   public void runForHistoryStatisticsCheck() {

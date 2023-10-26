@@ -2,6 +2,8 @@ package org.easystogu.runner;
 
 import java.util.List;
 
+import org.easystogu.analyse.ShenXianSellAnalyseHelper;
+import org.easystogu.cache.runner.AllCacheRunner;
 import org.easystogu.config.Constants;
 import org.easystogu.db.access.table.WSFConfigTableHelper;
 import org.easystogu.easymoney.runner.OverAllZiJinLiuAndDDXRunner;
@@ -47,8 +49,15 @@ public class DailyUpdateAllStockRunner implements Runnable {
 		dailySelectionRunner.setFetchRealTimeZiJinLiu(false);
 		dailySelectionRunner.runForStockIds(allStockIds);
 
-		// alaylse by view names
+		// analyse by view names
 		new DailyViewAnalyseRunner().run();
+
+		// candle pattern
+		new DailyCandleStickPatternRunner().run();
+		//
+		new AllCacheRunner().refreshAll();
+		//
+		ShenXianSellAnalyseHelper.main(null);
 
 		logger.debug("End DailyUpdateAllStockRunner, spent " + (System.currentTimeMillis() - st) / 1000 + " seconds");
 	}

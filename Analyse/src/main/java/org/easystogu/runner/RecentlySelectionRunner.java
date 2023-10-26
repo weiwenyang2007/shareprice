@@ -301,20 +301,12 @@ public class RecentlySelectionRunner implements Runnable {
 	}
 
 	public void run() {
+		latestDate = stockPriceTable.getLatestStockDate();
+		lastNDates = stockPriceTable.getAllLastNDate(stockConfig.getSZZSStockIdForDB(), 10);
 		fetchRecentDaysCheckPointFromDB();
 		fetchRecentZiJinLiuFromDB();
 		fetchRecentZhuLiJingLiuRuFromDB();
 		fetchLiuTongShiZhiFromDB();
 		printRecentCheckPointToHtml();
-	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		RecentlySelectionRunner runner = new RecentlySelectionRunner();
-		runner.fetchRecentDaysCheckPointFromDB();
-		runner.fetchRecentZiJinLiuFromDB();
-		runner.fetchRecentZhuLiJingLiuRuFromDB();
-		runner.fetchLiuTongShiZhiFromDB();
-		runner.printRecentCheckPointToHtml();
 	}
 }

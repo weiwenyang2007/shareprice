@@ -56,6 +56,10 @@ public class WeekdayUtil {
 	public static String yesterdayDate() {
         return nextNDateString(currentDate(), -1);
     }
+
+	public static String nDayBeforeToday(int nDay) {
+		return nextNDateString(currentDate(), nDay);
+	}
 	
 	public static String tomorrowDate() {
       return nextNDateString(currentDate(), 1);

@@ -7,16 +7,17 @@ import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
+import org.easystogu.log.LogHelper;
 import org.easystogu.sina.common.RealTimePriceVO;
 import org.easystogu.sina.helper.DailyStockPriceDownloadHelper;
+import org.slf4j.Logger;
 
 //daily get real time stock price from http://hq.sinajs.cn/list=
 //it need sotckIds as parameter
 //this method is not working now: hq.sinajs.cn can not return a correct stock price
 @Deprecated
 public class DailyStockPriceDownloadAndStoreDBRunner implements Runnable {
-    // private static Logger logger =
-    // LogHelper.getLogger(DailyStockPriceDownloadAndStoreDBRunner.class);
+    private static Logger logger = LogHelper.getLogger(DailyStockPriceDownloadAndStoreDBRunner.class);
     private CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
     private StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
     private StockPriceTableHelper qianFuQuanStockPriceTable = QianFuQuanStockPriceTableHelper.getInstance();
@@ -30,11 +31,11 @@ public class DailyStockPriceDownloadAndStoreDBRunner implements Runnable {
         int batchSize = 200;
         int batchs = allStockIds.size() / batchSize;
         totalSize = allStockIds.size();
-        System.out.println("Process daily price, totalSize= " + totalSize);
+        logger.debug("Process daily price, totalSize= " + totalSize);
         // 分批取数据
         int index = 0;
         for (; index < batchs; index++) {
-            System.out.println("Process daily price " + index + "/" + batchs);
+            logger.debug("Process daily price " + index + "/" + batchs);
             List<RealTimePriceVO> list = sinaHelper.fetchDataFromWeb(allStockIds.subList(index * batchSize, (index + 1)
                     * batchSize));
             for (RealTimePriceVO vo : list) {
@@ -42,7 +43,7 @@ public class DailyStockPriceDownloadAndStoreDBRunner implements Runnable {
             }
         }
         // 去剩余数据
-        System.out.println("Process daily price " + index + "/" + batchs);
+        logger.debug("Process daily price " + index + "/" + batchs);
         List<RealTimePriceVO> list = sinaHelper.fetchDataFromWeb(allStockIds.subList(index * batchSize,
                 allStockIds.size()));
         for (RealTimePriceVO vo : list) {
@@ -67,11 +68,11 @@ public class DailyStockPriceDownloadAndStoreDBRunner implements Runnable {
                 qianFuQuanStockPriceTable.insert(vo);
                 //houFuQuanStockPriceTable.insert(vo);
             } else {
-                System.out.println("vo invalidate: " + vo);
+                logger.debug("vo invalidate: " + vo);
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            System.out.println("Can't save to DB, vo=" + vo + ", error=" + e.getMessage());
+            logger.debug("Can't save to DB, vo=" + vo + ", error=" + e.getMessage());
             e.printStackTrace();
             totalError++;
             // logger.error("Can not save stock price to DB " + vo.toString(),
@@ -80,8 +81,8 @@ public class DailyStockPriceDownloadAndStoreDBRunner implements Runnable {
     }
 
     private void printResult() {
-        System.out.println("totalSize=" + this.totalSize);
-        System.out.println("totalError=" + this.totalError);
+        logger.debug("totalSize=" + this.totalSize);
+        logger.debug("totalError=" + this.totalError);
     }
 
     public void run() {

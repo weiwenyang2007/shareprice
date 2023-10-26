@@ -34,34 +34,10 @@ public class DailyViewAnalyseRunner implements Runnable {
           checkPointDailySelectionTable.delete(stockId, latestDate, viewName);
           checkPointDailySelectionTable.insertIfNotExist(cpvo);
 		});
-		
-//		for (String stockId : stockIds) {
-//			CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
-//			cpvo.stockId = stockId;
-//			cpvo.checkPoint = viewName;
-//			cpvo.date = this.latestDate;
-//
-//			checkPointDailySelectionTable.delete(stockId, latestDate, viewName);
-//			checkPointDailySelectionTable.insert(cpvo);
-//		}
-	}
-
-	// extract the currentDate from view, those view has many date's date
-	private void fastExtractForView(String viewName) {
-		logger.debug("Extract for viewName: " + viewName);
-		List<CommonViewVO> list = commonViewHelper.queryByDateForCheckPoint(viewName, this.latestDate);
-		for (CommonViewVO vo : list) {
-			CheckPointDailySelectionVO cpvo = new CheckPointDailySelectionVO();
-			cpvo.stockId = vo.stockId;
-			cpvo.checkPoint = viewName;
-			cpvo.date = this.latestDate;
-
-			checkPointDailySelectionTable.delete(vo.stockId, latestDate, viewName);
-			checkPointDailySelectionTable.insertIfNotExist(cpvo);
-		}
 	}
 
 	public void run() {
+		latestDate = stockPriceTable.getLatestStockDate();
 		//this.fastExtractForView("luzao_phaseII_zijinliu_top300");
 		//this.fastExtractForView("luzao_phaseIII_zijinliu_top300");
 

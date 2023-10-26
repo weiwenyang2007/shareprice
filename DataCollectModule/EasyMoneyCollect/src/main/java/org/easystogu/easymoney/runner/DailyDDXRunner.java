@@ -67,11 +67,7 @@ public class DailyDDXRunner implements Runnable {
 	}
 
 	public void run() {
+		latestDate = stockPriceTable.getLatestStockDate();
 		countAndSaved(stockConfig.getAllStockId());
-	}
-
-	public static void main(String[] args) {
-		DailyDDXRunner runner = new DailyDDXRunner();
-		runner.run();
 	}
 }

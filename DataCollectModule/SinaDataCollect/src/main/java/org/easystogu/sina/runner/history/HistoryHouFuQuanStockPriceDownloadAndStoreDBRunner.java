@@ -63,7 +63,7 @@ public class HistoryHouFuQuanStockPriceDownloadAndStoreDBRunner {
 			String contents = restTemplate.getForObject(url.toString(), String.class);
 
 			if (Strings.isEmpty(contents)) {
-				System.out.println("Contents is empty");
+				logger.debug("Contents is empty");
 				return spList;
 			}
 
@@ -106,19 +106,19 @@ public class HistoryHouFuQuanStockPriceDownloadAndStoreDBRunner {
 	public void countAndSave(List<String> stockIds) {
 		int index = 0;
 		for (String stockId : stockIds) {
-			System.out.println("Process hou fuquan price for " + stockId + ", " + (++index) + " of " + stockIds.size());
+			logger.debug("Process hou fuquan price for " + stockId + ", " + (++index) + " of " + stockIds.size());
 			this.countAndSave(stockId);
 		}
 	}
 
 	public void countAndSave(String stockId) {
 		// first delete all price for this stockId
-		System.out.println("Delete hou fuquan stock price for " + stockId);
+		logger.debug("Delete hou fuquan stock price for " + stockId);
 		this.houfuquanStockPriceTable.delete(stockId);
 		// fetch all history price from sohu api
 		// FuQuan data is in date order desc
 		List<StockPriceVO> fqspList = this.fetchFuQuanStockPriceFromWeb(stockId);
-		System.out.println("Save to database size=" + fqspList.size());
+		logger.debug("Save to database size=" + fqspList.size());
 		// save to db
 		for (StockPriceVO fqspvo : fqspList) {
 			StockPriceVO spvo = this.stockPriceTable.getStockPriceByIdAndDate(stockId, fqspvo.date);
@@ -162,7 +162,7 @@ public class HistoryHouFuQuanStockPriceDownloadAndStoreDBRunner {
 		for (String stockId : stockIds) {
 			if (this.houfuquanStockPriceTable.countTuplesByIDAndBetweenDate(stockId, "1997-01-01",
 					WeekdayUtil.currentDate()) <= 0) {
-				System.out.println("Re run for " + stockId);
+				logger.debug("Re run for " + stockId);
 				this.countAndSave(stockId);
 			}
 		}

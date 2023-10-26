@@ -11,19 +11,20 @@ import org.easystogu.db.access.table.WSFConfigTableHelper;
 import org.easystogu.db.vo.table.CompanyInfoVO;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
+import org.easystogu.log.LogHelper;
 import org.easystogu.sina.common.SinaQuoteStockPriceVO;
 import org.easystogu.sina.helper.DailyStockPriceDownloadHelper2;
 import org.easystogu.sina.runner.history.HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner;
 import org.easystogu.sina.runner.history.HistoryStockPriceDownloadAndStoreDBRunner;
 import org.easystogu.utils.Strings;
 import org.easystogu.utils.WeekdayUtil;
+import org.slf4j.Logger;
 
 //daily get real time stock price from http://vip.stock.finance.sina.com.cn/quotes_service/api/
 //it will get all the stockId from the web, including the new on board stockId
 public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
 
-    // private static Logger logger =
-    // LogHelper.getLogger(DailyStockPriceDownloadAndStoreDBRunner2.class);
+    private static Logger logger = LogHelper.getLogger(DailyStockPriceDownloadAndStoreDBRunner2.class);
     private CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
     private StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
     private ConfigurationServiceCache config = ConfigurationServiceCache.getInstance();
@@ -71,11 +72,11 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
     public void downloadDataAndSaveIntoDB(String latestDate, int page) {
 
         if (Strings.isEmpty(latestDate)) {
-            System.out.println("Fatel Error, the latestDate is null! Return.");
+            logger.error("Error, the latestDate is null! Return.");
             return;
         }
 
-        System.out.println("Get stock price for latestDate=" + latestDate + ", page=" + page);
+        logger.debug("Get stock price for latestDate=" + latestDate + ", page=" + page);
 
         List<SinaQuoteStockPriceVO> sqsList = sinaHelper2.fetchAPageDataFromWeb(page);
         for (SinaQuoteStockPriceVO sqvo : sqsList) {
@@ -85,10 +86,10 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
             if (companyInfo == null) {
                 CompanyInfoVO cinvo = new CompanyInfoVO(sqvo.code, sqvo.name);
                 companyInfoTable.insert(cinvo);
-                System.out.println("New company on board " + sqvo.code + " " + sqvo.name);
+                logger.debug("New company on board " + sqvo.code + " " + sqvo.name);
             } else if (Strings.isNotEmpty(companyInfo.name) && !companyInfo.name.equals(sqvo.name)) {
                 //update the company name
-                System.out.println("Company change name from " + companyInfo.name + " to " + sqvo.name);
+                logger.debug("Company change name from " + companyInfo.name + " to " + sqvo.name);
                 companyInfo.name = sqvo.name;
                 companyInfoTable.updateName(companyInfo);
             }
@@ -100,11 +101,11 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
     public void downloadDataAndSaveIntoDB() {
 
         if (Strings.isEmpty(this.latestDate)) {
-            System.out.println("Fatel Error, the latestDate is null! Return.");
+            logger.error("Fatel Error, the latestDate is null! Return.");
             return;
         }
 
-        System.out.println("Get stock price for latestDate=" + this.latestDate);
+        logger.debug("Get stock price for latestDate=" + this.latestDate);
 
         List<SinaQuoteStockPriceVO> sqsList = sinaHelper2.fetchAllStockPriceFromWeb();
         for (SinaQuoteStockPriceVO sqvo : sqsList) {
@@ -114,10 +115,10 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
             if (companyInfo == null) {
                 CompanyInfoVO cinvo = new CompanyInfoVO(sqvo.code, sqvo.name);
                 companyInfoTable.insert(cinvo);
-                System.out.println("New company on board " + sqvo.code + " " + sqvo.name);
+                logger.debug("New company on board " + sqvo.code + " " + sqvo.name);
             } else if (Strings.isNotEmpty(companyInfo.name) && !companyInfo.name.equals(sqvo.name)) {
                 //update the company name
-                System.out.println("Company change name from " + companyInfo.name + " to " + sqvo.name);
+                logger.debug("Company change name from " + companyInfo.name + " to " + sqvo.name);
                 companyInfo.name = sqvo.name;
                 companyInfoTable.updateName(companyInfo);
             }
@@ -146,7 +147,7 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
             // delete if today old data is exist
             this.stockPriceTable.delete(spvo.stockId, spvo.date);
             List<StockPriceVO> nDaySpList = this.stockPriceTable.getNdateStockPriceById(spvo.stockId, 1);
-            // System.out.println("saving into DB, vo=" + vo);
+
             this.stockPriceTable.insert(spvo);
             // also insert the qian fuquan stockprice
             this.qianfuquanStockPriceTable.delete(spvo.stockId, spvo.date);
@@ -159,7 +160,7 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
                     double rate = prevo.close / spvo.lastClose;
                     if (rate <= 0.95 || rate >= 1.05) {
                         // chu quan event
-                        System.out.println("Chu Quan happens for " + spvo.stockId + ", rate=" + rate);
+                        logger.debug("Chu Quan happens for " + spvo.stockId + ", rate=" + rate);
                         this.historyQianFuQuanRunner.countAndSave(spvo.stockId);
                     }
                 }
@@ -175,7 +176,7 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
     public void run() {
         downloadMainBoardIndicator();
         downloadDataAndSaveIntoDB();
-        System.out.println("\ntotalSize=" + this.totalSize);
+        logger.debug("\ntotalSize=" + this.totalSize);
     }
 
     public static void main(String[] args) {

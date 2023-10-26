@@ -97,7 +97,7 @@ public class DailyStockPriceDownloadHelper2 {
 		} catch (JSONException e) {
 			logger.debug("JSONException at fetchAPageDataFromWeb : " + e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("fetchAPageDataFromWeb exception", e.getMessage());
 		}
 		return list;
 	}

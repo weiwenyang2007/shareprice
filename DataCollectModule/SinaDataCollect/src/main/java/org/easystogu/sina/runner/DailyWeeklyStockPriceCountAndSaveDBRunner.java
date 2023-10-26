@@ -22,21 +22,13 @@ public class DailyWeeklyStockPriceCountAndSaveDBRunner implements Runnable {
 	}
 
 	public void countAndSave(List<String> stockIds) {
-	  
+		latestDate = qianFuQuanStockPriceTable.getLatestStockDate();
 	  stockIds.parallelStream().forEach(stockId -> {
         this.countAndSaved(stockId);
       });
-	  
-//		int index = 0;
-//		for (String stockId : stockIds) {
-//			if (index++ % 500 == 0) {
-//				System.out.println("Process weekly price " + (index) + "/" + stockIds.size());
-//			}
-//			this.countAndSaved(stockId);
-//		}
 	}
 
-	public void countAndSaved(String stockId) {
+	private void countAndSaved(String stockId) {
 		// first clean one tuple in week_stockprice table
 		// loop all this week's date, in fact, only one tuple match and
 		// del
@@ -89,13 +81,5 @@ public class DailyWeeklyStockPriceCountAndSaveDBRunner implements Runnable {
 
 	public void run() {
 		countAndSave(stockConfig.getAllStockId());
-	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
-		DailyWeeklyStockPriceCountAndSaveDBRunner runner = new DailyWeeklyStockPriceCountAndSaveDBRunner();
-		runner.countAndSave(stockConfig.getAllStockId());
-		//runner.countAndSaved("999999");
 	}
 }
