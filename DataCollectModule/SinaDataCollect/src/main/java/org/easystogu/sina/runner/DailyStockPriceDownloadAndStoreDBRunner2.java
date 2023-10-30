@@ -1,13 +1,11 @@
 package org.easystogu.sina.runner;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.easystogu.cache.ConfigurationServiceCache;
 import org.easystogu.db.access.table.CompanyInfoTableHelper;
 import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
-import org.easystogu.db.access.table.WSFConfigTableHelper;
 import org.easystogu.db.vo.table.CompanyInfoVO;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
@@ -36,7 +34,6 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
     private DailyStockPriceDownloadHelper2 sinaHelper2 = new DailyStockPriceDownloadHelper2();
     private HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner historyQianFuQuanRunner = new HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner();
     private String latestDate = "";
-    private int totalSize = 0;
 
     // first download szzs, szcz, cybz,
     // must record the latest date time
@@ -69,14 +66,8 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
 
     //another api to get realtime stock price is :
     //https://vip.stock.finance.sina.com.cn/quotes_service/view/vML_DataList.php?asc=j&symbol=sh600547&num=5
-    public void downloadDataAndSaveIntoDB(String latestDate, int page) {
-
-        if (Strings.isEmpty(latestDate)) {
-            logger.error("Error, the latestDate is null! Return.");
-            return;
-        }
-
-        logger.debug("Get stock price for latestDate=" + latestDate + ", page=" + page);
+    public void downloadDataAndSaveIntoDB(String today, int page) {
+        logger.debug("Get stock price for today=" + today + ", page=" + page);
 
         List<SinaQuoteStockPriceVO> sqsList = sinaHelper2.fetchAPageDataFromWeb(page);
         for (SinaQuoteStockPriceVO sqvo : sqsList) {
@@ -94,7 +85,7 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
                 companyInfoTable.updateName(companyInfo);
             }
             // convert to stockprice and save to DB
-            this.saveIntoDB(sqvo, latestDate);
+            this.saveIntoDBWithoutChuQuanEventChecking(sqvo, today);
         }
     }
 
@@ -123,11 +114,11 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
                 companyInfoTable.updateName(companyInfo);
             }
             // convert to stockprice and save to DB
-            this.saveIntoDB(sqvo, this.latestDate);
+            this.saveIntoDB(sqvo);
         }
     }
 
-    public void saveIntoDB(SinaQuoteStockPriceVO sqvo, String latestDate) {
+    private void saveIntoDB(SinaQuoteStockPriceVO sqvo) {
         try {
             // update stockprice into table
             StockPriceVO spvo = new StockPriceVO();
@@ -135,7 +126,7 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
             spvo.name = sqvo.name;
             // important: this json do not contain date information,
             // just time is not enough, so we must get it form hq.sinajs.cn
-            spvo.date = latestDate;
+            spvo.date = this.latestDate;
             spvo.close = sqvo.trade;
             spvo.open = sqvo.open;
             spvo.low = sqvo.low;
@@ -165,8 +156,34 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-            this.totalSize++;
+    private void saveIntoDBWithoutChuQuanEventChecking(SinaQuoteStockPriceVO sqvo, String today) {
+        try {
+            // update stockprice into table
+            StockPriceVO spvo = new StockPriceVO();
+            spvo.stockId = sqvo.code;
+            spvo.name = sqvo.name;
+            // important: this json do not contain date information,
+            // just time is not enough, so we must get it form hq.sinajs.cn
+            spvo.date = today;
+            spvo.close = sqvo.trade;
+            spvo.open = sqvo.open;
+            spvo.low = sqvo.low;
+            spvo.high = sqvo.high;
+            // sina data is 100 larger then sohu history data
+            spvo.volume = sqvo.volume / 100;
+            spvo.lastClose = sqvo.trade - sqvo.pricechange;
+
+            // delete if today old data is exist
+            this.stockPriceTable.delete(spvo.stockId, spvo.date);
+            this.stockPriceTable.insert(spvo);
+            // also insert the qian fuquan stockprice
+            this.qianfuquanStockPriceTable.delete(spvo.stockId, spvo.date);
+            this.qianfuquanStockPriceTable.insert(spvo);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -176,7 +193,6 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
     public void run() {
         downloadMainBoardIndicator();
         downloadDataAndSaveIntoDB();
-        logger.debug("\ntotalSize=" + this.totalSize);
     }
 
     public static void main(String[] args) {

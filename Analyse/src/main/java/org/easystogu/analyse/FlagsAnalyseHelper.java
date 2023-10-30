@@ -197,9 +197,8 @@ public class FlagsAnalyseHelper {
           sxvo.setDuoFlagsText(text);
         }
 
-        //太多这种诱多诱空的标记，暂时去掉
         // 多头做T
-        if ((sxvo.h1 >= sxvo.h2)) {
+        //if ((sxvo.h1 >= sxvo.h2)) {
           // buy point
           if (spvo.low <= sxvo.hc6) {
             //sxvo.setBuyFlagsTitle("B");
@@ -214,7 +213,7 @@ public class FlagsAnalyseHelper {
             sxvo.setSellFlagsTitle("S");
             sxvo.setSellFlagsText("HC5压力, 减仓1/3");
           }
-        }
+        //}
 
         // 86天缩量
         if (volumevo.maVolume < volumevo.hhvVolume / 10) {
