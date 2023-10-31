@@ -85,7 +85,7 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
                 companyInfoTable.updateName(companyInfo);
             }
             // convert to stockprice and save to DB
-            this.saveIntoDBWithoutChuQuanEventChecking(sqvo, today);
+            this.saveIntoDB(sqvo, today);
         }
     }
 
@@ -114,11 +114,11 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
                 companyInfoTable.updateName(companyInfo);
             }
             // convert to stockprice and save to DB
-            this.saveIntoDB(sqvo);
+            this.saveIntoDB(sqvo, this.latestDate);
         }
     }
 
-    private void saveIntoDB(SinaQuoteStockPriceVO sqvo) {
+    private void saveIntoDB(SinaQuoteStockPriceVO sqvo, String date) {
         try {
             // update stockprice into table
             StockPriceVO spvo = new StockPriceVO();
@@ -126,7 +126,7 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
             spvo.name = sqvo.name;
             // important: this json do not contain date information,
             // just time is not enough, so we must get it form hq.sinajs.cn
-            spvo.date = this.latestDate;
+            spvo.date = date;
             spvo.close = sqvo.trade;
             spvo.open = sqvo.open;
             spvo.low = sqvo.low;
@@ -156,35 +156,6 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
                     }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void saveIntoDBWithoutChuQuanEventChecking(SinaQuoteStockPriceVO sqvo, String today) {
-        try {
-            // update stockprice into table
-            StockPriceVO spvo = new StockPriceVO();
-            spvo.stockId = sqvo.code;
-            spvo.name = sqvo.name;
-            // important: this json do not contain date information,
-            // just time is not enough, so we must get it form hq.sinajs.cn
-            spvo.date = today;
-            spvo.close = sqvo.trade;
-            spvo.open = sqvo.open;
-            spvo.low = sqvo.low;
-            spvo.high = sqvo.high;
-            // sina data is 100 larger then sohu history data
-            spvo.volume = sqvo.volume / 100;
-            spvo.lastClose = sqvo.trade - sqvo.pricechange;
-
-            // delete if today old data is exist
-            this.stockPriceTable.delete(spvo.stockId, spvo.date);
-            this.stockPriceTable.insert(spvo);
-            // also insert the qian fuquan stockprice
-            this.qianfuquanStockPriceTable.delete(spvo.stockId, spvo.date);
-            this.qianfuquanStockPriceTable.insert(spvo);
-
         } catch (Exception e) {
             e.printStackTrace();
         }

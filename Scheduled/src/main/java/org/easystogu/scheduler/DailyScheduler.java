@@ -63,7 +63,7 @@ public class DailyScheduler implements SchedulingConfigurer {
 	public void updateStockPriceOnlyEvery2Mins() {
 		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			String time = WeekdayUtil.currentTime();
-			if ((time.compareTo("09-24-00") >= 0 && time.compareTo("09-41-00") <= 0)) {
+			if ((time.compareTo("09-25-00") >= 0 && time.compareTo("09-40-00") <= 0)) {
 				logger.info("Start updateStockPriceOnlyEvery2Mins");
 				long startTs = System.currentTimeMillis();
 				updateRealtimeStockPriceForEasyTrader();
@@ -72,17 +72,17 @@ public class DailyScheduler implements SchedulingConfigurer {
 		}
 	}
 
-	// every 10 mins from 9:40 to 15:00, Monday to Friday
-	@Scheduled(cron = "0 0/10 09,10,11,13,14 * * MON-FRI")
-	public void updateStockPriceOnlyEvery10Mins() {
+	// every 5 mins from 9:40 to 15:00, Monday to Friday
+	@Scheduled(cron = "0 0/5 09,10,11,13,14 * * MON-FRI")
+	public void updateStockPriceOnlyEvery5Mins() {
 		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			String time = WeekdayUtil.currentTime();
-			if ((time.compareTo("09-39-00") >= 0 && time.compareTo("11-32-00") <= 0)
-					|| (time.compareTo("13-00-00") >= 0 && time.compareTo("15-02-00") <= 0)) {
-				logger.info("Start updateStockPriceOnlyEvery10Mins");
+			if ((time.compareTo("09-40-00") >= 0 && time.compareTo("11-32-00") <= 0)
+					|| (time.compareTo("13-00-00") >= 0 && time.compareTo("15-10-00") <= 0)) {
+				logger.info("Start updateStockPriceOnlyEvery5Mins");
 				long startTs = System.currentTimeMillis();
 				updateRealtimeStockPriceForEasyTrader();
-				logger.info("End updateStockPriceOnlyEvery10Mins, spent " + (System.currentTimeMillis() - startTs)/1000 + " seconds");
+				logger.info("End updateStockPriceOnlyEvery5Mins, spent " + (System.currentTimeMillis() - startTs)/1000 + " seconds");
 			}
 		}
 	}
@@ -111,7 +111,7 @@ public class DailyScheduler implements SchedulingConfigurer {
 	}
 
 	// run at 15:10 DailyOverAllRunner
-	@Scheduled(cron = "0 10 15 * * MON-FRI")
+	// @Scheduled(cron = "0 10 15 * * MON-FRI")
 	public void _1_DailyOverAllRunner() {
 		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			boolean isGetZiJinLiu = false;
@@ -126,7 +126,8 @@ public class DailyScheduler implements SchedulingConfigurer {
 		  Thread t = new Thread(new Runnable() {
 	        public void run() {
 	        	//This will use sohu history stock data, sohu is much late to update today's data, so do not run it earlier
-	          new StockPriceHistoryOverAllRunner(WeekdayUtil.currentDate(), WeekdayUtil.currentDate()).run();
+						//-10 means that it will update the stock price from 10 days ago, and will make sure all the price are up to date
+	          new StockPriceHistoryOverAllRunner(WeekdayUtil.nDayBeforeToday(-10), WeekdayUtil.currentDate()).run();
 	          
 	          List<String> allStockIds = stockConfig.getAllStockId();
 	          // day ind
