@@ -156,8 +156,8 @@ public class DailyScheduler implements SchedulingConfigurer {
 		}
 	}
 
-	// run at 20:00
-	@Scheduled(cron = "0 0 20 * * MON-FRI")
+	// run at 23:00
+	@Scheduled(cron = "0 0 23 * * MON-FRI")
 	public void _0_DataBaseSanityCheck() {
 		// only run at office, since at aliyun, there is daily santy after price
 		// update
