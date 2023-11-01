@@ -228,7 +228,7 @@ def check_buy_condition(balance_data, target_stock):
                 if stock['stock_id'] == target_stock['stock_id'] and stock['operation'] == 'Buy':
                     curr_trades_number += stock['number']
             
-        log.debug('curr_hold_number: {}, curr_entrust_number: {}, curr_trades_number: {}'.format(str(curr_hold_number, str(curr_entrust_number), str(curr_trades_number))))
+        log.debug('curr_hold_number: {}, curr_entrust_number: {}, curr_trades_number: {}'.format(curr_hold_number, curr_entrust_number, curr_trades_number))
         # 当前持股数量和委托数量都少于预定最大值, 并且没有委托订单(还没有成交的订单),还可以加仓,限制一日成交不超过预定值max_trade_number_per_day
         if curr_trades_number < target_stock['max_trade_number_per_day'] and curr_hold_number < target_stock['max_hold_number'] and curr_entrust_number == 0:
             buy_items['stock_id'] = target_stock['stock_id']
@@ -285,7 +285,7 @@ def check_sell_condition(balance_data, target_stock):
                 if stock['stock_id'] == target_stock['stock_id'] and stock['operation'] == 'Sell':
                     curr_trades_number += stock['number']                    
             
-        log.debug('curr_usable_number: {}, curr_entrust_number: {}, curr_trades_number: {}'.format(str(curr_usable_number, str(curr_entrust_number), str(curr_trades_number))))
+        log.debug('curr_usable_number: {}, curr_entrust_number: {}, curr_trades_number: {}'.format(curr_usable_number, curr_entrust_number, curr_trades_number))
         # 当前股票可用余额大于最少交易量, 而且没有委托卖单,说明还可以卖 (min_hold_number==curr_usable_number是保留低仓,不会清仓), 限制一日成交不超过预定值max_trade_number_per_day
         if curr_trades_number < target_stock['max_trade_number_per_day'] and (curr_usable_number - target_stock['base_sell_number']) >= target_stock['min_hold_number'] and curr_usable_number >= target_stock['base_sell_number'] and curr_entrust_number == 0:
             sell_items['stock_id'] = target_stock['stock_id']
@@ -312,7 +312,7 @@ def deal_with_easy_trade(balance_data):
             return None
             
         current_time = datetime.now().strftime("%H:%M:%S")
-        if current_time >= '09:26:00' and current_time < '14:59:00':
+        if current_time >= '09:28:00' and current_time < '14:59:00':
             log.debug('within trade time, check buy and sell operation')
             target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
             target_stocks = json.load(target_stocks_f)
