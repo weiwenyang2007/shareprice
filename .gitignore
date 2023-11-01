@@ -1,6 +1,7 @@
-*.pyc
-*.pyo
 __pycache__/
+*.py[cod]
+*$py.class
+
 CommonLib/target/
 AI/target/
 Analyse/target/
