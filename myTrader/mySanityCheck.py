@@ -269,8 +269,8 @@ def check_sell_condition(balance_data, target_stock):
                     curr_entrust_number = stock['number']
             
         log.debug('curr_usable_number is ' + str(curr_usable_number) + ',curr_entrust_number is ' + str(curr_entrust_number)) 
-        # 当前股票可用余额大于最少交易量(100), 而且没有委托卖单,说明还可以卖
-        if curr_usable_number >= target_stock['base_sell_number'] and curr_entrust_number == 0:
+        # 当前股票可用余额大于最少交易量, 而且没有委托卖单,说明还可以卖 (min_hold_number==curr_usable_number是保留低仓,不会清仓)
+        if (curr_usable_number - target_stock['base_sell_number']) >= target_stock['min_hold_number'] and curr_usable_number >= target_stock['base_sell_number'] and curr_entrust_number == 0:
             sell_items['stock_id'] = target_stock['stock_id']
             sell_items['sell_number'] = target_stock['base_sell_number']
             
