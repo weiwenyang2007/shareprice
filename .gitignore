@@ -1,4 +1,6 @@
-*/**/*.pyc
+*.pyc
+*.pyo
+__pycache__/
 CommonLib/target/
 AI/target/
 Analyse/target/
