@@ -203,25 +203,34 @@ def check_buy_condition(balance_data, target_stock):
         buy_items = {}
         buy_items['buy_price'] = buy_price
 
-        curr_hold_entrust_number = 0
+        curr_hold_number = 0
+        curr_entrust_number = 0
+        curr_trades_number = 0
         
         # 检查当前持股数量
         if 'stock_holds' in balance_data:
             stock_holds = balance_data['stock_holds']
             for stock in stock_holds:
                 if stock['stock_id'] == target_stock['stock_id']:
-                    curr_hold_entrust_number += stock['hold_number']
+                    curr_hold_number += stock['hold_number']
                     
         # 检查今日委托买入数量            
         if 'stock_today_entrusts' in balance_data:
             stock_today_entrusts = balance_data['stock_today_entrusts']
             for stock in stock_today_entrusts:
                 if stock['stock_id'] == target_stock['stock_id'] and stock['operation'] == 'Buy':
-                    curr_hold_entrust_number += stock['number']
+                    curr_entrust_number += stock['number']
+                    
+        # 检查当日成交数量
+        if 'stock_today_trades' in balance_data:
+            stock_today_trades = balance_data['stock_today_trades']
+            for stock in stock_today_trades:
+                if stock['stock_id'] == target_stock['stock_id'] and stock['operation'] == 'Buy':
+                    curr_trades_number += stock['number']
             
-        log.debug('curr_hold_entrust_number is ' + str(curr_hold_entrust_number))    
-        # 当前持股数量和委托数量都少于预定最大值,还可以加仓
-        if curr_hold_entrust_number < target_stock['max_hold_number']:
+        log.debug('curr_hold_number: {}, curr_entrust_number: {}, curr_trades_number: {}'.format(str(curr_hold_number, str(curr_entrust_number), str(curr_trades_number))))
+        # 当前持股数量和委托数量都少于预定最大值, 并且没有委托订单(还没有成交的订单),还可以加仓,限制一日成交不超过预定值max_trade_number_per_day
+        if curr_trades_number < target_stock['max_trade_number_per_day'] and curr_hold_number < target_stock['max_hold_number'] and curr_entrust_number == 0:
             buy_items['stock_id'] = target_stock['stock_id']
             buy_items['buy_number'] = target_stock['base_buy_number']
             
@@ -253,6 +262,7 @@ def check_sell_condition(balance_data, target_stock):
 
         curr_usable_number = 0
         curr_entrust_number = 0
+        curr_trades_number = 0
         
         # 检查当前持股数量
         if 'stock_holds' in balance_data:
@@ -267,10 +277,17 @@ def check_sell_condition(balance_data, target_stock):
             for stock in stock_today_entrusts:
                 if stock['stock_id'] == target_stock['stock_id'] and stock['operation'] == 'Sell':
                     curr_entrust_number = stock['number']
+
+        # 检查当日成交数量
+        if 'stock_today_trades' in balance_data:
+            stock_today_trades = balance_data['stock_today_trades']
+            for stock in stock_today_trades:
+                if stock['stock_id'] == target_stock['stock_id'] and stock['operation'] == 'Sell':
+                    curr_trades_number += stock['number']                    
             
-        log.debug('curr_usable_number is ' + str(curr_usable_number) + ',curr_entrust_number is ' + str(curr_entrust_number)) 
-        # 当前股票可用余额大于最少交易量, 而且没有委托卖单,说明还可以卖 (min_hold_number==curr_usable_number是保留低仓,不会清仓)
-        if (curr_usable_number - target_stock['base_sell_number']) >= target_stock['min_hold_number'] and curr_usable_number >= target_stock['base_sell_number'] and curr_entrust_number == 0:
+        log.debug('curr_usable_number: {}, curr_entrust_number: {}, curr_trades_number: {}'.format(str(curr_usable_number, str(curr_entrust_number), str(curr_trades_number))))
+        # 当前股票可用余额大于最少交易量, 而且没有委托卖单,说明还可以卖 (min_hold_number==curr_usable_number是保留低仓,不会清仓), 限制一日成交不超过预定值max_trade_number_per_day
+        if curr_trades_number < target_stock['max_trade_number_per_day'] and (curr_usable_number - target_stock['base_sell_number']) >= target_stock['min_hold_number'] and curr_usable_number >= target_stock['base_sell_number'] and curr_entrust_number == 0:
             sell_items['stock_id'] = target_stock['stock_id']
             sell_items['sell_number'] = target_stock['base_sell_number']
             
