@@ -320,8 +320,9 @@ def deal_with_easy_trade(balance_data):
                 buy_item = check_buy_condition(balance_data, target_stock)
                 if buy_item:
                     log.debug('buy_item is ' + str(buy_item))
-                    entrust_no = user.sell(buy_item['stock_id'], price=buy_item['buy_price'], amount=buy_item['buy_number'])        
+                    entrust_no = user.buy(buy_item['stock_id'], price=buy_item['buy_price'], amount=buy_item['buy_number'])        
                     log.debug('buy result: ' + str(entrust_no))
+                    buy_item = None
                 else:
                     log.debug('no buy for ' + str(target_stock['stock_id']))
                     
@@ -330,6 +331,7 @@ def deal_with_easy_trade(balance_data):
                     log.debug('sell_item is ' + str(sell_item))   
                     entrust_no = user.sell(sell_item['stock_id'], price=sell_item['sell_price'], amount=sell_item['sell_number'])        
                     log.debug('sell result: ' + str(entrust_no))
+                    sell_item = None
                 else:
                     log.debug('no sell for ' + str(target_stock['stock_id']))    
         else:
