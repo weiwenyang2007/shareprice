@@ -34,6 +34,7 @@ import org.easystogu.indicator.QSDDHelper;
 import org.easystogu.indicator.ShenXianHelper;
 import org.easystogu.indicator.WRHelper;
 import org.easystogu.indicator.runner.utils.StockPriceFetcher;
+import org.easystogu.log.LogHelper;
 import org.easystogu.trendmode.TrendModeLoader;
 import org.easystogu.analyse.vo.ShenXianUIVO;
 import org.easystogu.utils.Strings;
@@ -42,9 +43,11 @@ import org.json.JSONObject;
 import org.easystogu.cache.ConfigurationServiceCache;
 import com.google.common.primitives.Doubles;
 import com.google.gson.Gson;
+import org.slf4j.Logger;
 
 //V3, with forecast data, query from qian fuquan stock price and count in real time
 public class IndicatorEndPointV3 {
+	private static Logger logger = LogHelper.getLogger(IndicatorEndPointV3.class);
 	private ConfigurationServiceCache config = ConfigurationServiceCache.getInstance();
 	protected String accessControlAllowOrgin = config.getString("Access-Control-Allow-Origin", "");
 	protected static String HHmmss = "00:00:00";
@@ -241,7 +244,7 @@ public class IndicatorEndPointV3 {
 
 	private ShenXianUIVO mockCurPriceAndPredictTodayInd(String stockIdParm, String dateParm, String postBody, String buyOrSell) {
 		String bodyTemplate = "{'mockCurPriceAndPredictTodayBSInd':'changeTmpl'}";
-		String[] percent = {
+		String[] percent = {"0.0",
 				"0.010", "0.015", "0.020", "0.025",
 				"0.030", "0.035", "0.040", "0.045",
 				"0.050", "0.055", "0.060", "0.065",
@@ -264,6 +267,7 @@ public class IndicatorEndPointV3 {
 			ShenXianUIVO curVo = rtnList.get(rtnList.size() - 1);
 			if(curVo.sellFlagsTitle.contains(buyOrSell)){
 				curVo.updatedTime = WeekdayUtil.currentDateTime();
+				logger.debug("mockCurPriceAndPredictTodayInd find {} {} point at {}", stockIdParm, buyOrSell, change);
 				return curVo;
 			}
 		}

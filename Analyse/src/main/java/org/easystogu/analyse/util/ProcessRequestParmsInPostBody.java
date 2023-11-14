@@ -56,9 +56,11 @@ public class ProcessRequestParmsInPostBody {
 	public List<StockPriceVO> updateStockPriceAccordingToRequest(String stockId, JSONObject jsonParm) {
 
 		List<StockPriceVO> spList = fetchAllPrices(stockId);
+		logger.debug("before updateStockPriceAccordingToRequest, curVo: {}", spList.get(spList.size() - 1));
 		if (jsonParm == null) {
 			return spList;
 		}
+
 		try {
 			// parms has process priority, do not change the order
 			int repeatTimes = 1;
@@ -93,20 +95,20 @@ public class ProcessRequestParmsInPostBody {
 					//increase percentage such as: "0.0", "0.010", "-0.010", "0.015", "-0.015","0.020", "-0.020", "0.025", "-0.025"
 					double mockClosePricePercent = Double.parseDouble(mockCurPriceAndPredictTodayBSInd);
 					StockPriceVO curVo = spList.get(spList.size() - 1).copy();
-					//System.out.println("before mockCurPriceAndPredictTodayBSInd="+mockCurPriceAndPredictTodayBSInd + ", update vo="+curVo.toString());
-					if (WeekdayUtil.currentDate().equals(curVo.date) && curVo.open > 0 && curVo.close > 0) {
-						curVo.close = curVo.close * (1.0 + mockClosePricePercent);
+					logger.debug("before mockCurPriceAndPredictTodayBSInd="+mockCurPriceAndPredictTodayBSInd + ", update vo="+curVo.toString());
+					if (WeekdayUtil.currentDate().equals(curVo.date) && curVo.open > 0 && curVo.close > 0 && curVo.lastClose > 0) {
+						double dynamicPrice = curVo.lastClose * (1.0 + mockClosePricePercent);
 						//keep open price, since at this time the open price had been known
 						//adjust the high and low price accordingly
-						if (curVo.close > curVo.high) {
-							curVo.high = curVo.close;
+						if (dynamicPrice > curVo.high) {
+							curVo.high = dynamicPrice;
 						}
-						if (curVo.close < curVo.low) {
-							curVo.low = curVo.close;
+						if (dynamicPrice < curVo.low) {
+							curVo.low = dynamicPrice;
 						}
 						//override it
 						spList.set(spList.size() - 1, curVo);
-						//System.out.println("after mockCurPriceAndPredictTodayBSInd="+mockCurPriceAndPredictTodayBSInd + ", update vo="+curVo.toString());
+						logger.debug("after mockCurPriceAndPredictTodayBSInd="+mockCurPriceAndPredictTodayBSInd + ", update vo="+curVo.toString());
 					} else {
 						logger.warn(
 								"mockCurPriceAndPredictTodayBSInd error, either today is not a trader day, nor the stock price is not updated");
@@ -118,6 +120,7 @@ public class ProcessRequestParmsInPostBody {
 			e.printStackTrace();
 		}
 		// finally return the updated spList
+		logger.debug("after updateStockPriceAccordingToRequest, curVo: {}", spList.get(spList.size() - 1));
 		return spList;
 	}
 

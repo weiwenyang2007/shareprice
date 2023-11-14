@@ -212,6 +212,9 @@ public class FlagsAnalyseHelper {
           if (spvo.high >= sxvo.hc5) {
             sxvo.setSellFlagsTitle("S");
             sxvo.setSellFlagsText("HC5压力, 减仓1/3");
+            //TODO: how to handle B and S at the same time?
+            //sxvo.setSellFlagsTitle(combine(sxvo.getSellFlagsTitle(), "S"));
+            //sxvo.setSellFlagsText(combine(sxvo.getSellFlagsText(),"HC5压力, 减仓1/3"));
           }
         //}
 
