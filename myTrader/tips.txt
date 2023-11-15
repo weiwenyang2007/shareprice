@@ -29,3 +29,11 @@
      Z:\easytrader\data\Windows7_Scheduler_Task.xml
 	 
 4.   One Win7 is running the easytrader project, another Win7 is remote control to it.	 
+
+5.   How to config wsfconfig:
+     Using below link to find the page value for the trade stockId
+     https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?page=7&num=100&sort=symbol&asc=1&node=hs_a
+
+     update wsfconfig where name='easytrader_stock_list' and 'realtime_stock_quota_service_page_number_list' 
+
+6.   Update data/target_stocks.json to add the trade stockId
