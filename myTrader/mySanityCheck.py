@@ -206,7 +206,8 @@ def check_buy_condition(balance_data, target_stock):
         curr_hold_number = 0
         curr_entrust_number = 0
         curr_trades_number = 0
-        
+        money = balance_data['money']
+
         # 检查当前持股数量
         if 'stock_holds' in balance_data:
             stock_holds = balance_data['stock_holds']
@@ -233,7 +234,7 @@ def check_buy_condition(balance_data, target_stock):
         if curr_trades_number < target_stock['max_trade_number_per_day'] \
                 and curr_hold_number < target_stock['max_hold_number'] \
                 and curr_entrust_number == 0 \
-                and balance_data['balance_usable'] > buy_price * target_stock['base_buy_number']:        
+                and money['balance_usable'] > buy_price * target_stock['base_buy_number']:        
             buy_items['stock_id'] = target_stock['stock_id']
             buy_items['buy_number'] = target_stock['base_buy_number']
             
