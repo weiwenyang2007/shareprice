@@ -230,7 +230,10 @@ def check_buy_condition(balance_data, target_stock):
             
         log.debug('curr_hold_number: {}, curr_entrust_number: {}, curr_trades_number: {}'.format(curr_hold_number, curr_entrust_number, curr_trades_number))
         # 当前持股数量和委托数量都少于预定最大值, 并且没有委托订单(还没有成交的订单),还可以加仓,限制一日成交不超过预定值max_trade_number_per_day
-        if curr_trades_number < target_stock['max_trade_number_per_day'] and curr_hold_number < target_stock['max_hold_number'] and curr_entrust_number == 0:
+        if curr_trades_number < target_stock['max_trade_number_per_day'] \
+                and curr_hold_number < target_stock['max_hold_number'] \
+                and curr_entrust_number == 0 \
+                and balance_data['balance_usable'] > buy_price * target_stock['base_buy_number']:        
             buy_items['stock_id'] = target_stock['stock_id']
             buy_items['buy_number'] = target_stock['base_buy_number']
             
