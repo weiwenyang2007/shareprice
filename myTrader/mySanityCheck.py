@@ -316,7 +316,7 @@ def deal_with_easy_trade(balance_data):
             return None
             
         current_time = datetime.now().strftime("%H:%M:%S")
-        if current_time >= '09:29:00' and current_time < '14:59:00':
+        if current_time >= '09:28:30' and current_time < '14:59:00':
             log.debug('within trade time, check buy and sell operation')
             target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
             target_stocks = json.load(target_stocks_f)
