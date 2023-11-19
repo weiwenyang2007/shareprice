@@ -1,6 +1,4 @@
 from datetime import datetime
-import schedule
-import time
 import mySanityCheck as sanity
 import myLog as myLogger
 log = myLogger.setup_custom_logger(__name__)
