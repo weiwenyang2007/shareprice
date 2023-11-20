@@ -349,6 +349,42 @@ public class ShenXianSellAnalyseHelper {
         logger.debug("analyseWithPredictStockPrice process complete");
     }
 
+    public ShenXianUIVO mockCurPriceAndPredictTodayInd(String stockId, String date, String buyOrSell) {
+        String bodyTemplate = "{'mockCurPriceAndPredictTodayBSInd':'changeTmpl'}";
+        String[] percent = {"0.0",
+            "0.010", "0.015", "0.020", "0.025",
+            "0.030", "0.035", "0.040", "0.045",
+            "0.050", "0.055", "0.060", "0.065",
+            "0.070", "0.075", "0.080", "0.085",
+            "0.090", "0.095", "0.100", "0.105",
+            "0.110", "0.115", "0.120", "0.125",
+            "0.130", "0.135", "0.140", "0.145",
+            "0.150", "0.155", "0.160", "0.165",
+            "0.170", "0.175", "0.180", "0.185",
+            "0.190", "0.195", "0.200"};
+        //loop from the minimum price change to a larger change, only return the first occurrence
+        for(int i=0; i < percent.length; i++){
+            String change = percent[i];
+            if("B".equals(buyOrSell)){
+                change = "-" + change;//price is decreased
+            }
+            String realPostBody = bodyTemplate.replaceFirst("changeTmpl",change);
+            JSONObject jsonParm = null;
+            try {
+                jsonParm = new JSONObject(realPostBody);
+            }catch(org.json.JSONException e){
+                e.printStackTrace();
+            }
+            List<ShenXianUIVO> rtnList = queryShenXianSellById(stockId, date, jsonParm);
+            ShenXianUIVO curVo = rtnList.get(rtnList.size() - 1);
+            if(curVo.sellFlagsTitle.contains(buyOrSell)){
+                logger.debug("mockCurPriceAndPredictTodayInd find {} {} point at {}", stockId, buyOrSell, change);
+                return curVo;
+            }
+        }
+        return new ShenXianUIVO();
+    }
+
     private boolean isSelectedCheckPoint(String checkPoint) {
         for(String cp: checkPoints){
             if(cp.equalsIgnoreCase(checkPoint)){

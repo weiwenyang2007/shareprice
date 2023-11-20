@@ -55,8 +55,7 @@ public class StockPriceVO {
     }
 
     public boolean isValidated() {
-        // return this.volume > 0 ? true : false;
-        return true;
+        return this.close > 0 ? true : false;
     }
 
     public StockPriceVO copy() {

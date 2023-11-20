@@ -5,10 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.easystogu.analyse.ShenXianSellAnalyseHelper;
+import org.easystogu.analyse.vo.ShenXianUIVO;
 import org.easystogu.cache.ConfigurationServiceCache;
 import org.easystogu.cache.runner.AllCacheRunner;
 import org.easystogu.checkpoint.DailyCombineCheckPoint;
 import org.easystogu.config.Constants;
+import org.easystogu.db.access.table.RealTimeStockPriceTableHelper;
 import org.easystogu.file.access.CompanyInfoFileHelper;
 import org.easystogu.indicator.runner.AllDailyIndCountAndSaveDBRunner;
 import org.easystogu.log.LogHelper;
@@ -46,6 +48,9 @@ public class DailyScheduler implements SchedulingConfigurer {
 	private CompanyInfoFileHelper companyInfoHelper = CompanyInfoFileHelper.getInstance();
 	private DataBaseSanityCheck sanityCheck = new DataBaseSanityCheck();
 	private CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
+	private ShenXianSellAnalyseHelper shenXianSellAnalyseHelper = ShenXianSellAnalyseHelper.getInstance();
+	private DailyStockPriceDownloadAndStoreDBRunner2 dailyStockPriceDownloadAndStoreDBRunner2 = new DailyStockPriceDownloadAndStoreDBRunner2();
+	private RealTimeStockPriceTableHelper realTimeStockPriceTableHelper = RealTimeStockPriceTableHelper.getInstance();
 
 	@Autowired
 	@Qualifier("taskScheduler")
@@ -59,7 +64,7 @@ public class DailyScheduler implements SchedulingConfigurer {
 	// http://www.quartz-scheduler.org/documentation/quartz-1.x/tutorials/crontrigger
 
 	// every 2 mins from 9:25 to 9:40, Monday to Friday
-	@Scheduled(cron = "0 0/2 09 * * MON-FRI")
+	//@Scheduled(cron = "0 0/2 09 * * MON-FRI")
 	public void updateStockPriceOnlyEvery2Mins() {
 		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			String time = WeekdayUtil.currentTime();
@@ -72,13 +77,13 @@ public class DailyScheduler implements SchedulingConfigurer {
 		}
 	}
 
-	// every 3 mins from 9:40 to 15:00, Monday to Friday
-	@Scheduled(cron = "0 0/3 09,10,11,13,14 * * MON-FRI")
+	// every 1 mins from 9:40 to 15:00, Monday to Friday
+	@Scheduled(cron = "0 0/1 09,10,11,13,14 * * MON-FRI")
 	public void updateStockPriceOnlyEvery5Mins() {
 		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			String time = WeekdayUtil.currentTime();
-			if ((time.compareTo("09-40-00") >= 0 && time.compareTo("11-32-00") <= 0)
-					|| (time.compareTo("13-00-00") >= 0 && time.compareTo("15-10-00") <= 0)) {
+			if ((time.compareTo("09-25-00") >= 0 && time.compareTo("11-32-00") <= 0)
+					|| (time.compareTo("13-00-00") >= 0 && time.compareTo("15-02-00") <= 0)) {
 				logger.info("Start updateStockPriceOnlyEvery5Mins");
 				long startTs = System.currentTimeMillis();
 				updateRealtimeStockPriceForEasyTrader();
@@ -89,25 +94,52 @@ public class DailyScheduler implements SchedulingConfigurer {
 
 	public void updateRealtimeStockPriceForEasyTrader() {
 		// day (download all stockIds price from sina realtime stock price)
+		// download specific stockIds realTime price, the url is save into WSFCONFIG
+		String today = WeekdayUtil.currentDate();
+		String datetime = WeekdayUtil.currentDateTime();
 		String pages = config.getString("realtime_stock_quota_service_page_number_list");//example: 7 or 7,10
 		String stockIds = config.getString("easytrader_stock_list");//example: 600547 or 600547,300059
+		List<String> stocks = Arrays.asList(stockIds.split(","));
 		if(Strings.isNotEmpty(pages)) {
-			DailyStockPriceDownloadAndStoreDBRunner2 runner = new DailyStockPriceDownloadAndStoreDBRunner2();
-			runner.downloadTradeTodayRealTimePriceAndSave2DB(pages);
-			// update indicators for part of the stockIds
-			if(Strings.isNotEmpty(stockIds)) {
-				List<String> stocks = Arrays.asList(stockIds.split(","));
-				// day ind
-				new AllDailyIndCountAndSaveDBRunner().runDailyIndForStockIds(stocks);
-				// week
-				new DailyWeeklyStockPriceCountAndSaveDBRunner().countAndSave(stocks);
-				// week ind
-				new AllDailyIndCountAndSaveDBRunner().runDailyWeekIndForStockIds(stocks);
-				// update cache
-				AllCacheRunner cacheRunner = new AllCacheRunner();
-				cacheRunner.refreshAll();
+			String[] page = pages.split(",");
+			for(int i=0; i<page.length; i++){
+				dailyStockPriceDownloadAndStoreDBRunner2.downloadDataAndSaveIntoDB(today, datetime, Integer.parseInt(page[i]));
 			}
 		}
+		// update indicators for part of the stockIds
+		if(stocks != null && stocks.size() > 0) {
+			// day ind
+			new AllDailyIndCountAndSaveDBRunner().runDailyIndForStockIds(stocks);
+			// week
+			new DailyWeeklyStockPriceCountAndSaveDBRunner().countAndSave(stocks);
+			// week ind
+			new AllDailyIndCountAndSaveDBRunner().runDailyWeekIndForStockIds(stocks);
+			// update cache
+			AllCacheRunner cacheRunner = new AllCacheRunner();
+			cacheRunner.refreshAll();
+		}
+		//update shenxian buy sell indicator
+		stocks.forEach(stockId -> {
+			//Buy
+			String buyOrSell = "B";
+			double shenxian_buy = 0.0;
+			ShenXianUIVO rtnBuy = shenXianSellAnalyseHelper.mockCurPriceAndPredictTodayInd(stockId, today, buyOrSell);
+			if (rtnBuy!=null && rtnBuy.sellFlagsTitle.contains(buyOrSell)){
+				shenxian_buy = rtnBuy.hc6;
+			}
+			//Sell
+			buyOrSell = "S";
+			double shenxian_sell = 0.0;
+			ShenXianUIVO rtnSell = shenXianSellAnalyseHelper.mockCurPriceAndPredictTodayInd(stockId, today, buyOrSell);
+			if (rtnSell!=null && rtnSell.sellFlagsTitle.contains(buyOrSell)){
+				shenxian_sell = rtnBuy.hc5;
+			}
+			//
+			if(shenxian_buy > 0.0 && shenxian_sell > 0.0) {
+				realTimeStockPriceTableHelper
+						.updateShenxianBuySell(stockId, datetime, shenxian_buy, shenxian_sell);
+			}
+		});
 	}
 
 	// run at 15:10 DailyOverAllRunner

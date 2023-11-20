@@ -91,6 +91,26 @@ ALTER TABLE stockprice
 COMMENT ON TABLE stockprice
   IS 'STOCK PRICE';
 
+CREATE TABLE realtime_stockprice
+(
+  stockid text NOT NULL,
+  datetime text NOT NULL,
+  open numeric NOT NULL,
+  high numeric NOT NULL,
+  low numeric NOT NULL,
+  close numeric NOT NULL,
+  shenxian_buy numeric,
+  shenxian_sell numeric,
+  CONSTRAINT realtime_stockprice_primary_key PRIMARY KEY (stockid, datetime)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE realtime_stockprice
+  OWNER TO postgres;
+COMMENT ON TABLE realtime_stockprice
+  IS 'REAL TIME STOCK PRICE';
+
 
 -- Table: ind_macd
 

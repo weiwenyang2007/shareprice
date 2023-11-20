@@ -14,7 +14,6 @@ public class ShenXianUIVO extends ShenXianVO {
 	public String duoFlagsText = "";
 	public String suoFlagsTitle = "";// 缩量
 	public String suoFlagsText = "";
-	public String updatedTime = "";//计算出来的时间点，非常重要，用于识别BuySell是否过期很久
 
 	public double getHc5() {
 		return hc5;

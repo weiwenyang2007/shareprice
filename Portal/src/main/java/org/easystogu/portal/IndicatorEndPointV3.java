@@ -17,11 +17,13 @@ import javax.ws.rs.core.Context;
 import org.easystogu.analyse.FlagsAnalyseHelper;
 import org.easystogu.analyse.ShenXianSellAnalyseHelper;
 import org.easystogu.analyse.util.ProcessRequestParmsInPostBody;
+import org.easystogu.db.access.table.RealTimeStockPriceTableHelper;
 import org.easystogu.db.vo.table.BollVO;
 import org.easystogu.db.vo.table.KDJVO;
 import org.easystogu.db.vo.table.LuZaoVO;
 import org.easystogu.db.vo.table.MacdVO;
 import org.easystogu.db.vo.table.QSDDVO;
+import org.easystogu.db.vo.table.RealtimeStockPriceVO;
 import org.easystogu.db.vo.table.ShenXianVO;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.db.vo.table.WRVO;
@@ -50,19 +52,16 @@ public class IndicatorEndPointV3 {
 	private static Logger logger = LogHelper.getLogger(IndicatorEndPointV3.class);
 	private ConfigurationServiceCache config = ConfigurationServiceCache.getInstance();
 	protected String accessControlAllowOrgin = config.getString("Access-Control-Allow-Origin", "");
-	protected static String HHmmss = "00:00:00";
 	protected MACDHelper macdHelper = new MACDHelper();
 	protected KDJHelper kdjHelper = new KDJHelper();
 	protected ShenXianHelper shenXianHelper = new ShenXianHelper();
 	protected QSDDHelper qsddHelper = new QSDDHelper();
 	protected WRHelper wrHelper = new WRHelper();
 	protected BOLLHelper bollHelper = new BOLLHelper();
-	protected BBIHelper bbiHelper = new BBIHelper();
 	protected LuZaoHelper luzaoHelper = new LuZaoHelper();
 	protected ProcessRequestParmsInPostBody postParmsProcess = ProcessRequestParmsInPostBody.getInstance();
-	protected TrendModeLoader trendModeLoader = TrendModeLoader.getInstance();
-	FlagsAnalyseHelper flagsAnalyseHelper = FlagsAnalyseHelper.getInstance();
-	ShenXianSellAnalyseHelper shenXianSellAnalyseHelper = ShenXianSellAnalyseHelper.getInstance();
+	protected ShenXianSellAnalyseHelper shenXianSellAnalyseHelper = ShenXianSellAnalyseHelper.getInstance();
+	protected RealTimeStockPriceTableHelper realTimeStockPriceTableHelper = RealTimeStockPriceTableHelper.getInstance();
 	
 	private Gson gson = new Gson();
 
@@ -230,48 +229,40 @@ public class IndicatorEndPointV3 {
 	public String mockCurPriceAndPredictTodayBuyInd(@PathParam("stockId") String stockIdParm,
 												   @PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
-		return gson.toJson(mockCurPriceAndPredictTodayInd(stockIdParm, dateParm, postBody, "B"));
+		ShenXianUIVO shenXianVO1 = shenXianSellAnalyseHelper.mockCurPriceAndPredictTodayInd(stockIdParm, dateParm, "B");
+
+		RealtimeStockPriceVO rtvo = realTimeStockPriceTableHelper.getLatestRealtimePrice(stockIdParm);
+		ShenXianUIVO shenXianVO2 = new ShenXianUIVO();
+		if (rtvo != null && rtvo.getShenxian_buy() > 0) {
+			shenXianVO2.setSellFlagsTitle("B");
+			shenXianVO2.setHc6(rtvo.getShenxian_buy());
+		}
+		//just print the vo1 and vo2
+		//TODO: switch to vo2 if vo1 is same same as vo2
+		logger.info("predictTodayBuy shenXianVO1: {}", shenXianVO1);
+		logger.info("predictTodayBuy shenXianVO2: {}", shenXianVO2);
+		return gson.toJson(shenXianVO1);
 	}
 
+	//TODO: can merge predictTodayBuy and predictTodaySell into ont API to reduce pq io
 	@POST
 	@Path("/predictTodaySell/{stockId}/{date}")
 	@Produces("application/json")
 	public String mockCurPriceAndPredictTodaySellInd(@PathParam("stockId") String stockIdParm,
 													@PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
-		return gson.toJson(mockCurPriceAndPredictTodayInd(stockIdParm, dateParm, postBody, "S"));
-	}
-
-	private ShenXianUIVO mockCurPriceAndPredictTodayInd(String stockIdParm, String dateParm, String postBody, String buyOrSell) {
-		String bodyTemplate = "{'mockCurPriceAndPredictTodayBSInd':'changeTmpl'}";
-		String[] percent = {"0.0",
-				"0.010", "0.015", "0.020", "0.025",
-				"0.030", "0.035", "0.040", "0.045",
-				"0.050", "0.055", "0.060", "0.065",
-				"0.070", "0.075", "0.080", "0.085",
-				"0.090", "0.095", "0.100", };
-		//loop from the minimum price change to a larger change, only return the first occurrence
-		for(int i=0; i < percent.length; i++){
-			String change = percent[i];
-			if("B".equals(buyOrSell)){
-				change = "-" + change;//price is decreased
-			}
-			String realPostBody = bodyTemplate.replaceFirst("changeTmpl",change);
-			JSONObject jsonParm = null;
-			try {
-					jsonParm = new JSONObject(realPostBody);
-			}catch(org.json.JSONException e){
-				e.printStackTrace();
-			}
-			List<ShenXianUIVO> rtnList = shenXianSellAnalyseHelper.queryShenXianSellById(stockIdParm, dateParm, jsonParm);
-			ShenXianUIVO curVo = rtnList.get(rtnList.size() - 1);
-			if(curVo.sellFlagsTitle.contains(buyOrSell)){
-				curVo.updatedTime = WeekdayUtil.currentDateTime();
-				logger.debug("mockCurPriceAndPredictTodayInd find {} {} point at {}", stockIdParm, buyOrSell, change);
-				return curVo;
-			}
+		ShenXianUIVO shenXianVO1 = shenXianSellAnalyseHelper.mockCurPriceAndPredictTodayInd(stockIdParm, dateParm, "S");
+		RealtimeStockPriceVO rtvo = realTimeStockPriceTableHelper.getLatestRealtimePrice(stockIdParm);
+		ShenXianUIVO shenXianVO2 = new ShenXianUIVO();
+		if (rtvo != null && rtvo.getShenxian_sell() > 0) {
+			shenXianVO2.setSellFlagsTitle("S");
+			shenXianVO2.setHc5(rtvo.getShenxian_sell());
 		}
-		return new ShenXianUIVO();
+		//just print the vo1 and vo2
+		//TODO: switch to vo2 if vo1 is same same as vo2
+		logger.info("predictTodaySell shenXianVO1: {}", shenXianVO1);
+		logger.info("predictTodaySell shenXianVO2: {}", shenXianVO2);
+		return gson.toJson(shenXianVO1);
 	}
 
 	@POST
