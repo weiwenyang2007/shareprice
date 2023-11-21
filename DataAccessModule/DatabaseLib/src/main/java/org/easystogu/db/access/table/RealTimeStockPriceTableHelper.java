@@ -22,7 +22,7 @@ public class RealTimeStockPriceTableHelper {
   protected String tableName = "REALTIME_STOCKPRICE";
   // please modify this SQL in all subClass
   protected String INSERT_SQL = "INSERT INTO " + tableName
-      + " (stockId, datetime, open, high, low, close) VALUES (:stockId, :datetime, :open, :high, :low, :close)";
+      + " (stockId, datetime, open, high, low, close, shenxian_buy, shenxian_sell) VALUES (:stockId, :datetime, :open, :high, :low, :close, :shenxian_buy, :shenxian_sell)";
   protected String UPDATE_SHENXIAN_SQL = "UPDATE " + tableName
       + " SET shenxian_buy = :shenxian_buy, shenxian_sell = :shenxian_sell"
       + " WHERE stockId = :stockId AND datetime = :datetime";
@@ -107,6 +107,8 @@ public class RealTimeStockPriceTableHelper {
       namedParameters.addValue("high", vo.getHigh());
       namedParameters.addValue("low", vo.getLow());
       namedParameters.addValue("close", vo.getClose());
+      namedParameters.addValue("shenxian_buy", vo.getShenxian_buy());
+      namedParameters.addValue("shenxian_sell", vo.getShenxian_sell());
 
       namedParameterJdbcTemplate.execute(INSERT_SQL, namedParameters,
           new RealTimeStockPriceTableHelper.DefaultPreparedStatementCallback());

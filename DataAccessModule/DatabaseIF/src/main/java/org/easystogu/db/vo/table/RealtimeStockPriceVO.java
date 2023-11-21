@@ -109,15 +109,17 @@ public class RealtimeStockPriceVO {
     return copy;
   }
 
-  public static RealtimeStockPriceVO copyFrom(StockPriceVO spvo, String datetime){
+  public static RealtimeStockPriceVO copyFrom(StockPriceVO spvo, String datetime, double shengxian_buy, double shenxian_sell){
     RealtimeStockPriceVO copy = new RealtimeStockPriceVO();
+    copy.stockId = spvo.stockId;
     copy.close = spvo.close;
-    copy.datetime = datetime;
     copy.high = spvo.high;
     copy.low = spvo.low;
     copy.name = spvo.name;
     copy.open = spvo.open;
-    copy.stockId = spvo.stockId;
+    copy.datetime = datetime;
+    copy.shenxian_buy = shengxian_buy;
+    copy.shenxian_sell = shenxian_sell;
     return copy;
   }
 

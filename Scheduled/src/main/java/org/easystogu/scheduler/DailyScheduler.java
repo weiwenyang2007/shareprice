@@ -9,7 +9,10 @@ import org.easystogu.analyse.vo.ShenXianUIVO;
 import org.easystogu.cache.ConfigurationServiceCache;
 import org.easystogu.checkpoint.DailyCombineCheckPoint;
 import org.easystogu.config.Constants;
+import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
 import org.easystogu.db.access.table.RealTimeStockPriceTableHelper;
+import org.easystogu.db.vo.table.RealtimeStockPriceVO;
+import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
 import org.easystogu.indicator.runner.AllDailyIndCountAndSaveDBRunner;
 import org.easystogu.log.LogHelper;
@@ -45,11 +48,11 @@ public class DailyScheduler implements SchedulingConfigurer {
 	private String zone = config.getString("zone", Constants.ZONE_HOME);
 	private boolean dailyUpdateStockPriceByBatch = config.getBoolean(Constants.DailyUpdateStockPriceByBatch, false);
 	private CompanyInfoFileHelper companyInfoHelper = CompanyInfoFileHelper.getInstance();
-	private DataBaseSanityCheck sanityCheck = new DataBaseSanityCheck();
 	private CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
 	private ShenXianSellAnalyseHelper shenXianSellAnalyseHelper = ShenXianSellAnalyseHelper.getInstance();
 	private DailyStockPriceDownloadAndStoreDBRunner2 dailyStockPriceDownloadAndStoreDBRunner2 = new DailyStockPriceDownloadAndStoreDBRunner2();
-	private RealTimeStockPriceTableHelper realTimeStockPriceTableHelper = RealTimeStockPriceTableHelper.getInstance();
+	private QianFuQuanStockPriceTableHelper qianfuquanStockPriceTable = QianFuQuanStockPriceTableHelper.getInstance();
+	private RealTimeStockPriceTableHelper realTimeStockPriceTable = RealTimeStockPriceTableHelper.getInstance();
 
 	@Autowired
 	@Qualifier("taskScheduler")
@@ -77,7 +80,7 @@ public class DailyScheduler implements SchedulingConfigurer {
 	}
 
 	// every 1 mins from 9:40 to 15:00, Monday to Friday
-	@Scheduled(cron = "0 0/1 09,10,11,13,14 * * MON-FRI")
+	@Scheduled(cron = "0 0/1 09,10,11,13,14,15 * * MON-FRI")
 	public void updateStockPriceOnlyEveryMins() {
 		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			String time = WeekdayUtil.currentTime();
@@ -102,7 +105,7 @@ public class DailyScheduler implements SchedulingConfigurer {
 		if(Strings.isNotEmpty(pages)) {
 			String[] page = pages.split(",");
 			for(int i=0; i<page.length; i++){
-				dailyStockPriceDownloadAndStoreDBRunner2.downloadDataAndSaveIntoDB(today, datetime, Integer.parseInt(page[i]));
+				dailyStockPriceDownloadAndStoreDBRunner2.downloadDataAndSaveIntoDB(today, Integer.parseInt(page[i]));
 			}
 		}
 		// update indicators for part of the stockIds
@@ -119,24 +122,31 @@ public class DailyScheduler implements SchedulingConfigurer {
 		}
 		//update shenxian buy sell indicator
 		stocks.forEach(stockId -> {
-			//Buy
-			String buyOrSell = "B";
-			double shenxian_buy = 0.0;
-			ShenXianUIVO rtnBuy = shenXianSellAnalyseHelper.mockCurPriceAndPredictTodayInd(stockId, today, buyOrSell);
-			if (rtnBuy!=null && rtnBuy.sellFlagsTitle.contains(buyOrSell)){
-				shenxian_buy = rtnBuy.hc6;
-			}
-			//Sell
-			buyOrSell = "S";
-			double shenxian_sell = 0.0;
-			ShenXianUIVO rtnSell = shenXianSellAnalyseHelper.mockCurPriceAndPredictTodayInd(stockId, today, buyOrSell);
-			if (rtnSell!=null && rtnSell.sellFlagsTitle.contains(buyOrSell)){
-				shenxian_sell = rtnBuy.hc5;
-			}
-			//
-			if(shenxian_buy > 0.0 && shenxian_sell > 0.0) {
-				realTimeStockPriceTableHelper
-						.updateShenxianBuySell(stockId, datetime, shenxian_buy, shenxian_sell);
+			StockPriceVO spvo = qianfuquanStockPriceTable.getStockPriceByIdAndDate(stockId, today);
+			if(spvo != null) {
+				//Buy
+				String buyOrSell = "B";
+				double shenxian_buy = 0.0;
+				ShenXianUIVO rtnBuy = shenXianSellAnalyseHelper
+						.mockCurPriceAndPredictTodayInd(stockId, today, buyOrSell);
+				if (rtnBuy != null && rtnBuy.sellFlagsTitle.contains(buyOrSell)) {
+					shenxian_buy = rtnBuy.hc6;
+				}
+				//Sell
+				buyOrSell = "S";
+				double shenxian_sell = 0.0;
+				ShenXianUIVO rtnSell = shenXianSellAnalyseHelper
+						.mockCurPriceAndPredictTodayInd(stockId, today, buyOrSell);
+				if (rtnSell != null && rtnSell.sellFlagsTitle.contains(buyOrSell)) {
+					shenxian_sell = rtnBuy.hc5;
+				}
+				//
+				if (shenxian_buy > 0.0 && shenxian_sell > 0.0) {
+					realTimeStockPriceTable
+							.insert(RealtimeStockPriceVO.copyFrom(spvo, datetime, shenxian_buy, shenxian_sell));
+				} else {
+					logger.warn("Either {} shenxian_buy {} or shenxian_sell {} is zero", stockId, shenxian_buy, shenxian_sell);
+				}
 			}
 		});
 	}

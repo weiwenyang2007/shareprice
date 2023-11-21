@@ -5,10 +5,8 @@ import java.util.List;
 import org.easystogu.cache.ConfigurationServiceCache;
 import org.easystogu.db.access.table.CompanyInfoTableHelper;
 import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
-import org.easystogu.db.access.table.RealTimeStockPriceTableHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.vo.table.CompanyInfoVO;
-import org.easystogu.db.vo.table.RealtimeStockPriceVO;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
 import org.easystogu.log.LogHelper;
@@ -17,7 +15,6 @@ import org.easystogu.sina.helper.DailyStockPriceDownloadHelper2;
 import org.easystogu.sina.runner.history.HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner;
 import org.easystogu.sina.runner.history.HistoryStockPriceDownloadAndStoreDBRunner;
 import org.easystogu.utils.Strings;
-import org.easystogu.utils.WeekdayUtil;
 import org.slf4j.Logger;
 
 //daily get real time stock price from http://vip.stock.finance.sina.com.cn/quotes_service/api/
@@ -28,12 +25,8 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
     private CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
     private StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
     private ConfigurationServiceCache config = ConfigurationServiceCache.getInstance();
-    //private HouFuQuanStockPriceTableHelper houfuquanStockPriceTable = HouFuQuanStockPriceTableHelper.getInstance();
-    private RealTimeStockPriceTableHelper realTimeStockPriceTableHelper = RealTimeStockPriceTableHelper.getInstance();
     private QianFuQuanStockPriceTableHelper qianfuquanStockPriceTable = QianFuQuanStockPriceTableHelper.getInstance();
-    //private ScheduleActionTableHelper scheduleActionTable = ScheduleActionTableHelper.getInstance();
     private CompanyInfoTableHelper companyInfoTable = CompanyInfoTableHelper.getInstance();
-    //private DailyStockPriceDownloadAndStoreDBRunner runner1 = new DailyStockPriceDownloadAndStoreDBRunner();
     private DailyStockPriceDownloadHelper2 sinaHelper2 = new DailyStockPriceDownloadHelper2();
     private HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner historyQianFuQuanRunner = new HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner();
     private String latestDate = "";
@@ -60,7 +53,7 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
 
     //another api to get realtime stock price is :
     //https://vip.stock.finance.sina.com.cn/quotes_service/view/vML_DataList.php?asc=j&symbol=sh600547&num=5
-    public void downloadDataAndSaveIntoDB(String today, String datetime, int page) {
+    public void downloadDataAndSaveIntoDB(String today, int page) {
         logger.debug("Get stock price for today=" + today + ", page=" + page);
 
         List<SinaQuoteStockPriceVO> sqsList = sinaHelper2.fetchAPageDataFromWeb(page);
@@ -79,7 +72,7 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
                 companyInfoTable.updateName(companyInfo);
             }
             // convert to stockprice and save to DB
-            this.saveIntoDB(sqvo, today, datetime,true);
+            this.saveIntoDB(sqvo, today);
         }
     }
 
@@ -108,11 +101,11 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
                 companyInfoTable.updateName(companyInfo);
             }
             // convert to stockprice and save to DB
-            this.saveIntoDB(sqvo, this.latestDate, "", false);
+            this.saveIntoDB(sqvo, this.latestDate);
         }
     }
 
-    private void saveIntoDB(SinaQuoteStockPriceVO sqvo, String date, String datetime, boolean saveToRealtimeStockPriceTable) {
+    private void saveIntoDB(SinaQuoteStockPriceVO sqvo, String date) {
         try {
             // update stockprice into table
             StockPriceVO spvo = new StockPriceVO();
@@ -137,10 +130,6 @@ public class DailyStockPriceDownloadAndStoreDBRunner2 implements Runnable {
             // also insert the qian fuquan stockprice
             this.qianfuquanStockPriceTable.delete(spvo.stockId, spvo.date);
             this.qianfuquanStockPriceTable.insert(spvo);
-            //TODO: should consider chuquan event?
-            if (saveToRealtimeStockPriceTable && Strings.isNotEmpty(datetime)) {
-                realTimeStockPriceTableHelper.insert(RealtimeStockPriceVO.copyFrom(spvo, datetime));
-            }
 
             // check if chu quan event exist
             if (nDaySpList.size() > 0) {
