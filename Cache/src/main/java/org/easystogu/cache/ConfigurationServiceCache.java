@@ -88,7 +88,7 @@ public class ConfigurationServiceCache {
 	}
 
 	public Object get(String key) {
-		logger.info("get from cache, key:" + key);
+		logger.debug("get from cache, key:" + key);
 		try {
 			return cache.get(key);
 		} catch (Exception e) {
