@@ -9,11 +9,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import org.easystogu.cache.CheckPointStatisticsCache;
 import org.easystogu.cache.ConfigurationServiceCache;
-import org.easystogu.cache.StockPriceCache;
 import org.easystogu.checkpoint.DailyCombineCheckPoint;
 import org.easystogu.config.Constants;
+import org.easystogu.db.access.table.CheckPointDailyStatisticsTableHelper;
+import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.vo.table.CheckPointDailyStatisticsVO;
 import org.easystogu.analyse.vo.StatisticsVO;
 import org.easystogu.utils.WeekdayUtil;
@@ -21,15 +21,10 @@ import com.google.gson.Gson;
 
 public class CheckPointStatisticsEndPoint {
   private ConfigurationServiceCache config = ConfigurationServiceCache.getInstance();
+  private CheckPointDailyStatisticsTableHelper checkPointStatisticsTable = CheckPointDailyStatisticsTableHelper
+      .getInstance();
+  private StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
   private String accessControlAllowOrgin = config.getString("Access-Control-Allow-Origin", "");
-  // private CheckPointDailyStatisticsTableHelper checkPointStatisticsTable =
-  // CheckPointDailyStatisticsTableHelper
-  // .getInstance();
-  // private StockPriceTableHelper stockPriceTable =
-  // StockPriceTableHelper.getInstance();
-  private CheckPointStatisticsCache checkPointStatisticsCache =
-      CheckPointStatisticsCache.getInstance();
-  private StockPriceCache stockPriceCache = StockPriceCache.getInstance();
   private String dateRegex = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
   private String fromToRegex = dateRegex + "_" + dateRegex;
 
@@ -48,11 +43,11 @@ public class CheckPointStatisticsEndPoint {
 
       // List<String> dateList =
       // stockPriceTable.getSZZSDayListByIdAndBetweenDates(date1, date2);
-      List<String> dateList = this.stockPriceCache
-          .get(Constants.cacheSZZSDayListByIdAndBetweenDates + ":" + date1 + ":" + date2);
+      List<String> dateList = this.stockPriceTable
+          .getSZZSDayListByIdAndBetweenDates(date1, date2);
 
       List<CheckPointDailyStatisticsVO> statisticsList =
-          checkPointStatisticsCache.get(date1 + ":" + date2);
+          checkPointStatisticsTable.getAllCheckPointBetweenDate(date1, date2);
 
       for (String date : dateList) {
         StatisticsVO vo = new StatisticsVO();
@@ -85,10 +80,10 @@ public class CheckPointStatisticsEndPoint {
 
       // List<String> dateList =
       // stockPriceTable.getSZZSDayListByIdAndBetweenDates(date1, date2);
-      List<String> dateList = this.stockPriceCache
-          .get(Constants.cacheSZZSDayListByIdAndBetweenDates + ":" + date1 + ":" + date2);
+      List<String> dateList = this.stockPriceTable
+          .getSZZSDayListByIdAndBetweenDates(date1, date2);
       List<CheckPointDailyStatisticsVO> statisticsList =
-          checkPointStatisticsCache.get(date1 + ":" + date2);
+          checkPointStatisticsTable.getAllCheckPointBetweenDate(date1, date2);
 
       for (String date : dateList) {
         StatisticsVO vo = new StatisticsVO();
@@ -124,10 +119,10 @@ public class CheckPointStatisticsEndPoint {
       String date2 = dateParm.split("_")[1];
 
       List<String> allDealDateList =
-          this.stockPriceCache.get(Constants.cacheAllDealDate + ":999999");
+          this.stockPriceTable.getAllDealDate("999999");
       List<String> dateList = WeekdayUtil.getWorkingDatesBetween(date1, date2);
       List<CheckPointDailyStatisticsVO> statisticsList =
-          checkPointStatisticsCache.get(date1 + ":" + date2);
+          checkPointStatisticsTable.getAllCheckPointBetweenDate(date1, date2);
 
       for (String date : dateList) {
         if (this.isDateInDealDate(allDealDateList, date)) {
@@ -161,10 +156,10 @@ public class CheckPointStatisticsEndPoint {
       String date2 = dateParm.split("_")[1];
 
       List<String> allDealDateList =
-          this.stockPriceCache.get(Constants.cacheAllDealDate + ":999999");
+          this.stockPriceTable.getAllDealDate("999999");
       List<String> dateList = WeekdayUtil.getWorkingDatesBetween(date1, date2);
       List<CheckPointDailyStatisticsVO> statisticsList =
-          checkPointStatisticsCache.get(date1 + ":" + date2);
+          checkPointStatisticsTable.getAllCheckPointBetweenDate(date1, date2);
 
       for (String date : dateList) {
         if (this.isDateInDealDate(allDealDateList, date)) {
@@ -198,10 +193,10 @@ public class CheckPointStatisticsEndPoint {
       String date2 = dateParm.split("_")[1];
 
       List<String> allDealDateList =
-          this.stockPriceCache.get(Constants.cacheAllDealDate + ":999999");
+          this.stockPriceTable.getAllDealDate("999999");
       List<String> dateList = WeekdayUtil.getWorkingDatesBetween(date1, date2);
       List<CheckPointDailyStatisticsVO> statisticsList =
-          checkPointStatisticsCache.get(date1 + ":" + date2);
+          checkPointStatisticsTable.getAllCheckPointBetweenDate(date1, date2);
 
       for (String date : dateList) {
         if (this.isDateInDealDate(allDealDateList, date)) {
@@ -233,10 +228,10 @@ public class CheckPointStatisticsEndPoint {
       String date2 = dateParm.split("_")[1];
 
       List<String> allDealDateList =
-          this.stockPriceCache.get(Constants.cacheAllDealDate + ":999999");
+          this.stockPriceTable.getAllDealDate("999999");
       List<String> dateList = WeekdayUtil.getWorkingDatesBetween(date1, date2);
       List<CheckPointDailyStatisticsVO> statisticsList =
-          checkPointStatisticsCache.get(date1 + ":" + date2);
+          checkPointStatisticsTable.getAllCheckPointBetweenDate(date1, date2);
 
       for (String date : dateList) {
         if (this.isDateInDealDate(allDealDateList, date)) {
@@ -267,10 +262,10 @@ public class CheckPointStatisticsEndPoint {
       String date2 = dateParm.split("_")[1];
 
       List<String> allDealDateList =
-          this.stockPriceCache.get(Constants.cacheAllDealDate + ":999999");
+          this.stockPriceTable.getAllDealDate("999999");
       List<String> dateList = WeekdayUtil.getWorkingDatesBetween(date1, date2);
       List<CheckPointDailyStatisticsVO> statisticsList =
-          checkPointStatisticsCache.get(date1 + ":" + date2);
+          checkPointStatisticsTable.getAllCheckPointBetweenDate(date1, date2);
 
       for (String date : dateList) {
         if (this.isDateInDealDate(allDealDateList, date)) {
@@ -303,10 +298,10 @@ public class CheckPointStatisticsEndPoint {
       String date2 = dateParm.split("_")[1];
 
       List<String> allDealDateList =
-          this.stockPriceCache.get(Constants.cacheAllDealDate + ":999999");
+          this.stockPriceTable.getAllDealDate("999999");
       List<String> dateList = WeekdayUtil.getWorkingDatesBetween(date1, date2);
       List<CheckPointDailyStatisticsVO> statisticsList =
-          checkPointStatisticsCache.get(date1 + ":" + date2);
+          checkPointStatisticsTable.getAllCheckPointBetweenDate(date1, date2);
 
       for (String date : dateList) {
         if (this.isDateInDealDate(allDealDateList, date)) {
@@ -340,10 +335,10 @@ public class CheckPointStatisticsEndPoint {
       String date2 = dateParm.split("_")[1];
 
       List<String> allDealDateList =
-          this.stockPriceCache.get(Constants.cacheAllDealDate + ":999999");
+          this.stockPriceTable.getAllDealDate("999999");
       List<String> dateList = WeekdayUtil.getWorkingDatesBetween(date1, date2);
       List<CheckPointDailyStatisticsVO> statisticsList =
-          checkPointStatisticsCache.get(date1 + ":" + date2);
+          checkPointStatisticsTable.getAllCheckPointBetweenDate(date1, date2);
 
       for (String date : dateList) {
         if (this.isDateInDealDate(allDealDateList, date)) {

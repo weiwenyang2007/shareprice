@@ -10,24 +10,24 @@ import org.easystogu.cache.StockPriceCache;
 import org.easystogu.cache.XXXYuanStockStatisticsCache;
 
 public class AllCacheRunner implements Runnable {
+	private ConfigurationServiceCache configurationServiceCache = ConfigurationServiceCache.getInstance();
 	private CheckPointStatisticsCache checkPointStatisticsCache = CheckPointStatisticsCache.getInstance();
 	private StockIndicatorCache stockIndicatorCache = StockIndicatorCache.getInstance();
 	private StockPriceCache stockPriceCache = StockPriceCache.getInstance();
 	private CheckPointDailySelectionTableCache checkPointDailySelectionTableCache = CheckPointDailySelectionTableCache.getInstance();
 	private CommonViewCache commonViewCache = CommonViewCache.getInstance();
-	private ConfigurationServiceCache configurationServiceCache = ConfigurationServiceCache.getInstance();
 	private XXXYuanStockStatisticsCache stockStatisticsCache = XXXYuanStockStatisticsCache.getInstance();
 	private FavoritesCache favoritesCache = FavoritesCache.getInstance();
 
 	public void refreshAll() {
 		this.configurationServiceCache.refreshAll();
-		this.checkPointStatisticsCache.refreshAll();
-		this.stockPriceCache.refreshAll();
-		this.stockIndicatorCache.refreshAll();
-		this.checkPointDailySelectionTableCache.refreshAll();
-		this.commonViewCache.refreshAll();
-		this.stockStatisticsCache.refreshAll();
-		this.favoritesCache.refreshAll();
+		//this.checkPointStatisticsCache.refreshAll();
+		//this.stockPriceCache.refreshAll();
+		//this.stockIndicatorCache.refreshAll();
+		//this.checkPointDailySelectionTableCache.refreshAll();
+		//this.commonViewCache.refreshAll();
+		//this.stockStatisticsCache.refreshAll();
+		//this.favoritesCache.refreshAll();
 	}
 
 	public void run() {

@@ -2,7 +2,6 @@ package org.easystogu.runner;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.easystogu.cache.runner.AllCacheRunner;
 import org.easystogu.config.Constants;
 import org.easystogu.db.access.facde.DBAccessFacdeFactory;
 import org.easystogu.db.access.table.CheckPointDailyStatisticsTableHelper;
@@ -306,7 +305,7 @@ public class DataBaseSanityCheck implements Runnable {
 
   public static void main(String[] args) {
     new DataBaseSanityCheck().run();
-    new AllCacheRunner().refreshAll();
+    //new AllCacheRunner().refreshAll();
     logger.debug("DataBaseSanityCheck done!");
   }
 }

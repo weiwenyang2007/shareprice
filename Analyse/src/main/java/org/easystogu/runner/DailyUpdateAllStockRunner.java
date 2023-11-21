@@ -3,7 +3,6 @@ package org.easystogu.runner;
 import java.util.List;
 
 import org.easystogu.analyse.ShenXianSellAnalyseHelper;
-import org.easystogu.cache.runner.AllCacheRunner;
 import org.easystogu.config.Constants;
 import org.easystogu.db.access.table.WSFConfigTableHelper;
 import org.easystogu.easymoney.runner.OverAllZiJinLiuAndDDXRunner;
@@ -55,7 +54,7 @@ public class DailyUpdateAllStockRunner implements Runnable {
 		// candle pattern
 		new DailyCandleStickPatternRunner().run();
 		//
-		new AllCacheRunner().refreshAll();
+		//new AllCacheRunner().refreshAll();
 		//
 		ShenXianSellAnalyseHelper.main(null);
 

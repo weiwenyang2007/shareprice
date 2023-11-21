@@ -11,16 +11,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
-import org.easystogu.config.ConfigurationService;
-import org.easystogu.config.DBConfigurationService;
 import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.vo.table.StockPriceVO;
-import org.easystogu.cache.StockIndicatorCache;
-import org.easystogu.cache.ConfigurationServiceCache;
 import org.easystogu.utils.Strings;
 import org.easystogu.config.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.google.gson.Gson;
 
 //v2, qian FuQuan stockprice (v2 same as v1, can be delete?)
@@ -40,7 +35,7 @@ public class PriceEndPointV2 extends PriceEndPointV0{
 		if (Pattern.matches(fromToRegex, dateParm)) {
 			String date1 = dateParm.split("_")[0];
 			String date2 = dateParm.split("_")[1];
-			List<StockPriceVO> cacheSpList = indicatorCache.queryByStockId(Constants.cacheQianFuQuanStockPrice + ":" +stockIdParm);
+			List<StockPriceVO> cacheSpList = stockPriceTable.queryByStockId(stockIdParm);
 			for (Object obj : cacheSpList) {
 				StockPriceVO spvo = (StockPriceVO)obj;
 				if (Strings.isDateSelected(date1 + " " + HHmmss, date2 + " " + HHmmss, spvo.date + " " + HHmmss)) {

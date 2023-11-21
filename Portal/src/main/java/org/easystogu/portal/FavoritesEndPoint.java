@@ -13,14 +13,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import org.easystogu.cache.CheckPointDailySelectionTableCache;
-import org.easystogu.cache.CommonViewCache;
 import org.easystogu.cache.ConfigurationServiceCache;
-import org.easystogu.cache.FavoritesCache;
-import org.easystogu.cache.StockPriceCache;
 import org.easystogu.config.Constants;
+import org.easystogu.db.access.table.CheckPointDailySelectionTableHelper;
 import org.easystogu.db.access.table.FavoritesStockHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
+import org.easystogu.db.access.view.CommonViewHelper;
 import org.easystogu.db.vo.table.CheckPointDailySelectionVO;
 import org.easystogu.db.vo.table.CompanyInfoVO;
 import org.easystogu.db.vo.view.CommonViewVO;
@@ -35,16 +33,11 @@ public class FavoritesEndPoint {
 	private ConfigurationServiceCache config = ConfigurationServiceCache.getInstance();
 	private String accessControlAllowOrgin = config.getString("Access-Control-Allow-Origin", "");
 	private CompanyInfoFileHelper stockConfig = CompanyInfoFileHelper.getInstance();
-	private CheckPointDailySelectionTableCache checkPointDailySelectionCache = CheckPointDailySelectionTableCache
+	private CheckPointDailySelectionTableHelper checkPointDailySelectionTable = CheckPointDailySelectionTableHelper
 			.getInstance();
-	// private CheckPointDailySelectionTableHelper
-	// checkPointDailySelectionTableHelper = CheckPointDailySelectionTableHelper
-	// .getInstance();
-	protected StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
-	private CommonViewCache commonViewCache = CommonViewCache.getInstance();
+	private CommonViewHelper commonViewHelper = CommonViewHelper.getInstance();
 	private FavoritesStockHelper favoritesStockHelper = FavoritesStockHelper.getInstance();
-	private FavoritesCache favoritesCache = FavoritesCache.getInstance();
-	private StockPriceCache stockPriceCache = StockPriceCache.getInstance();
+	private StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
 	
 	private Gson gson = new Gson();
 
@@ -76,7 +69,6 @@ public class FavoritesEndPoint {
 			String postBody, @Context HttpServletResponse response) {
 		// response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		favoritesStockHelper.insert(new FavoritesStockVO(stockIdParm, userIdParm));
-		favoritesCache.refreshAll();
 	}
 
 	@DELETE
@@ -86,7 +78,6 @@ public class FavoritesEndPoint {
 			String postBody, @Context HttpServletResponse response) {
 		// response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		favoritesStockHelper.delete(stockIdParm, userIdParm);
-		favoritesCache.refreshAll();
 	}
 
 	@GET
@@ -95,7 +86,7 @@ public class FavoritesEndPoint {
 	public String getFavorites(@PathParam("userId") String userIdParm, String postBody,
 			@Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
-		List<FavoritesStockVO> rtn = favoritesCache.get(userIdParm);
+		List<FavoritesStockVO> rtn = favoritesStockHelper.getByUserId(userIdParm);
 		for (FavoritesStockVO vo : rtn) {
 			CompanyInfoVO cvo = stockConfig.getByStockId(vo.stockId);
 			if (cvo != null) {
@@ -114,23 +105,23 @@ public class FavoritesEndPoint {
 		// get the latest N date: Latest_50
 		if (date != null && date.contains("Latest_")) {
 			String limitNumber = date.split("_")[1];
-			List<String> latestNDate = stockPriceCache.get(Constants.cacheLatestNStockDate + ":" + limitNumber);
+			List<String> latestNDate = stockPriceTable.getLatestNStockDate(Integer.parseInt(limitNumber));
 			if (latestNDate != null && latestNDate.size() > 0) {
 				date = latestNDate.get(latestNDate.size() - 1);
 			}
 
 			// get all checkpoint that in latest N date
-			cps = checkPointDailySelectionCache.getRecentDaysCheckPoint(date);
+			cps = checkPointDailySelectionTable.getRecentDaysCheckPoint(date);
 
 		} else {
 			// fetch the checkpoint by specify date
-			cps = checkPointDailySelectionCache.getCheckPointByDate(date);
+			cps = checkPointDailySelectionTable.getCheckPointByDate(date);
 		}
 
 		// only select the stockId that is in ZiXuanGu (favorites stockids)
 		if ("true".equalsIgnoreCase(isZiXuanGu)) {
 			// here hardcode userId to admin since there is no other customer
-			favoritesStockIds = favoritesCache.get("admin");
+			favoritesStockIds = favoritesStockHelper.getByUserId("admin");
 			cps = filterZiXuanGu(favoritesStockIds, cps);
 		}
 
@@ -169,21 +160,21 @@ public class FavoritesEndPoint {
 		// get the latest N date: Latest_50
 		if (date != null && date.contains("Latest_")) {
 			String limitNumber = date.split("_")[1];
-			List<String> latestNDate = stockPriceCache.get(Constants.cacheLatestNStockDate + ":" + limitNumber);
+			List<String> latestNDate = stockPriceTable.getLatestNStockDate(Integer.parseInt(limitNumber));
 			if (latestNDate != null && latestNDate.size() > 0) {
 				date = latestNDate.get(latestNDate.size() - 1);
 			}
 			// get all checkpoint that in latest N date
-			cps = checkPointDailySelectionCache.getRecentDaysCheckPoint(date);
+			cps = checkPointDailySelectionTable.getRecentDaysCheckPoint(date);
 		} else {
 			// fetch the checkpoint by specify date
-			cps = checkPointDailySelectionCache.getCheckPointByDate(date);
+			cps = checkPointDailySelectionTable.getCheckPointByDate(date);
 		}
 
 		// only select the stockId that is in ZiXuanGu (favorites stockids)
 		if ("true".equalsIgnoreCase(isZiXuanGu)) {
 			// here hardcode userId to admin since there is no other customer
-			favoritesStockIds = favoritesCache.get("admin");
+			favoritesStockIds = favoritesStockHelper.getByUserId("admin");
 			cps = filterZiXuanGu(favoritesStockIds, cps);
 		}
 
@@ -248,7 +239,7 @@ public class FavoritesEndPoint {
 	private boolean isZiJinLiuRuAtDate(String viewName, String stockId, String date) {
 		// get result from view directory, since they are fast
 		String searchViewName = viewName + "_Details";
-		List<CommonViewVO> list = this.commonViewCache.queryByDateForViewDirectlySearch(date, searchViewName);
+		List<CommonViewVO> list = this.commonViewHelper.queryByDateForViewDirectlySearch(date, searchViewName);
 		for (CommonViewVO cvo : list) {
 			if (cvo.date.equals(date) && cvo.stockId.equals(stockId)) {
 				return true;

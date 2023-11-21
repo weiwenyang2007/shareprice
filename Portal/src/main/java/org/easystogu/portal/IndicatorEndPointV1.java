@@ -12,7 +12,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.easystogu.cache.ConfigurationServiceCache;
-import org.easystogu.cache.StockIndicatorCache;
 import org.easystogu.config.Constants;
 import org.easystogu.db.access.facde.DBAccessFacdeFactory;
 import org.easystogu.db.access.table.IndDDXTableHelper;
@@ -52,8 +51,6 @@ public class IndicatorEndPointV1 {
 	protected IndDDXTableHelper ddxTable = IndDDXTableHelper.getInstance();
 	protected LuZaoHelper luzaoHelper = new LuZaoHelper();
 	protected ShenXianHelper shenXianHelper = new ShenXianHelper();
-
-	protected StockIndicatorCache indicatorCache = StockIndicatorCache.getInstance();
 
 	protected String dateRegex = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
 	protected String fromToRegex = dateRegex + "_" + dateRegex;
@@ -311,8 +308,8 @@ public class IndicatorEndPointV1 {
 	// common function to fetch price from stockPrice table
 	protected List<StockPriceVO> fetchAllPrices(String stockid) {
 		List<StockPriceVO> spList = new ArrayList<StockPriceVO>();
-		List<StockPriceVO> cacheSpList = indicatorCache
-				.queryByStockId(Constants.cacheQianFuQuanStockPrice + ":" + stockid);
+		List<StockPriceVO> cacheSpList = qianfuquanStockPriceTable
+				.queryByStockId(stockid);
 		for (Object obj : cacheSpList) {
 			spList.add((StockPriceVO) obj);
 		}

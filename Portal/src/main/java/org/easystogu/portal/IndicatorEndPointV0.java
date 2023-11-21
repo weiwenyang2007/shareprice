@@ -11,12 +11,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
-import org.easystogu.config.ConfigurationService;
-import org.easystogu.config.Constants;
-import org.easystogu.cache.StockIndicatorCache;
 import org.easystogu.cache.ConfigurationServiceCache;
-import org.easystogu.config.DBConfigurationService;
 import org.easystogu.db.access.table.IndDDXTableHelper;
+import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.vo.table.BollVO;
 import org.easystogu.db.vo.table.DDXVO;
@@ -27,7 +24,6 @@ import org.easystogu.db.vo.table.QSDDVO;
 import org.easystogu.db.vo.table.ShenXianVO;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.db.vo.table.WRVO;
-import org.easystogu.file.access.CompanyInfoFileHelper;
 import org.easystogu.indicator.BOLLHelper;
 import org.easystogu.indicator.KDJHelper;
 import org.easystogu.indicator.LuZaoHelper;
@@ -44,11 +40,11 @@ import com.google.gson.Gson;
 
 //V0, query stockprice (no chuquan) and count in real time
 public class IndicatorEndPointV0 {
-	private ConfigurationServiceCache config = ConfigurationServiceCache.getInstance();
+	protected ConfigurationServiceCache config = ConfigurationServiceCache.getInstance();
+	protected StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
+	protected QianFuQuanStockPriceTableHelper qianFuQuanStockPriceTable = QianFuQuanStockPriceTableHelper.getInstance();
 	protected String accessControlAllowOrgin = config.getString("Access-Control-Allow-Origin", "");
 	protected static String HHmmss = "00:00:00";
-	protected CompanyInfoFileHelper companyInfoHelper = CompanyInfoFileHelper.getInstance();
-	protected StockIndicatorCache indicatorCache = StockIndicatorCache.getInstance();
 	protected MACDHelper macdHelper = new MACDHelper();
 	protected KDJHelper kdjHelper = new KDJHelper();
 	protected ShenXianHelper shenXianHelper = new ShenXianHelper();
@@ -303,7 +299,7 @@ public class IndicatorEndPointV0 {
 	// common function to fetch price from stockPrice table
 	protected List<StockPriceVO> fetchAllPrices(String stockid) {
 		List<StockPriceVO> spList = new ArrayList<StockPriceVO>();
-		List<StockPriceVO> cacheSpList = indicatorCache.queryByStockId(Constants.cacheStockPrice + ":" + stockid);
+		List<StockPriceVO> cacheSpList = stockPriceTable.queryByStockId(stockid);
 		for (Object obj : cacheSpList) {
 			spList.add((StockPriceVO) obj);
 		}

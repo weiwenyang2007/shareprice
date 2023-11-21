@@ -1,7 +1,7 @@
 package org.easystogu.analyse;
 
 import com.google.common.primitives.Doubles;
-import org.easystogu.cache.CheckPointDailySelectionTableCache;
+import org.easystogu.db.access.table.CheckPointDailySelectionTableHelper;
 import org.easystogu.db.vo.table.*;
 import org.easystogu.indicator.IND;
 import org.easystogu.indicator.MAHelper;
@@ -17,8 +17,8 @@ import java.util.List;
 //@Component
 public class FlagsAnalyseHelper {
   private static Logger logger = LogHelper.getLogger(FlagsAnalyseHelper.class);
-  private CheckPointDailySelectionTableCache checkPointDailySelectionCache =
-      CheckPointDailySelectionTableCache.getInstance();
+  private CheckPointDailySelectionTableHelper checkPointDailySelectionTable = CheckPointDailySelectionTableHelper
+      .getInstance();
   private static String[] zijinliuViewnames =
       {"luzao_phaseII_zijinliu_top300", "luzao_phaseIII_zijinliu_top300",
           "luzao_phaseII_ddx_bigger_05", "luzao_phaseIII_ddx_bigger_05",
@@ -787,7 +787,7 @@ public class FlagsAnalyseHelper {
   }
 
   private List<CheckPointDailySelectionVO> getCheckPoints(String stockId) {
-    return checkPointDailySelectionCache.getCheckPointByStockId(stockId);
+    return checkPointDailySelectionTable.getCheckPointByStockID(stockId);
   }
 
   private String combine(String meyBeExistText, String newText){

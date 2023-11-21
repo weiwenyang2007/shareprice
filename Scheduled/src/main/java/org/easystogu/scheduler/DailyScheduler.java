@@ -7,7 +7,6 @@ import java.util.List;
 import org.easystogu.analyse.ShenXianSellAnalyseHelper;
 import org.easystogu.analyse.vo.ShenXianUIVO;
 import org.easystogu.cache.ConfigurationServiceCache;
-import org.easystogu.cache.runner.AllCacheRunner;
 import org.easystogu.checkpoint.DailyCombineCheckPoint;
 import org.easystogu.config.Constants;
 import org.easystogu.db.access.table.RealTimeStockPriceTableHelper;
@@ -79,15 +78,15 @@ public class DailyScheduler implements SchedulingConfigurer {
 
 	// every 1 mins from 9:40 to 15:00, Monday to Friday
 	@Scheduled(cron = "0 0/1 09,10,11,13,14 * * MON-FRI")
-	public void updateStockPriceOnlyEvery5Mins() {
+	public void updateStockPriceOnlyEveryMins() {
 		if (Constants.ZONE_HOME.equalsIgnoreCase(zone)) {
 			String time = WeekdayUtil.currentTime();
 			if ((time.compareTo("09-25-00") >= 0 && time.compareTo("11-32-00") <= 0)
 					|| (time.compareTo("13-00-00") >= 0 && time.compareTo("15-02-00") <= 0)) {
-				logger.info("Start updateStockPriceOnlyEvery5Mins");
+				logger.info("Start updateStockPriceOnlyEveryMins");
 				long startTs = System.currentTimeMillis();
 				updateRealtimeStockPriceForEasyTrader();
-				logger.info("End updateStockPriceOnlyEvery5Mins, spent " + (System.currentTimeMillis() - startTs)/1000 + " seconds");
+				logger.info("End updateStockPriceOnlyEveryMins, spent " + (System.currentTimeMillis() - startTs)/1000 + " seconds");
 			}
 		}
 	}
@@ -115,8 +114,8 @@ public class DailyScheduler implements SchedulingConfigurer {
 			// week ind
 			new AllDailyIndCountAndSaveDBRunner().runDailyWeekIndForStockIds(stocks);
 			// update cache
-			AllCacheRunner cacheRunner = new AllCacheRunner();
-			cacheRunner.refreshAll();
+			//AllCacheRunner cacheRunner = new AllCacheRunner();
+			//cacheRunner.refreshAll();
 		}
 		//update shenxian buy sell indicator
 		stocks.forEach(stockId -> {
@@ -179,7 +178,7 @@ public class DailyScheduler implements SchedulingConfigurer {
 	          // candle pattern
 						new DailyCandleStickPatternRunner().run();
 	          //
-	          new AllCacheRunner().refreshAll();
+	          //new AllCacheRunner().refreshAll();
 			  		//
 			  		ShenXianSellAnalyseHelper.main(null);
 	        }

@@ -1,6 +1,5 @@
 package org.easystogu.analyse.util;
 
-import org.easystogu.cache.StockIndicatorCache;
 import org.easystogu.config.Constants;
 import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
@@ -16,8 +15,6 @@ import org.easystogu.utils.Strings;
 import org.easystogu.utils.WeekdayUtil;
 import org.json.JSONObject;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +31,6 @@ public class ProcessRequestParmsInPostBody {
 	protected StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
 	protected CompanyInfoFileHelper companyInfoHelper = CompanyInfoFileHelper.getInstance();
 	protected MergeNDaysPriceUtil mergeNdaysPriceHeloer = new MergeNDaysPriceUtil();
-	protected StockIndicatorCache indicatorCache = StockIndicatorCache.getInstance();
 	protected HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner historyQianFuQuanRunner = new HistoryQianFuQuanStockPriceDownloadAndStoreDBRunner();
 	//@Autowired
 	protected TrendModeLoader trendModeLoader = TrendModeLoader.getInstance();
@@ -186,7 +182,7 @@ public class ProcessRequestParmsInPostBody {
 	// common function to fetch price from stockPrice table
 	private List<StockPriceVO> fetchAllPrices(String stockid) {
 		List<StockPriceVO> spList = new ArrayList<StockPriceVO>();
-		List<StockPriceVO> tmpList = this.indicatorCache.queryByStockId(Constants.cacheQianFuQuanStockPrice + ":" + stockid);
+		List<StockPriceVO> tmpList = this.qianFuQuanStockPriceTable.queryByStockId(stockid);
 		for (Object obj : tmpList) {
 			spList.add((StockPriceVO) obj);
 		}

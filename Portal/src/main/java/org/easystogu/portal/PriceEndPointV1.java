@@ -12,18 +12,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.easystogu.analyse.util.ProcessRequestParmsInPostBody;
-import org.easystogu.config.ConfigurationService;
-import org.easystogu.config.DBConfigurationService;
 import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
 import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.util.MergeNDaysPriceUtil;
 import org.easystogu.db.vo.table.StockPriceVO;
-import org.easystogu.portal.util.MergeNDaysStatisticsHelper;
 import org.easystogu.utils.Strings;
-import org.easystogu.cache.StockIndicatorCache;
 import org.easystogu.cache.ConfigurationServiceCache;
 import org.easystogu.config.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.google.gson.Gson;
 
 //v1, qian FuQuan stockprice data (suggest to use this v1)
@@ -32,7 +27,6 @@ public class PriceEndPointV1 {
 	private String accessControlAllowOrgin = config.getString("Access-Control-Allow-Origin", "");
 	protected static String HHmmss = "00:00:00";
 	protected StockPriceTableHelper qianFuQuanStockPriceTable = QianFuQuanStockPriceTableHelper.getInstance();
-	protected StockIndicatorCache indicatorCache = StockIndicatorCache.getInstance();
 	private MergeNDaysPriceUtil nDaysPriceMergeUtil = new MergeNDaysPriceUtil();
 
 	protected ProcessRequestParmsInPostBody postParmsProcess = ProcessRequestParmsInPostBody.getInstance();
@@ -52,8 +46,8 @@ public class PriceEndPointV1 {
 		if (Pattern.matches(fromToRegex, dateParm)) {
 			String date1 = dateParm.split("_")[0];
 			String date2 = dateParm.split("_")[1];
-			List<StockPriceVO> cacheSpList = indicatorCache
-					.queryByStockId(Constants.cacheQianFuQuanStockPrice + ":" + stockIdParm);
+			List<StockPriceVO> cacheSpList = qianFuQuanStockPriceTable
+					.queryByStockId(stockIdParm);
 			for (Object obj : cacheSpList) {
 				StockPriceVO spvo = (StockPriceVO) obj;
 				if (Strings.isDateSelected(date1 + " " + HHmmss, date2 + " " + HHmmss, spvo.date + " " + HHmmss)) {
@@ -86,8 +80,8 @@ public class PriceEndPointV1 {
        if (Pattern.matches(fromToRegex, dateParm)) {
            String date1 = dateParm.split("_")[0];
            String date2 = dateParm.split("_")[1];
-           List<StockPriceVO> cacheSpList = indicatorCache
-                   .queryByStockId(Constants.cacheQianFuQuanStockPrice + ":" + stockIdParm);
+           List<StockPriceVO> cacheSpList = qianFuQuanStockPriceTable
+                   .queryByStockId(stockIdParm);
            for (Object obj : cacheSpList) {
                StockPriceVO spvo = (StockPriceVO) obj;
                if (Strings.isDateSelected(date1 + " " + HHmmss, date2 + " " + HHmmss, spvo.date + " " + HHmmss)) {

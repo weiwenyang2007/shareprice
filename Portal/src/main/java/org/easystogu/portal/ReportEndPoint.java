@@ -12,8 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.easystogu.cache.ConfigurationServiceCache;
-import org.easystogu.cache.StockPriceCache;
 import org.easystogu.config.Constants;
+import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.access.view.FavoritesStockCheckpointViewHelper;
 import org.easystogu.db.vo.view.FavoritesStockCheckpointVO;
 import com.google.gson.Gson;
@@ -22,7 +22,7 @@ public class ReportEndPoint {
 	private ConfigurationServiceCache config = ConfigurationServiceCache.getInstance();
 	private FavoritesStockCheckpointViewHelper favoritesStockCheckpointViewHelper = FavoritesStockCheckpointViewHelper
 			.getInstance();
-	private StockPriceCache stockPriceCache = StockPriceCache.getInstance();
+	private StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
 	protected String accessControlAllowOrgin = config.getString("Access-Control-Allow-Origin", "");
 	private Gson gson = new Gson();
 	
@@ -33,7 +33,7 @@ public class ReportEndPoint {
 	// DateOffset is like 0,1,2,3 means today, yesterday, ...
 	public String queryReportByDate(@PathParam("DateOffset") String dateOffset, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
-		List<String> latestDates = this.stockPriceCache.get(Constants.cacheLatestNStockDate + ":10");
+		List<String> latestDates = this.stockPriceTable.getLatestNStockDate(10);
 		String date = latestDates.get(Math.abs(Integer.parseInt(dateOffset)));
 		List<FavoritesStockCheckpointVO> list = favoritesStockCheckpointViewHelper.getByDateAndUserId(date, "admin");
 		StringBuffer rtn = new StringBuffer("====" + date + "====<br>");

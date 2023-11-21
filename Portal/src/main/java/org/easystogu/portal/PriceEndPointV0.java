@@ -13,15 +13,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.easystogu.analyse.util.ProcessRequestParmsInPostBody;
-import org.easystogu.config.ConfigurationService;
-import org.easystogu.config.DBConfigurationService;
 import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.file.access.CompanyInfoFileHelper;
 import org.easystogu.utils.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.google.gson.Gson;
-import org.easystogu.cache.StockIndicatorCache;
 import org.easystogu.cache.ConfigurationServiceCache;
 import org.easystogu.config.Constants;
 
@@ -30,10 +26,7 @@ public class PriceEndPointV0 {
 	protected ConfigurationServiceCache config = ConfigurationServiceCache.getInstance();
 	protected String accessControlAllowOrgin = config.getString("Access-Control-Allow-Origin", "");
 	protected static String HHmmss = "00:00:00";
-	protected CompanyInfoFileHelper companyInfoHelper = CompanyInfoFileHelper.getInstance();
 	private StockPriceTableHelper stockPriceTable = StockPriceTableHelper.getInstance();
-	protected StockIndicatorCache indicatorCache = StockIndicatorCache.getInstance();
-	protected ProcessRequestParmsInPostBody postParmsProcess = ProcessRequestParmsInPostBody.getInstance();
 	protected String dateRegex = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
 	protected String fromToRegex = dateRegex + "_" + dateRegex;
 	
@@ -51,7 +44,7 @@ public class PriceEndPointV0 {
 		if (Pattern.matches(fromToRegex, dateParm)) {
 			String date1 = dateParm.split("_")[0];
 			String date2 = dateParm.split("_")[1];
-			List<StockPriceVO> cacheSpList = indicatorCache.queryByStockId(Constants.cacheStockPrice + ":" +stockIdParm);
+			List<StockPriceVO> cacheSpList = stockPriceTable.queryByStockId(stockIdParm);
 			for (Object obj : cacheSpList) {
 				StockPriceVO spvo = (StockPriceVO)obj;
 				if (Strings.isDateSelected(date1 + " " + HHmmss, date2 + " " + HHmmss, spvo.date + " " + HHmmss)) {
