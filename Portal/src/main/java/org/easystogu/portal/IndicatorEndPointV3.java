@@ -229,7 +229,7 @@ public class IndicatorEndPointV3 {
 	public String mockCurPriceAndPredictTodayBuyInd(@PathParam("stockId") String stockIdParm,
 												   @PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
-		ShenXianUIVO shenXianVO1 = shenXianSellAnalyseHelper.mockCurPriceAndPredictTodayInd(stockIdParm, dateParm, "B");
+		//ShenXianUIVO shenXianVO1 = shenXianSellAnalyseHelper.mockCurPriceAndPredictTodayInd(stockIdParm, dateParm, "B");
 
 		RealtimeStockPriceVO rtvo = realTimeStockPriceTableHelper.getLatestRealtimePrice(stockIdParm);
 		ShenXianUIVO shenXianVO2 = new ShenXianUIVO();
@@ -238,11 +238,9 @@ public class IndicatorEndPointV3 {
 			shenXianVO2.setHc6(rtvo.getShenxian_buy());
 		}
 		//just print the vo1 and vo2
-		//TODO: switch to vo2 if vo1 is same same as vo2
-		//Note: sometimes the hc5 and hc6 in vo2 is null due to late calculation in DailyScheduler, so just use vo1 for safe.
-		logger.info("predictTodayBuy shenXianVO1: {}", shenXianVO1);
-		logger.info("predictTodayBuy shenXianVO2: {}", shenXianVO2);
-		return gson.toJson(shenXianVO1);
+		//logger.debug("predictTodayBuy shenXianVO1: {}", shenXianVO1);
+		logger.debug("predictTodayBuy shenXianVO2: {}", shenXianVO2);
+		return gson.toJson(shenXianVO2);
 	}
 
 	//TODO: can merge predictTodayBuy and predictTodaySell into ont API to reduce pq io
@@ -252,7 +250,7 @@ public class IndicatorEndPointV3 {
 	public String mockCurPriceAndPredictTodaySellInd(@PathParam("stockId") String stockIdParm,
 													@PathParam("date") String dateParm, String postBody, @Context HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
-		ShenXianUIVO shenXianVO1 = shenXianSellAnalyseHelper.mockCurPriceAndPredictTodayInd(stockIdParm, dateParm, "S");
+		//ShenXianUIVO shenXianVO1 = shenXianSellAnalyseHelper.mockCurPriceAndPredictTodayInd(stockIdParm, dateParm, "S");
 		RealtimeStockPriceVO rtvo = realTimeStockPriceTableHelper.getLatestRealtimePrice(stockIdParm);
 		ShenXianUIVO shenXianVO2 = new ShenXianUIVO();
 		if (rtvo != null && rtvo.getShenxian_sell() > 0) {
@@ -260,10 +258,9 @@ public class IndicatorEndPointV3 {
 			shenXianVO2.setHc5(rtvo.getShenxian_sell());
 		}
 		//just print the vo1 and vo2
-		//Note: sometimes the hc5 and hc6 in vo2 is null due to late calculation in DailyScheduler, so just use vo1 for safe.
-		logger.info("predictTodaySell shenXianVO1: {}", shenXianVO1);
-		logger.info("predictTodaySell shenXianVO2: {}", shenXianVO2);
-		return gson.toJson(shenXianVO1);
+		//logger.debug("predictTodaySell shenXianVO1: {}", shenXianVO1);
+		logger.debug("predictTodaySell shenXianVO2: {}", shenXianVO2);
+		return gson.toJson(shenXianVO2);
 	}
 
 	@POST
