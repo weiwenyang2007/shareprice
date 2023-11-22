@@ -126,6 +126,7 @@ public class ShenXianSellAnalyseHelper {
                 vo.setHc6(Strings.convert2ScaleDecimal(shenXian[3][i]));
                 vo.setStockId(stockIdParm);
                 vo.setDate(spList.get(i).date);
+                vo.close = spList.get(i).close;//temp for analysis
                 sxList.add(vo);
             }
         }

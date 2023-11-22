@@ -14,6 +14,7 @@ public class ShenXianUIVO extends ShenXianVO {
 	public String duoFlagsText = "";
 	public String suoFlagsTitle = "";// 缩量
 	public String suoFlagsText = "";
+	public double close;//temp for analysis
 
 	public double getHc5() {
 		return hc5;

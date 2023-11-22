@@ -138,7 +138,7 @@ public class DailyScheduler implements SchedulingConfigurer {
 				ShenXianUIVO rtnSell = shenXianSellAnalyseHelper
 						.mockCurPriceAndPredictTodayInd(stockId, today, buyOrSell);
 				if (rtnSell != null && rtnSell.sellFlagsTitle.contains(buyOrSell)) {
-					shenxian_sell = rtnBuy.hc5;
+					shenxian_sell = rtnSell.hc5;
 				}
 				//
 				if (shenxian_buy > 0.0 && shenxian_sell > 0.0) {
