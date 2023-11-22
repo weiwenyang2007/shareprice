@@ -1,8 +1,20 @@
 [
   {
     "stock_id": "600547",
+    "enabled": true,
     "max_hold_number": 600,
+    "min_hold_number": 200,
     "base_buy_number": 200,
-    "base_sell_number": 200
+    "base_sell_number": 200,
+    "max_trade_number_per_day": 200
+  },
+  {
+    "stock_id": "300688",
+    "enabled": false,
+    "max_hold_number": 300,
+    "min_hold_number": 100,
+    "base_buy_number": 100,
+    "base_sell_number": 100,
+    "max_trade_number_per_day": 100
   }
 ]
