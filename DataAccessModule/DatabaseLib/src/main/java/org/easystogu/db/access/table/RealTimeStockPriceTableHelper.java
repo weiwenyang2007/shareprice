@@ -28,6 +28,11 @@ public class RealTimeStockPriceTableHelper {
       + " WHERE stockId = :stockId AND datetime = :datetime";
   protected String QUERY_LATEST_REALTIME_PRICE_BY_STOCKID_SQL =
       "SELECT * FROM " + tableName + " WHERE stockId = :stockId ORDER BY datetime DESC LIMIT 1";
+  //
+  //check sell point by:
+  //select *,round(100*(close-shenxian_sell)/high,2) as dif from realtime_stockprice where stockid='300688' order by datetime desc;
+  //check buy point by:
+  //select *,round(100*(shenxian_buy-close)/low,2) as dif from realtime_stockprice where stockid='300688' order by datetime desc;
 
   protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
