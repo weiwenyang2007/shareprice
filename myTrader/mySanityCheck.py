@@ -321,23 +321,26 @@ def deal_with_easy_trade(balance_data):
             target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
             target_stocks = json.load(target_stocks_f)
             for target_stock in target_stocks:
-                buy_item = check_buy_condition(balance_data, target_stock)
-                if buy_item:
-                    log.debug('buy_item is ' + str(buy_item))
-                    entrust_no = user.buy(buy_item['stock_id'], price=buy_item['buy_price'], amount=buy_item['buy_number'])        
-                    log.debug('buy result: ' + str(entrust_no))
-                    buy_item = None
+                if target_stock['enabled']:
+                    buy_item = check_buy_condition(balance_data, target_stock)
+                    if buy_item:
+                        log.debug('buy_item is ' + str(buy_item))
+                        entrust_no = user.buy(buy_item['stock_id'], price=buy_item['buy_price'], amount=buy_item['buy_number'])
+                        log.debug('buy result: ' + str(entrust_no))
+                        buy_item = None
+                    else:
+                        log.debug('no buy for ' + str(target_stock['stock_id']))
+
+                    sell_item = check_sell_condition(balance_data, target_stock)
+                    if sell_item:
+                        log.debug('sell_item is ' + str(sell_item))
+                        entrust_no = user.sell(sell_item['stock_id'], price=sell_item['sell_price'], amount=sell_item['sell_number'])
+                        log.debug('sell result: ' + str(entrust_no))
+                        sell_item = None
+                    else:
+                        log.debug('no sell for ' + str(target_stock['stock_id']))
                 else:
-                    log.debug('no buy for ' + str(target_stock['stock_id']))
-                    
-                sell_item = check_sell_condition(balance_data, target_stock)
-                if sell_item:
-                    log.debug('sell_item is ' + str(sell_item))   
-                    entrust_no = user.sell(sell_item['stock_id'], price=sell_item['sell_price'], amount=sell_item['sell_number'])        
-                    log.debug('sell result: ' + str(entrust_no))
-                    sell_item = None
-                else:
-                    log.debug('no sell for ' + str(target_stock['stock_id']))    
+                    log.debug('stockId {} is disabled, will not check buy and sell condition'.format(target_stock['stock_id']))
         else:
             log.debug('Time is out of trade time, no buy or sell operation')        
         
