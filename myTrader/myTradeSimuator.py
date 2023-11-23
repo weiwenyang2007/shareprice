@@ -141,6 +141,14 @@ def get_suggested_buy_price(history_trade, sxvo, spvo):
     last_avg_sell_price = get_last_price_from_history_trades(history_trade, 'Sell')
     #log.debug('last_avg_sell_price {}'.format(last_avg_sell_price))
 
+    #ignore the last_avg_sell_price if it is not within lowest and highest price
+    if last_avg_sell_price > spvo['high']:
+        # for example: 卖出后大跌
+        last_avg_sell_price = spvo['close'] / 0.978 #use close price or realtime price
+    elif last_avg_sell_price < spvo['low']:
+        # for example: 卖出后大涨
+        last_avg_sell_price = 0.0
+
     #Has risk to based on realtime
     #price = get_realtime_price_from_sina(stock_id)
     #if price:
@@ -150,22 +158,14 @@ def get_suggested_buy_price(history_trade, sxvo, spvo):
     shenxian_buy_price = get_indicator_from_easystogu(sxvo, 'Buy')
     #log.debug('shenxian_buy_price {}'.format(shenxian_buy_price))
 
-    rtn = 0.0
-
     if last_avg_sell_price > 0.0 and shenxian_buy_price > 0.0:
-        rtn = max(last_avg_sell_price * 0.978, shenxian_buy_price)
+        return max(last_avg_sell_price * 0.978, shenxian_buy_price)
     elif last_avg_sell_price > 0.0:
-        rtn = last_avg_sell_price * 0.978
+        return last_avg_sell_price * 0.978
     elif shenxian_buy_price > 0.0:
-        rtn = shenxian_buy_price
+        return shenxian_buy_price
 
-    if rtn > spvo['high']:
-        rtn = spvo['high']
-
-    if rtn < spvo['low']:
-        rtn = spvo['low']
-
-    return rtn
+    return 0.0
 
 
 def get_suggested_sell_price(history_trade, sxvo, spvo):
@@ -174,6 +174,13 @@ def get_suggested_sell_price(history_trade, sxvo, spvo):
     # 优先选择上次买入价格，做T
     last_avg_buy_price = get_last_price_from_history_trades(history_trade, 'Buy')
     #log.debug('last_avg_buy_price {}'.format(last_avg_buy_price))
+
+    if last_avg_buy_price > spvo['high']:
+        # for example: 买入后大跌
+        last_avg_buy_price = 0.0
+    elif last_avg_buy_price < spvo['low']:
+        # for example: 买入后大涨
+        last_avg_buy_price = spvo['close'] / 1.022 #use close price or realtime price
 
     # realtime_price = get_realtime_price_from_sina(stock_id)
     #if realtime_price:
@@ -184,24 +191,15 @@ def get_suggested_sell_price(history_trade, sxvo, spvo):
     shenxian_sell_price = get_indicator_from_easystogu(sxvo, 'Sell')
     #log.debug('shenxian_sell_price {}'.format(shenxian_sell_price))
 
-    rtn = 0.0
-
     # select the min price
     if last_avg_buy_price > 0.0 and shenxian_sell_price > 0.0:
-        rtn = min(last_avg_buy_price * 1.022, shenxian_sell_price)
+        return min(last_avg_buy_price * 1.022, shenxian_sell_price)
     elif last_avg_buy_price > 0.0:
-        rtn = last_avg_buy_price * 1.022
+        return last_avg_buy_price * 1.022
     elif shenxian_sell_price > 0.0:
-        rtn = shenxian_sell_price
+        return shenxian_sell_price
 
-    if rtn > spvo['high']:
-        rtn = spvo['high']
-
-    if rtn < spvo['low']:
-        rtn = spvo['low']
-
-    return rtn
-
+    return 0.0
 
 
 if __name__ == "__main__":
