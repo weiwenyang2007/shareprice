@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 import schedule
 import time
 import mySanityCheck as sanity
@@ -12,7 +13,10 @@ def my_easy_trade():
         if current_time >= '09:15:00' and current_time < '15:15:00':
             balance_data = sanity.sanity_check()
             if balance_data:
-                sanity.deal_with_easy_trade(balance_data)
+                target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
+                target_stocks = json.load(target_stocks_f)
+                target_stocks_f.close()
+                sanity.deal_with_easy_trade(balance_data, target_stocks)
             else:
                 log.warn('sanity_result is false, skip deal_with_easy_trade')    
         else:

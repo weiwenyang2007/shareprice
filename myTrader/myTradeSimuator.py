@@ -43,6 +43,23 @@ def simulate_trade(stock_id):
             suggested_sell_price = get_suggested_sell_price(history_trade, sxvo, spvo)
 
             log.debug('{} {} high {} low {} close {} suggested_buy_price {} suggested_sell_price {}'.format(stock_id, spvo['date'], spvo['high'], spvo['low'], spvo['close'],suggested_buy_price, suggested_sell_price))
+
+            if (cur_hold_number - base_sell_number) >= min_hold_number and suggested_sell_price > 0.0:
+                cur_hold_number = cur_hold_number - base_sell_number
+                balance_remain = balance_remain + (base_buy_number * suggested_sell_price)
+                balance_stockHold = cur_hold_number * float(spvo['close'])
+                balance_total = balance_remain + balance_stockHold
+                stock = {}
+                contract_id += 1
+                stock['datetime'] = sxvo['date']
+                stock['contract_id'] = contract_id
+                stock['number'] = base_sell_number
+                stock['price'] = suggested_sell_price
+                stock['operation'] = 'Sell'
+                history_trade.append(stock)
+                log.debug('  Sel@{}  balance_total {}, balance_stockHold {}, balance_remain {}, cur_hold_number {}'
+                          .format(suggested_sell_price, balance_total, balance_stockHold, balance_remain, cur_hold_number))
+
             if (cur_hold_number + base_buy_number) <= max_hold_number and suggested_buy_price > 0.0:
                 cur_hold_number = cur_hold_number + base_buy_number
                 balance_remain = balance_remain - (base_buy_number * suggested_buy_price)
@@ -59,22 +76,6 @@ def simulate_trade(stock_id):
 
                 log.debug('  Buy@{}  balance_total {}, balance_stockHold {}, balance_remain {}, cur_hold_number {}'
                           .format(suggested_buy_price, balance_total, balance_stockHold, balance_remain, cur_hold_number))
-
-            elif (cur_hold_number - base_sell_number) >= min_hold_number and suggested_sell_price > 0.0:
-                cur_hold_number = cur_hold_number - base_sell_number
-                balance_remain = balance_remain + (base_buy_number * suggested_sell_price)
-                balance_stockHold = cur_hold_number * float(spvo['close'])
-                balance_total = balance_remain + balance_stockHold
-                stock = {}
-                contract_id += 1
-                stock['datetime'] = sxvo['date']
-                stock['contract_id'] = contract_id
-                stock['number'] = base_sell_number
-                stock['price'] = suggested_sell_price
-                stock['operation'] = 'Sell'
-                history_trade.append(stock)
-                log.debug('  Sel@{}  balance_total {}, balance_stockHold {}, balance_remain {}, cur_hold_number {}'
-                          .format(suggested_sell_price, balance_total, balance_stockHold, balance_remain, cur_hold_number))
         #end for
         log.debug('history_trade:')
         log.debug(str(history_trade))
@@ -144,7 +145,8 @@ def get_suggested_buy_price(history_trade, sxvo, spvo):
     #ignore the last_avg_sell_price if it is not within lowest and highest price
     if last_avg_sell_price > spvo['high']:
         # for example: 卖出后大跌
-        last_avg_sell_price = spvo['close'] / 0.978 #use close price or realtime price
+        last_avg_sell_price = min(last_avg_sell_price * 0.978, spvo['high'])
+        return last_avg_sell_price
     elif last_avg_sell_price < spvo['low']:
         # for example: 卖出后大涨
         last_avg_sell_price = 0.0
@@ -180,7 +182,8 @@ def get_suggested_sell_price(history_trade, sxvo, spvo):
         last_avg_buy_price = 0.0
     elif last_avg_buy_price < spvo['low']:
         # for example: 买入后大涨
-        last_avg_buy_price = spvo['close'] / 1.022 #use close price or realtime price
+        last_avg_buy_price = max(last_avg_buy_price * 1.022, spvo['low'])
+        return last_avg_buy_price
 
     # realtime_price = get_realtime_price_from_sina(stock_id)
     #if realtime_price:

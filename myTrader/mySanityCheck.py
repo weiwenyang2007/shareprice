@@ -229,7 +229,8 @@ def check_buy_condition(balance_data, target_stock):
                 if stock['stock_id'] == target_stock['stock_id'] and stock['operation'] == 'Buy':
                     curr_trades_number += stock['number']
             
-        log.debug('curr_hold_number: {}, curr_entrust_number: {}, curr_trades_number: {}'.format(curr_hold_number, curr_entrust_number, curr_trades_number))
+        log.debug('curr_hold_number: {}, curr_entrust_number: {}, curr_trades_number: {}'
+                  .format(curr_hold_number, curr_entrust_number, curr_trades_number))
         # 当前持股数量和委托数量都少于预定最大值, 并且没有委托订单(还没有成交的订单),还可以加仓,限制一日成交不超过预定值max_trade_number_per_day
         if curr_trades_number < target_stock['max_trade_number_per_day'] \
                 and curr_hold_number < target_stock['max_hold_number'] \
@@ -289,9 +290,13 @@ def check_sell_condition(balance_data, target_stock):
                 if stock['stock_id'] == target_stock['stock_id'] and stock['operation'] == 'Sell':
                     curr_trades_number += stock['number']                    
             
-        log.debug('curr_usable_number: {}, curr_entrust_number: {}, curr_trades_number: {}'.format(curr_usable_number, curr_entrust_number, curr_trades_number))
+        log.debug('curr_usable_number: {}, curr_entrust_number: {}, curr_trades_number: {}'
+                  .format(curr_usable_number, curr_entrust_number, curr_trades_number))
         # 当前股票可用余额大于最少交易量, 而且没有委托卖单,说明还可以卖 (min_hold_number==curr_usable_number是保留低仓,不会清仓), 限制一日成交不超过预定值max_trade_number_per_day
-        if curr_trades_number < target_stock['max_trade_number_per_day'] and (curr_usable_number - target_stock['base_sell_number']) >= target_stock['min_hold_number'] and curr_usable_number >= target_stock['base_sell_number'] and curr_entrust_number == 0:
+        if curr_trades_number < target_stock['max_trade_number_per_day'] \
+                and (curr_usable_number - target_stock['base_sell_number']) >= target_stock['min_hold_number'] \
+                and curr_usable_number >= target_stock['base_sell_number'] \
+                and curr_entrust_number == 0:
             sell_items['stock_id'] = target_stock['stock_id']
             sell_items['sell_number'] = target_stock['base_sell_number']
             
@@ -307,38 +312,46 @@ def check_sell_condition(balance_data, target_stock):
         return None
         
         
-def deal_with_easy_trade(balance_data):
+def deal_with_easy_trade(balance_data, target_stocks):
     try:
-        #Check Buy condiction and make Buy
         log.debug('deal_with_easy_trade start')
-        if not balance_data:
+        balance_data_cur = balance_data
+        if not balance_data_cur:
             log.error('balance_data from Sanity Check is None, skip deal_with_easy_trade')
             return None
             
         current_time = datetime.now().strftime("%H:%M:%S")
         if current_time >= '09:28:30' and current_time < '14:59:00':
             log.debug('within trade time, check buy and sell operation')
-            target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
-            target_stocks = json.load(target_stocks_f)
             for target_stock in target_stocks:
                 if target_stock['enabled']:
-                    buy_item = check_buy_condition(balance_data, target_stock)
-                    if buy_item:
-                        log.debug('buy_item is ' + str(buy_item))
-                        entrust_no = user.buy(buy_item['stock_id'], price=buy_item['buy_price'], amount=buy_item['buy_number'])
-                        log.debug('buy result: ' + str(entrust_no))
-                        buy_item = None
-                    else:
-                        log.debug('no buy for ' + str(target_stock['stock_id']))
-
-                    sell_item = check_sell_condition(balance_data, target_stock)
+                    #Sell
+                    sell_item = check_sell_condition(balance_data_cur, target_stock)
                     if sell_item:
                         log.debug('sell_item is ' + str(sell_item))
                         entrust_no = user.sell(sell_item['stock_id'], price=sell_item['sell_price'], amount=sell_item['sell_number'])
                         log.debug('sell result: ' + str(entrust_no))
                         sell_item = None
+                        #update the balance after successful sell
+                        balance_data_updated = sanity_check()
+                        if not balance_data_updated:
+                            balance_data_cur = balance_data_updated
                     else:
                         log.debug('no sell for ' + str(target_stock['stock_id']))
+
+                    #Buy
+                    buy_item = check_buy_condition(balance_data_cur, target_stock)
+                    if buy_item:
+                        log.debug('buy_item is ' + str(buy_item))
+                        entrust_no = user.buy(buy_item['stock_id'], price=buy_item['buy_price'], amount=buy_item['buy_number'])
+                        log.debug('buy result: ' + str(entrust_no))
+                        buy_item = None
+                        #update the balance after successful buy
+                        balance_data_updated = sanity_check()
+                        if not balance_data_updated:
+                            balance_data_cur = balance_data_updated
+                    else:
+                        log.debug('no buy for ' + str(target_stock['stock_id']))
                 else:
                     log.debug('stockId {} is disabled, will not check buy and sell condition'.format(target_stock['stock_id']))
         else:
