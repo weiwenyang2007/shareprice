@@ -1,28 +1,37 @@
 {
   "money": {
-    "balance_remain": 272.8,
-    "balance_stockHold": 14250.0,
-    "balance_total": 14522.8,
-    "balance_usable": 272.8
+    "balance_remain": 2247.46,
+    "balance_stockHold": 15694.0,
+    "balance_total": 15695.42,
+    "balance_usable": 1.42
   },
   "stock_holds": [
     {
-      "balance": 14250.0,
+      "balance": 15694.0,
       "freeze_number": 0,
-      "hold_number": 600,
+      "hold_number": 700,
       "stock_id": "600547",
-      "trade_price": 24.553,
+      "trade_price": 24.211,
       "usable_number": 400
     }
   ],
   "stock_today_entrusts": [
     {
-      "contract_id": "654",
+      "contract_id": "1110",
       "number": 200,
       "operation": "Sell",
-      "price": 24.77,
+      "price": 23.0,
       "stock_id": "600547"
     }
   ],
-  "stock_today_trades": []
+  "stock_today_trades": [
+    {
+      "contract_id": "770",
+      "datetime": "2023-11-24 09:30:09",
+      "number": 100,
+      "operation": "Buy",
+      "price": 22.41,
+      "stock_id": "600547"
+    }
+  ]
 }

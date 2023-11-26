@@ -106,7 +106,7 @@ def sanity_check():
         stock_today_entrusts = []
         money_occupy = 0.0
         for item in today_entrusts:
-            # 过滤没有撤销和成交的委托订单
+            # 过滤出没有撤销和成交的委托订单,剩下的就是等待成交的委托订单
             if item['成交数量'] == 0 and item['备注'] in ['未报', '已报', '未报待撤', '已报待撤']:
                 stock = {}
                 stock['stock_id'] = item['证券代码']
@@ -215,7 +215,7 @@ def check_buy_condition(balance_data, target_stock):
                 if stock['stock_id'] == target_stock['stock_id']:
                     curr_hold_number += stock['hold_number']
                     
-        # 检查今日委托买入数量            
+        # 检查今日委托买入数量(还在等待成交的)
         if 'stock_today_entrusts' in balance_data:
             stock_today_entrusts = balance_data['stock_today_entrusts']
             for stock in stock_today_entrusts:
@@ -276,7 +276,7 @@ def check_sell_condition(balance_data, target_stock):
                 if stock['stock_id'] == target_stock['stock_id']:
                     curr_usable_number = stock['usable_number']
                     
-        # 检查今日委托卖出数量            
+        # 检查今日委托卖出数量(还在等待成交的)
         if 'stock_today_entrusts' in balance_data:
             stock_today_entrusts = balance_data['stock_today_entrusts']
             for stock in stock_today_entrusts:
