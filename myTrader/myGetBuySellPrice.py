@@ -13,9 +13,9 @@ def get_suggested_buy_price(stock_id):
     last_avg_sell_price = get_last_price_from_history_trades(stock_id, 'Sell')
     log.debug('last_avg_sell_price {}'.format(last_avg_sell_price))
     
-    #Has risk to based on realtime
-    #price = get_realtime_price_from_sina(stock_id)
-    #if price:
+    # Has risk to based on realtime
+    # price = get_realtime_price_from_sina(stock_id)
+    # if price:
     #    return price * 0.978 
         
     # else get suggest buy price from shenXian Indicator (hc6 value)
@@ -43,7 +43,7 @@ def get_suggested_sell_price(stock_id):
     log.debug('last_avg_buy_price {}'.format(last_avg_buy_price))
 
     # realtime_price = get_realtime_price_from_sina(stock_id)
-    #if realtime_price:
+    # if realtime_price:
     #    return realtime_price
     
     # else get suggest buy price from shenXian Indicator (hc6 value)
@@ -63,6 +63,7 @@ def get_suggested_sell_price(stock_id):
     
     return None     
 
+
 def get_realtime_price_from_sina(stock_id):
     try:
         log.debug('get_realtime_price_from_sina for ' + stock_id)
@@ -80,7 +81,7 @@ def get_realtime_price_from_sina(stock_id):
         response = conn.getresponse()
         resp = response.read().decode()
         log.debug('response for ' + stock_id + ' is ' + resp)
-        #var minute_data_list = [['15:00:00', '24.89', '215872']];
+        # var minute_data_list = [['15:00:00', '24.89', '215872']];
         arrs = resp.split(',')
         if len(arrs) == 3:
             price = arrs[1].strip()
@@ -102,7 +103,7 @@ def get_last_price_from_history_trades(stock_id, buyOrSell):
         
         his_trade_file = open("Z:/easytrader/data/history_trade.json", "r")
         his_trade_data = json.load(his_trade_file)
-        #log.debug('his_trade_data for ' + stock_id + ' is ' + str(his_trade_data))
+        # log.debug('his_trade_data for ' + stock_id + ' is ' + str(his_trade_data))
         # for buy/sell price, we count the average price of the history trade
         total_price = 0.0
         total_count = 0

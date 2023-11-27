@@ -2,9 +2,13 @@ import logging
 import warnings
 from logging.handlers import RotatingFileHandler
 
+
 def warn(*args, **kwargs):
     pass
+
+
 warnings.warn = warn
+
 
 def setup_custom_logger(name):
     format = '%(asctime)s %(levelname)s %(module)s %(message)s'

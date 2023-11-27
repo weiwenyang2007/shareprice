@@ -10,7 +10,7 @@ def my_easy_trade():
     try:
         log.info('my_easy_trade start')
         current_time = datetime.now().strftime("%H:%M:%S")
-        if current_time >= '09:15:00' and current_time < '15:15:00':
+        if '09:15:00' <= current_time < '15:15:00':
             balance_data = sanity.sanity_check()
             if balance_data:
                 target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")

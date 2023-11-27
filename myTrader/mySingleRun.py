@@ -4,13 +4,14 @@ import mySanityCheck as sanity
 import myLog as myLogger
 log = myLogger.setup_custom_logger(__name__)
 
+
 def my_easy_trade():
     try:    
         log.info('my_easy_trade start')
         dt = datetime.now()
         week_day = dt.weekday()
         current_time = dt.strftime("%H:%M:%S")
-        if (current_time >= '09:15:00' and current_time < '15:15:00') and (week_day >=0 and week_day <=4):
+        if ('09:15:00' <= current_time < '15:15:00') and (0 <= week_day <= 4):
             balance_data = sanity.sanity_check()
             if balance_data:
                 target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")

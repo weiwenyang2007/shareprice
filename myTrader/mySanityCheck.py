@@ -18,6 +18,7 @@ user = easytrader.use('universal_client')
 user.enable_type_keys_for_editor()
 user.connect(r'C:\同花顺软件\同花顺\xiadan.exe')
 
+
 def sanity_check():
     try:
         log.info('Sanity start')
@@ -28,33 +29,31 @@ def sanity_check():
         history_trade.close()
 
         balance_data = {}
-        #资金
+        # 资金
         log.debug('get user.balance')
         balance = user.balance
         log.debug('当前资金:' + str(balance))
 
-        money = {}
-        money['balance_remain'] = balance['资金余额']
-        money['balance_usable'] = balance['可用金额']
-        money['balance_stockHold'] = balance['股票市值']
-        money['balance_total'] = balance['总资产']
+        money = {'balance_remain': balance['资金余额'],
+                 'balance_usable': balance['可用金额'],
+                 'balance_stockHold': balance['股票市值'],
+                 'balance_total': balance['总资产']}
 
         balance_data['money'] = money
 
-        #当前持仓
+        # 当前持仓
         log.debug('get user.position')
         position = user.position
         log.debug('当前持仓:' + str(position))
 
         stock_holds = []
         for item in position:
-            stock = {}
-            stock['stock_id'] = item['证券代码']
-            stock['hold_number'] = item['股票余额']
-            stock['usable_number'] = item['可用余额']
-            stock['freeze_number'] = item['冻结数量']
-            stock['trade_price'] = item['成本价']
-            stock['balance'] = item['市值']
+            stock = {'stock_id': item['证券代码'],
+                     'hold_number': item['股票余额'],
+                     'usable_number': item['可用余额'],
+                     'freeze_number': item['冻结数量'],
+                     'trade_price': item['成本价'],
+                     'balance': item['市值']}
             log.debug(stock)
             stock_holds.append(stock)
 
@@ -64,56 +63,54 @@ def sanity_check():
             
         balance_data['stock_holds'] = stock_holds
 
-        #当日成交
+        # 当日成交
         log.debug('get user.today_trades')
         today_trades = user.today_trades
         log.debug('当日成交:' + str(today_trades))
 
         stock_today_trades = []
         for item in today_trades:
-            stock = {}
-            stock['datetime'] = today + ' ' + item['成交时间']
-            stock['stock_id'] = item['证券代码']
-            stock['number'] = item['成交数量']
-            stock['price'] = item['成交均价']
-            stock['contract_id'] = item['合同编号']
-            stock['operation'] = 'Buy' if item['操作']=="证券买入" else 'Sell' if item['操作']=="证券卖出" else 'Unknown'
+            stock = {'datetime': today + ' ' + item['成交时间'],
+                     'stock_id': item['证券代码'],
+                     'number': item['成交数量'],
+                     'price': item['成交均价'],
+                     'contract_id': item['合同编号'],
+                     'operation': 'Buy' if item['操作'] == "证券买入" else 'Sell' if item['操作'] == "证券卖出" else 'Unknown'}
             stock_today_trades.append(stock)
             
             exist = False
             for his_item in history_trade_balance_data:
                 log.debug('his_item='+str(his_item))
                 if his_item['contract_id'] == stock['contract_id'] and his_item['datetime'] == stock['datetime'] and his_item['stock_id'] == stock['stock_id']:
-                    #already exist
+                    # already exist
                     exist = True
                     break
             
-            if exist == False:
+            if not exist:
+                # New trade in today, add it to history trade data
+                # at the sametime, remove one of its couterpart from history trade data
                 history_trade_balance_data.append(stock)
-                
 
         balance_data['stock_today_trades'] = stock_today_trades
 
-
-        #当日委托
+        # 当日委托
         log.debug('get user.today_entrusts')
         today_entrusts = user.today_entrusts
         log.debug('当日委托:' + str(today_entrusts))
-        #操作：买入，卖出
-        #备注：未报，已报，已撤，已成
-        #委托类别：委托，撤单
+        # 操作：买入，卖出
+        # 备注：未报，已报，已撤，已成
+        # 委托类别：委托，撤单
 
         stock_today_entrusts = []
         money_occupy = 0.0
         for item in today_entrusts:
             # 过滤出没有撤销和成交的委托订单,剩下的就是等待成交的委托订单
             if item['成交数量'] == 0 and item['备注'] in ['未报', '已报', '未报待撤', '已报待撤']:
-                stock = {}
-                stock['stock_id'] = item['证券代码']
-                stock['number'] = item['委托数量']
-                stock['price'] = item['委托价格']
-                stock['contract_id'] = item['合同编号']
-                stock['operation'] = 'Buy' if item['操作']=="买入" else 'Sell' if item['操作']=="卖出" else item['操作']
+                stock = {'stock_id': item['证券代码'],
+                         'number': item['委托数量'],
+                         'price': item['委托价格'],
+                         'contract_id': item['合同编号'],
+                         'operation': 'Buy' if item['操作'] == "买入" else 'Sell' if item['操作'] == "卖出" else item['操作']}
 
                 if stock['operation'] == 'Buy':
                     money_occupy += (int(stock['number']) * float(stock['price']))
@@ -129,10 +126,9 @@ def sanity_check():
         if abs(float(money['balance_total']) - (float(money['balance_usable']) + float(money['balance_stockHold']) + money_occupy)) >= 100.0:
             log.error("资金验证发现异常,很可能是查询不到某些数据,比如委托订单,当前持仓等")
             raise Exception("Money and stock balance check failure")
-        
-        
+
         # Sanity Check is OK for this time, update the json file.
-        #save to balance_data file
+        # save to balance_data file
         with open("Z:/easytrader/data/balance.json", "w") as write_file:
             json.dump(balance_data, write_file, indent=2, sort_keys=True)
 
@@ -154,7 +150,8 @@ def filter_history_trade_data(balance_data, history_trade_balance_data):
         # filter and sort the history_trade_balance_data
         # 只保留当前仓位数量对应的条数
         rtn = []
-        # Only keep the latest 3 history trade records (3 = max_hold_number/base_buy_number in target_stocks.json)
+        # Only keep the latest 3 history trade records (3 = max_hold_number/base_buy_number
+        # in target_stocks.json)
         max_keep_record_number = 3
         for balance_item in balance_data['stock_holds']:
             # To handle Buy:
@@ -192,7 +189,7 @@ def filter_history_trade_data(balance_data, history_trade_balance_data):
 
 def check_buy_condition(balance_data, target_stock):
     try:
-        #Check Buy condiction and make Buy
+        # Check Buy condiction and make Buy
         log.debug('check_buy_condition start for ' + str(target_stock))
         
         buy_price = myGetBuySellPrice.get_suggested_buy_price(target_stock['stock_id'])
@@ -200,8 +197,7 @@ def check_buy_condition(balance_data, target_stock):
             log.debug('There is no suggest buy_price for ' + target_stock['stock_id'])
             return None
             
-        buy_items = {}
-        buy_items['buy_price'] = buy_price
+        buy_items = {'buy_price': buy_price}
 
         curr_hold_number = 0
         curr_entrust_number = 0
@@ -253,8 +249,8 @@ def check_buy_condition(balance_data, target_stock):
         
 def check_sell_condition(balance_data, target_stock):
     try:
-        #Check Buy condiction and make Buy
-        #log.debug('check_sell_condition start for ' + str(target_stock))
+        # Check Buy condiction and make Buy
+        # log.debug('check_sell_condition start for ' + str(target_stock))
         
         sell_price = myGetBuySellPrice.get_suggested_sell_price(target_stock['stock_id'])
         if not sell_price:
@@ -262,8 +258,7 @@ def check_sell_condition(balance_data, target_stock):
             return None
         log.debug('sell price for ' + target_stock['stock_id'] + ' is ' + str(sell_price))
             
-        sell_items = {}
-        sell_items['sell_price'] = sell_price
+        sell_items = {'sell_price': sell_price}
 
         curr_usable_number = 0
         curr_entrust_number = 0
@@ -292,7 +287,8 @@ def check_sell_condition(balance_data, target_stock):
             
         log.debug('curr_usable_number: {}, curr_entrust_number: {}, curr_trades_number: {}'
                   .format(curr_usable_number, curr_entrust_number, curr_trades_number))
-        # 当前股票可用余额大于最少交易量, 而且没有委托卖单,说明还可以卖 (min_hold_number==curr_usable_number是保留低仓,不会清仓), 限制一日成交不超过预定值max_trade_number_per_day
+        # 当前股票可用余额大于最少交易量, 而且没有委托卖单,说明还可以卖 (min_hold_number==curr_usable_number是保留低仓,不会清仓),
+        # 限制一日成交不超过预定值max_trade_number_per_day
         if curr_trades_number < target_stock['max_trade_number_per_day'] \
                 and (curr_usable_number - target_stock['base_sell_number']) >= target_stock['min_hold_number'] \
                 and curr_usable_number >= target_stock['base_sell_number'] \
@@ -321,32 +317,32 @@ def deal_with_easy_trade(balance_data, target_stocks):
             return None
             
         current_time = datetime.now().strftime("%H:%M:%S")
-        if current_time >= '09:28:30' and current_time < '14:59:00':
+        if '09:28:30' <= current_time < '14:59:00':
             log.debug('within trade time, check buy and sell operation')
             for target_stock in target_stocks:
                 if target_stock['enabled']:
-                    #Sell
+                    # Sell
                     sell_item = check_sell_condition(balance_data_cur, target_stock)
                     if sell_item:
                         log.debug('sell_item is ' + str(sell_item))
                         entrust_no = user.sell(sell_item['stock_id'], price=sell_item['sell_price'], amount=sell_item['sell_number'])
                         log.debug('sell result: ' + str(entrust_no))
                         sell_item = None
-                        #update the balance after successful sell
+                        # update the balance after successful sell
                         balance_data_updated = sanity_check()
                         if not balance_data_updated:
                             balance_data_cur = balance_data_updated
                     else:
                         log.debug('no sell for ' + str(target_stock['stock_id']))
 
-                    #Buy
+                    # Buy
                     buy_item = check_buy_condition(balance_data_cur, target_stock)
                     if buy_item:
                         log.debug('buy_item is ' + str(buy_item))
                         entrust_no = user.buy(buy_item['stock_id'], price=buy_item['buy_price'], amount=buy_item['buy_number'])
                         log.debug('buy result: ' + str(entrust_no))
                         buy_item = None
-                        #update the balance after successful buy
+                        # update the balance after successful buy
                         balance_data_updated = sanity_check()
                         if not balance_data_updated:
                             balance_data_cur = balance_data_updated
@@ -357,7 +353,7 @@ def deal_with_easy_trade(balance_data, target_stocks):
         else:
             log.debug('Time is out of trade time, no buy or sell operation')        
         
-        #Check Sell condiction and make Sell
+        # Check Sell condiction and make Sell
     except Exception as ex:
         log.exception(ex)
         log.error('deal_with_easy_trade end with exception')  
@@ -365,5 +361,5 @@ def deal_with_easy_trade(balance_data, target_stocks):
 
 if __name__ == "__main__":
     sanity_check()
-    #deal_with_easy_trade(json.load(open("Z:/easytrader/data/balance.json", "r")))
-    #filter_history_trade_data(json.load(open("Z:/easytrader/data/balance.json")), json.load(open("Z:/easytrader/data/history_trade_test_input1.json")))
+    # deal_with_easy_trade(json.load(open("Z:/easytrader/data/balance.json", "r")))
+    # filter_history_trade_data(json.load(open("Z:/easytrader/data/balance.json")), json.load(open("Z:/easytrader/data/history_trade_test_input1.json")))
