@@ -317,7 +317,7 @@ def deal_with_easy_trade(balance_data, target_stocks):
             return None
             
         current_time = datetime.now().strftime("%H:%M:%S")
-        if '09:28:30' <= current_time < '14:59:00':
+        if '09:27:00' <= current_time <= '14:59:00':
             log.debug('within trade time, check buy and sell operation')
             for target_stock in target_stocks:
                 if target_stock['enabled']:
