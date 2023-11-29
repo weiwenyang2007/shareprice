@@ -88,7 +88,7 @@ def sanity_check():
             
             if not exist:
                 # New trade in today, add it to history trade data
-                # at the sametime, remove one of its couterpart from history trade data
+                # TODO: at the sametime, remove one of its couterpart from history trade data
                 history_trade_balance_data.append(stock)
 
         balance_data['stock_today_trades'] = stock_today_trades
@@ -192,7 +192,7 @@ def check_buy_condition(balance_data, target_stock):
         # Check Buy condiction and make Buy
         log.debug('check_buy_condition start for ' + str(target_stock))
         
-        buy_price = myGetBuySellPrice.get_suggested_buy_price(target_stock['stock_id'])
+        buy_price = myGetBuySellPrice.get_suggested_buy_price(target_stock)
         if not buy_price:
             log.debug('There is no suggest buy_price for ' + target_stock['stock_id'])
             return None
@@ -252,7 +252,7 @@ def check_sell_condition(balance_data, target_stock):
         # Check Buy condiction and make Buy
         # log.debug('check_sell_condition start for ' + str(target_stock))
         
-        sell_price = myGetBuySellPrice.get_suggested_sell_price(target_stock['stock_id'])
+        sell_price = myGetBuySellPrice.get_suggested_sell_price(target_stock)
         if not sell_price:
             log.debug('There is no suggest sell_price for ' + target_stock['stock_id'])
             return None
