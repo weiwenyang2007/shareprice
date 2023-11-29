@@ -178,5 +178,6 @@ def get_indicator_from_easystogu(stock_id, buyOrSell):
         
 
 if __name__ == "__main__":
+    log.debug('start')
     #rtn = get_suggested_sell_price('600547')
     #print('rtn='+str(rtn))
