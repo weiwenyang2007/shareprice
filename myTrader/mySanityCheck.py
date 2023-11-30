@@ -14,9 +14,18 @@ log = myLogger.setup_custom_logger(__name__)
 from pytesseract import pytesseract
 pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
-user = easytrader.use('universal_client') 
-user.enable_type_keys_for_editor()
-user.connect(r'C:\同花顺软件\同花顺\xiadan.exe')
+
+def connect_to_app():
+    try:
+        log.info('Connecting to xiadan app')
+        user = easytrader.use('universal_client')
+        user.enable_type_keys_for_editor()
+        user.connect(r'C:\同花顺软件\同花顺\xiadan.exe')
+        return True
+    except Exception as ex:
+        log.exception(ex)
+        log.error('Connecting to xiadan app with exception')
+        return None
 
 
 def sanity_check():
@@ -360,6 +369,7 @@ def deal_with_easy_trade(balance_data, target_stocks):
         
 
 if __name__ == "__main__":
-    sanity_check()
+    if connect_to_app():
+        sanity_check()
     # deal_with_easy_trade(json.load(open("Z:/easytrader/data/balance.json", "r")))
     # filter_history_trade_data(json.load(open("Z:/easytrader/data/balance.json")), json.load(open("Z:/easytrader/data/history_trade_test_input1.json")))

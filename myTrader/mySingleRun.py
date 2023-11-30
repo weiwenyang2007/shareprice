@@ -12,16 +12,19 @@ def my_easy_trade():
         week_day = dt.weekday()
         current_time = dt.strftime("%H:%M:%S")
         if ('09:15:00' <= current_time <= '15:05:00') and (0 <= week_day <= 4):
-            balance_data = sanity.sanity_check()
-            if balance_data:
-                target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
-                target_stocks = json.load(target_stocks_f)
-                target_stocks_f.close()
-                sanity.deal_with_easy_trade(balance_data, target_stocks)
+            if sanity.connect_to_app():
+                balance_data = sanity.sanity_check()
+                if balance_data:
+                    target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
+                    target_stocks = json.load(target_stocks_f)
+                    target_stocks_f.close()
+                    sanity.deal_with_easy_trade(balance_data, target_stocks)
+                else:
+                    log.warn('sanity_result is false, skip deal_with_easy_trade')
             else:
-                log.warn('sanity_result is false, skip deal_with_easy_trade')    
+                log.warn('connect_to_app return None')
         else:
-            log.info('my_easy_trade not run due to date time is outof trade')
+            log.warn('my_easy_trade not run due to date time is outof trade')
             
         log.info('my_easy_trade end')    
             
