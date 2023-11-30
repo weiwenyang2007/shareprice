@@ -3,6 +3,7 @@ sys.path.append('Z:/easytrader/github/easytrader')
 
 from datetime import datetime
 from operator import itemgetter
+from pywinauto import application
 
 import json
 import easytrader
@@ -18,14 +19,44 @@ user = easytrader.use('universal_client')
 user.enable_type_keys_for_editor()
 
 
+def start_app():
+    try:
+        log.info('Start hexin and xiadan app')
+        user.start(r'C:\同花顺软件\同花顺\hexin.exe')
+        user.start(r'C:\同花顺软件\同花顺\xiadan.exe')        
+        return True
+    except Exception as ex:
+        log.exception(ex)
+        log.error('Start hexin and xiadan app with exception')
+        return None
+
+
 def connect_to_app():
     try:
         log.info('Connecting to xiadan app')
         user.connect(r'C:\同花顺软件\同花顺\xiadan.exe')
         return True
+    except application.ProcessNotFoundError as error:
+        log.error('xiadan application not found')
+        
+        retry = 1
+        if retry <= 3:
+            log.info('retry {} to start app'.format(str(retry)))
+            try:
+                start_app()
+                user.connect(r'C:\同花顺软件\同花顺\xiadan.exe')    
+                retry += 1
+                return True
+            except Exception as ex:
+                log.exception(ex)
+                log.error('retry start_app and Connecting to xiadan app with exception')
+                user.exit()
+                return None
+        
     except Exception as ex:
         log.exception(ex)
         log.error('Connecting to xiadan app with exception')
+        user.exit()
         return None
 
 
