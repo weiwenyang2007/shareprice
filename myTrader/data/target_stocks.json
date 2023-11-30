@@ -7,16 +7,18 @@
     "base_buy_number": 200,
     "base_sell_number": 200,
     "max_trade_number_per_day": 200,
-    "price_delta": 0.022
+    "price_delta": 0.022,
+    "price_strategy": "HistoryTrade_and_Shenxian"
   },
   {
     "stock_id": "300688",
     "enabled": true,
-    "max_hold_number": 300,
+    "max_hold_number": 100,
     "min_hold_number": 100,
     "base_buy_number": 100,
     "base_sell_number": 100,
     "max_trade_number_per_day": 100,
-    "price_delta": 0.032
+    "price_delta": 0.032,
+    "price_strategy": "HistoryTrade"
   }
 ]

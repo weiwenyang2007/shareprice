@@ -8,26 +8,30 @@ log = myLogger.setup_custom_logger(__name__)
 def get_suggested_buy_price(target_stock):
     log.debug("get_suggested_buy_price {}".format(target_stock['stock_id']))
     price_delta = target_stock['price_delta']
-    # first get last Sell trade price from history trades
-    # 高抛低吸做T:建议买入价格比上次卖出价格低0.022
-    last_avg_sell_price = get_last_price_from_history_trades(target_stock['stock_id'], 'Sell')
-    log.debug('last_avg_sell_price {}'.format(last_avg_sell_price))
-    
-    # Has risk to based on realtime
-    # price = get_realtime_price_from_sina(stock_id)
-    # if price:
-    #    return price * 0.978 
-        
-    # else get suggest buy price from shenXian Indicator (hc6 value)
-    shenxian_buy_price = get_indicator_from_easystogu(target_stock['stock_id'], 'Buy')
-    log.debug('shenxian_buy_price {}'.format(shenxian_buy_price))
+    price_strategy = target_stock['price_strategy']
 
-    if last_avg_sell_price > 0.0 and shenxian_buy_price > 0.0:
-        return max(last_avg_sell_price * (1.0 - price_delta), shenxian_buy_price)
-    elif last_avg_sell_price > 0.0:
-        return last_avg_sell_price * (1.0 - price_delta)
-    elif shenxian_buy_price > 0.0:
-        return shenxian_buy_price
+    if price_strategy == 'HistoryTrade':
+        # 高抛低吸做T:建议卖出价格比上次买入价格高price_delta(比如0.022)
+        # 优先选择上次买入价格，做T
+        last_avg_sell_price = get_last_price_from_history_trades(target_stock['stock_id'], 'Sell')
+        log.debug('last_avg_sell_price {}'.format(last_avg_sell_price))
+        if last_avg_sell_price > 0.0:
+            return last_avg_sell_price * (1.0 - price_delta)
+
+    if price_strategy == 'Shenxian':
+        # get suggest buy price from shenXian Indicator (hc5 value)
+        # 选择shenxian卖指标，这个值比上面那个last_avg_sell_price要高或者低都有可能
+        shenxian_buy_price = get_indicator_from_easystogu(target_stock['stock_id'], 'Buy')
+        log.debug('shenxian_buy_price {}'.format(shenxian_buy_price))
+        if shenxian_buy_price > 0.0:
+            return shenxian_buy_price
+
+    if price_strategy == 'HistoryTrade_and_Shenxian':
+        last_avg_sell_price = get_last_price_from_history_trades(target_stock['stock_id'], 'Sell')
+        shenxian_buy_price = get_indicator_from_easystogu(target_stock['stock_id'], 'Buy')
+        log.debug('last_avg_buy_price {}, shenxian_buy_price {}'.format(last_avg_sell_price, shenxian_buy_price))
+        if last_avg_sell_price > 0.0 and shenxian_buy_price > 0.0:
+            return max(last_avg_sell_price * (1.0 - price_delta), shenxian_buy_price)
                
     log.debug('Can not get_suggested_buy_price for ' + target_stock['stock_id'])
     
@@ -35,30 +39,33 @@ def get_suggested_buy_price(target_stock):
 
 
 def get_suggested_sell_price(target_stock):
-    log.debug("get_suggested_sell_price {}".format(target_stock['stock_id']))
+    log.debug("get_suggested_sell_price {}".format(target_stock))
     price_delta = target_stock['price_delta']
-    # first get last Buy trade price from history trades
-    # 高抛低吸做T:建议卖出价格比上次买入价格高0.022
-    # 优先选择上次买入价格，做T
-    last_avg_buy_price = get_last_price_from_history_trades(target_stock['stock_id'], 'Buy')
-    log.debug('last_avg_buy_price {}'.format(last_avg_buy_price))
+    price_strategy = target_stock['price_strategy']
 
-    # realtime_price = get_realtime_price_from_sina(stock_id)
-    # if realtime_price:
-    #    return realtime_price
-    
-    # else get suggest buy price from shenXian Indicator (hc6 value)
-    # 其次选择shenxian卖指标，这个值比上面那个要高或者低都有可能
-    shenxian_sell_price = get_indicator_from_easystogu(target_stock['stock_id'], 'Sell')
-    log.debug('shenxian_sell_price {}'.format(shenxian_sell_price))
+    if price_strategy == 'HistoryTrade':
+        # 高抛低吸做T:建议卖出价格比上次买入价格高price_delta(比如0.022)
+        # 优先选择上次买入价格，做T
+        last_avg_buy_price = get_last_price_from_history_trades(target_stock['stock_id'], 'Buy')
+        log.debug('last_avg_buy_price {}'.format(last_avg_buy_price))
+        if last_avg_buy_price > 0.0:
+            return last_avg_buy_price * (1.0 + price_delta)
 
-    # select the min price
-    if last_avg_buy_price > 0.0 and shenxian_sell_price > 0.0:
-        return min(last_avg_buy_price * (1.0 + price_delta), shenxian_sell_price)
-    elif last_avg_buy_price > 0.0:
-        return last_avg_buy_price * (1.0 + price_delta)
-    elif shenxian_sell_price > 0.0:
-        return shenxian_sell_price
+    if price_strategy == 'Shenxian':
+        # get suggest buy price from shenXian Indicator (hc6 value)
+        # 选择shenxian卖指标，这个值比上面那个last_avg_buy_price要高或者低都有可能
+        shenxian_sell_price = get_indicator_from_easystogu(target_stock['stock_id'], 'Sell')
+        log.debug('shenxian_sell_price {}'.format(shenxian_sell_price))
+        if shenxian_sell_price > 0.0:
+            return shenxian_sell_price
+
+    if price_strategy == 'HistoryTrade_and_Shenxian':
+        last_avg_buy_price = get_last_price_from_history_trades(target_stock['stock_id'], 'Buy')
+        shenxian_sell_price = get_indicator_from_easystogu(target_stock['stock_id'], 'Sell')
+        log.debug('last_avg_buy_price {}, shenxian_sell_price {}'.format(last_avg_buy_price, shenxian_sell_price))
+        if last_avg_buy_price > 0.0 and shenxian_sell_price > 0.0:
+            # select the min price
+            return min(last_avg_buy_price * (1.0 + price_delta), shenxian_sell_price)
 
     log.debug('Can not get_suggested_sell_price for ' + target_stock['stock_id'])
     
