@@ -199,15 +199,7 @@ def filter_history_trade_data(balance_data, history_trade_balance_data):
 
 def check_buy_condition(balance_data, target_stock):
     try:
-        # Check Buy condiction and make Buy
-        log.debug('check_buy_condition start for ' + str(target_stock))
-        
-        buy_price = myGetBuySellPrice.get_suggested_buy_price(target_stock)
-        if not buy_price:
-            log.debug('There is no suggest buy_price for ' + target_stock['stock_id'])
-            return None
-            
-        buy_items = {'buy_price': buy_price}
+        log.debug('check_buy_condition for ' + target_stock['stock_id'])
 
         curr_hold_number = 0
         curr_entrust_number = 0
@@ -240,11 +232,20 @@ def check_buy_condition(balance_data, target_stock):
         # 当前持股数量和委托数量都少于预定最大值, 并且没有委托订单(还没有成交的订单),还可以加仓,限制一日成交不超过预定值max_trade_number_per_day
         if curr_trades_number < target_stock['max_trade_number_per_day'] \
                 and curr_hold_number < target_stock['max_hold_number'] \
-                and curr_entrust_number == 0 \
-                and money['balance_usable'] > buy_price * target_stock['base_buy_number']:        
-            buy_items['stock_id'] = target_stock['stock_id']
-            buy_items['buy_number'] = target_stock['base_buy_number']
-            
+                and curr_entrust_number == 0:
+            # Can buy stock now
+            buy_price = myGetBuySellPrice.get_suggested_buy_price(target_stock)
+            if not buy_price:
+                log.debug('There is no suggest buy_price for ' + target_stock['stock_id'])
+                return None
+            if money['balance_usable'] <= buy_price * target_stock['base_buy_number']:
+                log.debug('Not enough money to buy ' + target_stock['stock_id'])
+                return None
+
+            buy_items = {'buy_price': buy_price,
+                         'stock_id': target_stock['stock_id'],
+                         'buy_number': target_stock['base_buy_number']}
+
             log.debug('check_buy_condition result: ' + str(buy_items))
             return buy_items
             
@@ -259,16 +260,7 @@ def check_buy_condition(balance_data, target_stock):
         
 def check_sell_condition(balance_data, target_stock):
     try:
-        # Check Buy condiction and make Buy
-        # log.debug('check_sell_condition start for ' + str(target_stock))
-        
-        sell_price = myGetBuySellPrice.get_suggested_sell_price(target_stock)
-        if not sell_price:
-            log.debug('There is no suggest sell_price for ' + target_stock['stock_id'])
-            return None
-        log.debug('sell price for ' + target_stock['stock_id'] + ' is ' + str(sell_price))
-            
-        sell_items = {'sell_price': sell_price}
+        log.debug('check_sell_condition for ' + target_stock['stock_id'])
 
         curr_usable_number = 0
         curr_entrust_number = 0
@@ -303,9 +295,17 @@ def check_sell_condition(balance_data, target_stock):
                 and (curr_usable_number - target_stock['base_sell_number']) >= target_stock['min_hold_number'] \
                 and curr_usable_number >= target_stock['base_sell_number'] \
                 and curr_entrust_number == 0:
-            sell_items['stock_id'] = target_stock['stock_id']
-            sell_items['sell_number'] = target_stock['base_sell_number']
-            
+            # Can sell for stock now
+            sell_price = myGetBuySellPrice.get_suggested_sell_price(target_stock)
+            if not sell_price:
+                log.debug('There is no suggest sell_price for ' + target_stock['stock_id'])
+                return None
+            log.debug('sell price for ' + target_stock['stock_id'] + ' is ' + str(sell_price))
+
+            sell_items = {'sell_price': sell_price,
+                          'stock_id': target_stock['stock_id'],
+                          'sell_number': target_stock['base_sell_number']}
+
             log.debug('check_sell_condition result: ' + str(sell_items))
             return sell_items
             
