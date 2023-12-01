@@ -21,17 +21,24 @@ def get_suggested_buy_price(target_stock):
     if price_strategy == 'Shenxian':
         # get suggest buy price from shenXian Indicator (hc5 value)
         # 选择shenxian卖指标，这个值比上面那个last_avg_sell_price要高或者低都有可能
-        shenxian_buy_price = get_indicator_from_easystogu(target_stock['stock_id'], 'Buy')
-        log.debug('shenxian_buy_price {}'.format(shenxian_buy_price))
+        shenxian_buy_price, last_close = get_indicator_from_easystogu(target_stock['stock_id'], 'Buy')
+        log.debug('shenxian_buy_price {}, last_close {}'.format(shenxian_buy_price, last_close))
         if shenxian_buy_price > 0.0:
             return shenxian_buy_price
 
     if price_strategy == 'HistoryTrade_and_Shenxian':
         last_avg_sell_price = get_last_price_from_history_trades(target_stock['stock_id'], 'Sell')
-        shenxian_buy_price = get_indicator_from_easystogu(target_stock['stock_id'], 'Buy')
-        log.debug('last_avg_buy_price {}, shenxian_buy_price {}'.format(last_avg_sell_price, shenxian_buy_price))
+        shenxian_buy_price, last_close = get_indicator_from_easystogu(target_stock['stock_id'], 'Buy')
+        log.debug('last_avg_buy_price {}, shenxian_buy_price {}, last_close {}'.format(last_avg_sell_price, shenxian_buy_price, last_close))
         if last_avg_sell_price > 0.0 and shenxian_buy_price > 0.0:
             return max(last_avg_sell_price * (1.0 - price_delta), shenxian_buy_price)
+
+    if price_strategy == 'HistoryTrade_and_Shenxian_and_PriceDelta':
+        last_avg_sell_price = get_last_price_from_history_trades(target_stock['stock_id'], 'Sell')
+        shenxian_buy_price, last_close = get_indicator_from_easystogu(target_stock['stock_id'], 'Buy')
+        log.debug('last_avg_buy_price {}, shenxian_buy_price {}, last_close {}'.format(last_avg_sell_price, shenxian_buy_price, last_close))
+        if last_avg_sell_price > 0.0 and shenxian_buy_price > 0.0 and last_close > 0.0:
+            return max(last_avg_sell_price * (1.0 - price_delta), shenxian_buy_price, last_close * (1.0 - price_delta))
                
     log.debug('Can not get_suggested_buy_price for ' + target_stock['stock_id'])
     
@@ -54,14 +61,14 @@ def get_suggested_sell_price(target_stock):
     if price_strategy == 'Shenxian':
         # get suggest buy price from shenXian Indicator (hc6 value)
         # 选择shenxian卖指标，这个值比上面那个last_avg_buy_price要高或者低都有可能
-        shenxian_sell_price = get_indicator_from_easystogu(target_stock['stock_id'], 'Sell')
+        shenxian_sell_price, last_close = get_indicator_from_easystogu(target_stock['stock_id'], 'Sell')
         log.debug('shenxian_sell_price {}'.format(shenxian_sell_price))
         if shenxian_sell_price > 0.0:
             return shenxian_sell_price
 
     if price_strategy == 'HistoryTrade_and_Shenxian':
         last_avg_buy_price = get_last_price_from_history_trades(target_stock['stock_id'], 'Buy')
-        shenxian_sell_price = get_indicator_from_easystogu(target_stock['stock_id'], 'Sell')
+        shenxian_sell_price, last_close = get_indicator_from_easystogu(target_stock['stock_id'], 'Sell')
         log.debug('last_avg_buy_price {}, shenxian_sell_price {}'.format(last_avg_buy_price, shenxian_sell_price))
         if last_avg_buy_price > 0.0 and shenxian_sell_price > 0.0:
             # select the min price
@@ -159,8 +166,8 @@ def get_indicator_from_easystogu(stock_id, buyOrSell):
             log.debug('predictTodayBuy for ' + stock_id + 'is ' + str(respJson))
 
             if 'B' in respJson['sellFlagsTitle']:
-                log.debug(stock_id + ' Buy@'+str(respJson['hc6']))
-                return float(respJson['hc6'])
+                log.debug('{} ShenxianBuy@{}, lastClose@{}'.format(stock_id,respJson['hc6'],respJson['lastClose']))
+                return respJson['hc6'], respJson['lastClose']
         else:
             # Sell
             conn.request('POST', '/portal/indv3/predictTodaySell/' + stock_id + '/' + dayParm, None, headers)
@@ -170,8 +177,8 @@ def get_indicator_from_easystogu(stock_id, buyOrSell):
             log.debug('predictTodaySell for ' + stock_id + 'is ' + str(respJson))
 
             if 'S' in respJson['sellFlagsTitle']:
-                log.debug(stock_id + ' Sell@'+str(respJson['hc5']))
-                return float(respJson['hc5'])
+                log.debug('{} ShenxianSell@{}, lastClose@{}'.format(stock_id,respJson['hc5'],respJson['lastClose']))
+                return respJson['hc5'], respJson['lastClose']
                 
         #        
         log.debug('Can not get_indicator_from_easystogu {} {}'.format(stock_id, buyOrSell))
@@ -185,6 +192,9 @@ def get_indicator_from_easystogu(stock_id, buyOrSell):
         
 
 if __name__ == "__main__":
-    log.debug('start')
-    #rtn = get_suggested_sell_price('600547')
-    #print('rtn='+str(rtn))
+    target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
+    target_stocks = json.load(target_stocks_f)
+    for target_stock in target_stocks:
+        rtn = get_suggested_buy_price(target_stock)
+        print(rtn)
+

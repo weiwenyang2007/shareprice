@@ -20,7 +20,7 @@
     "base_sell_number": 100,
     "max_trade_number_per_day": 100,
     "price_delta": 0.032,
-    "buy_price_strategy": "HistoryTrade_and_Shenxian",
+    "buy_price_strategy": "HistoryTrade_and_Shenxian_and_PriceDelta",
     "sell_price_strategy": "HistoryTrade"
   }
 ]
