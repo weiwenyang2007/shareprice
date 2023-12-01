@@ -8,7 +8,7 @@ log = myLogger.setup_custom_logger(__name__)
 def get_suggested_buy_price(target_stock):
     log.debug("get_suggested_buy_price {}".format(target_stock['stock_id']))
     price_delta = target_stock['price_delta']
-    price_strategy = target_stock['price_strategy']
+    price_strategy = target_stock['buy_price_strategy']
 
     if price_strategy == 'HistoryTrade':
         # 高抛低吸做T:建议卖出价格比上次买入价格高price_delta(比如0.022)
@@ -41,7 +41,7 @@ def get_suggested_buy_price(target_stock):
 def get_suggested_sell_price(target_stock):
     log.debug("get_suggested_sell_price {}".format(target_stock))
     price_delta = target_stock['price_delta']
-    price_strategy = target_stock['price_strategy']
+    price_strategy = target_stock['sell_price_strategy']
 
     if price_strategy == 'HistoryTrade':
         # 高抛低吸做T:建议卖出价格比上次买入价格高price_delta(比如0.022)
