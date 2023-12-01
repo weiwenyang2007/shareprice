@@ -1,12 +1,8 @@
 package org.easystogu.portal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,10 +10,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
-import org.easystogu.analyse.FlagsAnalyseHelper;
 import org.easystogu.analyse.ShenXianSellAnalyseHelper;
 import org.easystogu.analyse.util.ProcessRequestParmsInPostBody;
+import org.easystogu.db.access.table.QianFuQuanStockPriceTableHelper;
 import org.easystogu.db.access.table.RealTimeStockPriceTableHelper;
+import org.easystogu.db.access.table.StockPriceTableHelper;
 import org.easystogu.db.vo.table.BollVO;
 import org.easystogu.db.vo.table.KDJVO;
 import org.easystogu.db.vo.table.LuZaoVO;
@@ -27,7 +24,6 @@ import org.easystogu.db.vo.table.RealtimeStockPriceVO;
 import org.easystogu.db.vo.table.ShenXianVO;
 import org.easystogu.db.vo.table.StockPriceVO;
 import org.easystogu.db.vo.table.WRVO;
-import org.easystogu.indicator.BBIHelper;
 import org.easystogu.indicator.BOLLHelper;
 import org.easystogu.indicator.KDJHelper;
 import org.easystogu.indicator.LuZaoHelper;
@@ -37,7 +33,6 @@ import org.easystogu.indicator.ShenXianHelper;
 import org.easystogu.indicator.WRHelper;
 import org.easystogu.indicator.runner.utils.StockPriceFetcher;
 import org.easystogu.log.LogHelper;
-import org.easystogu.trendmode.TrendModeLoader;
 import org.easystogu.analyse.vo.ShenXianUIVO;
 import org.easystogu.utils.Strings;
 import org.easystogu.utils.WeekdayUtil;
@@ -62,6 +57,7 @@ public class IndicatorEndPointV3 {
 	protected ProcessRequestParmsInPostBody postParmsProcess = ProcessRequestParmsInPostBody.getInstance();
 	protected ShenXianSellAnalyseHelper shenXianSellAnalyseHelper = ShenXianSellAnalyseHelper.getInstance();
 	protected RealTimeStockPriceTableHelper realTimeStockPriceTableHelper = RealTimeStockPriceTableHelper.getInstance();
+	protected StockPriceTableHelper qianFuQuanStockPriceTable = QianFuQuanStockPriceTableHelper.getInstance();
 	
 	private Gson gson = new Gson();
 
@@ -232,10 +228,16 @@ public class IndicatorEndPointV3 {
 		//ShenXianUIVO shenXianVO1 = shenXianSellAnalyseHelper.mockCurPriceAndPredictTodayInd(stockIdParm, dateParm, "B");
 
 		RealtimeStockPriceVO rtvo = realTimeStockPriceTableHelper.getLatestRealtimePrice(stockIdParm);
+		StockPriceVO spVoToday = qianFuQuanStockPriceTable.getStockPriceByIdAndDate(stockIdParm, WeekdayUtil.currentDate());
+
 		ShenXianUIVO shenXianVO2 = new ShenXianUIVO();
-		if (rtvo != null && rtvo.getShenxian_buy() > 0) {
+		if (rtvo != null && rtvo.getShenxian_buy() > 0 && spVoToday != null) {
 			shenXianVO2.setSellFlagsTitle("B");
 			shenXianVO2.setHc6(rtvo.getShenxian_buy());
+			shenXianVO2.close = spVoToday.getClose();
+			shenXianVO2.lastClose = spVoToday.getLastClose();
+		} else {
+			logger.error("Error meets in predictTodayBuy, rtvo {}, spVoToday {}", rtvo, spVoToday);
 		}
 		//just print the vo1 and vo2
 		//logger.debug("predictTodayBuy shenXianVO1: {}", shenXianVO1);
@@ -252,10 +254,16 @@ public class IndicatorEndPointV3 {
 		response.addHeader("Access-Control-Allow-Origin", accessControlAllowOrgin);
 		//ShenXianUIVO shenXianVO1 = shenXianSellAnalyseHelper.mockCurPriceAndPredictTodayInd(stockIdParm, dateParm, "S");
 		RealtimeStockPriceVO rtvo = realTimeStockPriceTableHelper.getLatestRealtimePrice(stockIdParm);
+		StockPriceVO spVoToday = qianFuQuanStockPriceTable.getStockPriceByIdAndDate(stockIdParm, WeekdayUtil.currentDate());
+
 		ShenXianUIVO shenXianVO2 = new ShenXianUIVO();
-		if (rtvo != null && rtvo.getShenxian_sell() > 0) {
+		if (rtvo != null && rtvo.getShenxian_sell() > 0 && spVoToday != null) {
 			shenXianVO2.setSellFlagsTitle("S");
 			shenXianVO2.setHc5(rtvo.getShenxian_sell());
+			shenXianVO2.close = spVoToday.getClose();
+			shenXianVO2.lastClose = spVoToday.getLastClose();
+		} else {
+			logger.error("Error meets in predictTodaySell, rtvo {}, spVoToday {}", rtvo, spVoToday);
 		}
 		//just print the vo1 and vo2
 		//logger.debug("predictTodaySell shenXianVO1: {}", shenXianVO1);

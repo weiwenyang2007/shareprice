@@ -15,6 +15,7 @@ public class ShenXianUIVO extends ShenXianVO {
 	public String suoFlagsTitle = "";// 缩量
 	public String suoFlagsText = "";
 	public double close;//temp for analysis
+	public double lastClose;//for easyTrade
 
 	public double getHc5() {
 		return hc5;

@@ -127,6 +127,7 @@ public class ShenXianSellAnalyseHelper {
                 vo.setStockId(stockIdParm);
                 vo.setDate(spList.get(i).date);
                 vo.close = spList.get(i).close;//temp for analysis
+                vo.lastClose = spList.get(i).lastClose;//for easyTrade
                 sxList.add(vo);
             }
         }
