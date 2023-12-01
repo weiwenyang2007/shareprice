@@ -132,7 +132,8 @@ def get_last_price_from_history_trades(stock_id, buyOrSell):
                     total_count += 1
 
         if total_count > 0:
-            return total_price/total_count
+            log.debug('last {} avg price for {} is {}'.format(buyOrSell, stock_id, round(total_price/total_count,2)))
+            return round(total_price/total_count,2)
 
         log.debug('Can not get_last_price_from_history_trads: {} {}'.format(stock_id, buyOrSell))
         
@@ -183,18 +184,18 @@ def get_indicator_from_easystogu(stock_id, buyOrSell):
         #        
         log.debug('Can not get_indicator_from_easystogu {} {}'.format(stock_id, buyOrSell))
         
-        return 0.0
+        return 0.0, 0.0
         
     except Exception as ex:
         log.exception(ex)
         log.debug('get_indicator_from_easystogu {} {} with exception.'.format(stock_id, buyOrSell))
-        return 0.0
+        return 0.0, 0.0
         
 
 if __name__ == "__main__":
     target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
     target_stocks = json.load(target_stocks_f)
     for target_stock in target_stocks:
-        rtn = get_suggested_buy_price(target_stock)
+        rtn = get_suggested_sell_price(target_stock)
         print(rtn)
 
