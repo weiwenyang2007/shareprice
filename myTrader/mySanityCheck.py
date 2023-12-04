@@ -71,9 +71,15 @@ def sanity_check(target_stocks):
 
         balance_data = {}
         # 资金
-        log.debug('get user.balance')
-        balance = user.balance
-        log.debug('当前资金:' + str(balance))
+        try:
+            log.debug('get user.balance')
+            balance = user.balance
+            log.debug('当前资金:' + str(balance))
+        except Exception as ex:
+            log.exception(ex)
+            log.error('get user.balance with exception')
+            user.exit()
+            return None
 
         money = {'balance_remain': balance['资金余额'],
                  'balance_usable': balance['可用金额'],
@@ -83,9 +89,15 @@ def sanity_check(target_stocks):
         balance_data['money'] = money
 
         # 当前持仓
-        log.debug('get user.position')
-        position = user.position
-        log.debug('当前持仓:' + str(position))
+        try:
+            log.debug('get user.position')
+            position = user.position
+            log.debug('当前持仓:' + str(position))
+        except Exception as ex:
+            log.exception(ex)
+            log.error('get user.position with exception')
+            user.exit()
+            return None
 
         stock_holds = []
         for item in position:
@@ -105,9 +117,15 @@ def sanity_check(target_stocks):
         balance_data['stock_holds'] = stock_holds
 
         # 当日成交
-        log.debug('get user.today_trades')
-        today_trades = user.today_trades
-        log.debug('当日成交:' + str(today_trades))
+        try:
+            log.debug('get user.today_trades')
+            today_trades = user.today_trades
+            log.debug('当日成交:' + str(today_trades))
+        except Exception as ex:
+            log.exception(ex)
+            log.error('get user.today_trades with exception')
+            user.exit()
+            return None
 
         stock_today_trades = []
         for item in today_trades:
@@ -135,12 +153,18 @@ def sanity_check(target_stocks):
         balance_data['stock_today_trades'] = stock_today_trades
 
         # 当日委托
-        log.debug('get user.today_entrusts')
-        today_entrusts = user.today_entrusts
-        log.debug('当日委托:' + str(today_entrusts))
-        # 操作：买入，卖出
-        # 备注：未报，已报，已撤，已成
-        # 委托类别：委托，撤单
+        try:
+            log.debug('get user.today_entrusts')
+            today_entrusts = user.today_entrusts
+            log.debug('当日委托:' + str(today_entrusts))
+            # 操作：买入，卖出
+            # 备注：未报，已报，已撤，已成
+            # 委托类别：委托，撤单
+        except Exception as ex:
+            log.exception(ex)
+            log.error('get user.today_entrusts with exception')
+            user.exit()
+            return None
 
         stock_today_entrusts = []
         money_occupy = 0.0
@@ -195,7 +219,7 @@ def filter_history_trade_data(history_trade_balance_data, target_stocks):
             # To handle Buy:
             # filter condition: operation==Buy and stock_id is balance_item['stock_id']
             history_trade_balance_buy_data = list(filter(lambda item: ('Buy' in item['operation'] and target_stock['stock_id'] == item['stock_id']), history_trade_balance_data))
-            if len(history_trade_balance_buy_data) <= target_stocks['max_keep_history_trade_number']:
+            if len(history_trade_balance_buy_data) <= target_stock['max_keep_history_trade_number']:
                 log.debug('Keep the current history trade buy record')
             else:
                 log.debug('Filter out the oldest history trade buy record')
@@ -208,7 +232,7 @@ def filter_history_trade_data(history_trade_balance_data, target_stocks):
             # filter condition: operation==Sell and stock_id is balance_item['stock_id']
             history_trade_balance_sell_data = list(filter(lambda item: ('Sell' in item['operation'] and target_stock['stock_id'] == item['stock_id']), history_trade_balance_data))
 
-            if len(history_trade_balance_sell_data) <= target_stocks['max_keep_history_trade_number']:
+            if len(history_trade_balance_sell_data) <= target_stock['max_keep_history_trade_number']:
                 log.debug('Keep the current history trade sell record')
             else:
                 log.debug('Filter out the oldest history trade sell record')
@@ -403,5 +427,6 @@ if __name__ == "__main__":
         target_stocks = json.load(target_stocks_f)
         target_stocks_f.close()
         sanity_check(target_stocks)
+
 
 

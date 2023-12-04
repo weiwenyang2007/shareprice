@@ -11,7 +11,7 @@ def my_easy_trade():
         dt = datetime.now()
         week_day = dt.weekday()
         current_time = dt.strftime("%H:%M:%S")
-        if ('09:15:00' <= current_time <= '15:05:00') and (0 <= week_day <= 4):
+        if ('09:15:00' <= current_time <= '15:45:00') and (0 <= week_day <= 4):
             target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
             target_stocks = json.load(target_stocks_f)
             target_stocks_f.close()
