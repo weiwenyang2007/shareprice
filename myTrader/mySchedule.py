@@ -11,11 +11,11 @@ def my_easy_trade():
         log.info('my_easy_trade start')
         current_time = datetime.now().strftime("%H:%M:%S")
         if '09:15:00' <= current_time < '15:15:00':
-            balance_data = sanity.sanity_check()
+            target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
+            target_stocks = json.load(target_stocks_f)
+            target_stocks_f.close()
+            balance_data = sanity.sanity_check(target_stocks)
             if balance_data:
-                target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
-                target_stocks = json.load(target_stocks_f)
-                target_stocks_f.close()
                 sanity.deal_with_easy_trade(balance_data, target_stocks)
             else:
                 log.warn('sanity_result is false, skip deal_with_easy_trade')    

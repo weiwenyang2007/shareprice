@@ -60,7 +60,7 @@ def connect_to_app():
         return None
 
 
-def sanity_check():
+def sanity_check(target_stocks):
     try:
         log.info('Sanity start')
 
@@ -173,7 +173,7 @@ def sanity_check():
         with open("Z:/easytrader/data/balance.json", "w") as write_file:
             json.dump(balance_data, write_file, indent=2, sort_keys=True)
 
-        after_filter = filter_history_trade_data(balance_data, history_trade_balance_data)
+        after_filter = filter_history_trade_data(history_trade_balance_data, target_stocks)
         if after_filter:
             with open("Z:/easytrader/data/history_trade.json", "w") as write_file:
                 json.dump(after_filter, write_file, indent=2, sort_keys=True)
@@ -186,7 +186,7 @@ def sanity_check():
         return None
 
 
-def filter_history_trade_data(balance_data, history_trade_balance_data):
+def filter_history_trade_data(history_trade_balance_data, target_stocks):
     try:
         # filter and sort the history_trade_balance_data
         # 只保留当前仓位数量对应的条数
@@ -194,10 +194,10 @@ def filter_history_trade_data(balance_data, history_trade_balance_data):
         # Only keep the latest 3 history trade records (3 = max_hold_number/base_buy_number
         # in target_stocks.json)
         max_keep_record_number = 3
-        for balance_item in balance_data['stock_holds']:
+        for target_stock in target_stocks:
             # To handle Buy:
             # filter condition: operation==Buy and stock_id is balance_item['stock_id']
-            history_trade_balance_buy_data = list(filter(lambda item: ('Buy' in item['operation'] and balance_item['stock_id'] == item['stock_id']), history_trade_balance_data))
+            history_trade_balance_buy_data = list(filter(lambda item: ('Buy' in item['operation'] and target_stock['stock_id'] == item['stock_id']), history_trade_balance_data))
             if len(history_trade_balance_buy_data) <= max_keep_record_number:
                 log.debug('Keep the current history trade buy record')
             else:
@@ -209,7 +209,7 @@ def filter_history_trade_data(balance_data, history_trade_balance_data):
 
             # To handle Sell:
             # filter condition: operation==Sell and stock_id is balance_item['stock_id']
-            history_trade_balance_sell_data = list(filter(lambda item: ('Sell' in item['operation'] and balance_item['stock_id'] == item['stock_id']), history_trade_balance_data))
+            history_trade_balance_sell_data = list(filter(lambda item: ('Sell' in item['operation'] and target_stock['stock_id'] == item['stock_id']), history_trade_balance_data))
 
             if len(history_trade_balance_sell_data) <= max_keep_record_number:
                 log.debug('Keep the current history trade sell record')
@@ -402,6 +402,8 @@ def deal_with_easy_trade(balance_data, target_stocks):
 
 if __name__ == "__main__":
     if connect_to_app():
-        sanity_check()
-    # deal_with_easy_trade(json.load(open("Z:/easytrader/data/balance.json", "r")))
-    # filter_history_trade_data(json.load(open("Z:/easytrader/data/balance.json")), json.load(open("Z:/easytrader/data/history_trade_test_input1.json")))
+        target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
+        target_stocks = json.load(target_stocks_f)
+        target_stocks_f.close()
+        sanity_check(target_stocks)
+
