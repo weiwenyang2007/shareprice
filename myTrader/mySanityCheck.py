@@ -370,7 +370,7 @@ def deal_with_easy_trade(balance_data, target_stocks):
                         log.debug('sell result: ' + str(entrust_no))
                         sell_item = None
                         # update the balance after successful sell
-                        balance_data_updated = sanity_check()
+                        balance_data_updated = sanity_check(target_stocks)
                         if not balance_data_updated:
                             balance_data_cur = balance_data_updated
                     else:
@@ -384,7 +384,7 @@ def deal_with_easy_trade(balance_data, target_stocks):
                         log.debug('buy result: ' + str(entrust_no))
                         buy_item = None
                         # update the balance after successful buy
-                        balance_data_updated = sanity_check()
+                        balance_data_updated = sanity_check(target_stocks)
                         if not balance_data_updated:
                             balance_data_cur = balance_data_updated
                     else:
