@@ -200,7 +200,7 @@ def filter_history_trade_data(history_trade_balance_data, target_stocks):
             else:
                 log.debug('Filter out the oldest history trade buy record')
                 history_trade_balance_buy_data.sort(key=itemgetter('datetime'), reverse=True)
-                history_trade_balance_buy_data = history_trade_balance_buy_data[:target_stocks['max_keep_history_trade_number']]
+                history_trade_balance_buy_data = history_trade_balance_buy_data[:target_stock['max_keep_history_trade_number']]
 
             rtn.extend(history_trade_balance_buy_data)
 
@@ -213,7 +213,7 @@ def filter_history_trade_data(history_trade_balance_data, target_stocks):
             else:
                 log.debug('Filter out the oldest history trade sell record')
                 history_trade_balance_sell_data.sort(key=itemgetter('datetime'), reverse=True)
-                history_trade_balance_sell_data = history_trade_balance_sell_data[:target_stocks['max_keep_history_trade_number']]
+                history_trade_balance_sell_data = history_trade_balance_sell_data[:target_stock['max_keep_history_trade_number']]
 
             rtn.extend(history_trade_balance_sell_data)
 
