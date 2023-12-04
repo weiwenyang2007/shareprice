@@ -29,14 +29,14 @@ def get_suggested_buy_price(target_stock):
     if price_strategy == 'HistoryTrade_and_Shenxian':
         last_avg_sell_price = get_last_price_from_history_trades(target_stock['stock_id'], 'Sell')
         shenxian_buy_price, last_close = get_indicator_from_easystogu(target_stock['stock_id'], 'Buy')
-        log.debug('last_avg_buy_price {}, shenxian_buy_price {}, last_close {}'.format(last_avg_sell_price, shenxian_buy_price, last_close))
+        log.debug('last_avg_sell_price {}, shenxian_buy_price {}, last_close {}'.format(last_avg_sell_price, shenxian_buy_price, last_close))
         if last_avg_sell_price > 0.0 and shenxian_buy_price > 0.0:
             return max(last_avg_sell_price * (1.0 - price_delta), shenxian_buy_price)
 
     if price_strategy == 'HistoryTrade_and_Shenxian_and_PriceDelta':
         last_avg_sell_price = get_last_price_from_history_trades(target_stock['stock_id'], 'Sell')
         shenxian_buy_price, last_close = get_indicator_from_easystogu(target_stock['stock_id'], 'Buy')
-        log.debug('last_avg_buy_price {}, shenxian_buy_price {}, last_close {}'.format(last_avg_sell_price, shenxian_buy_price, last_close))
+        log.debug('last_avg_sell_price {}, shenxian_buy_price {}, last_close {}'.format(last_avg_sell_price, shenxian_buy_price, last_close))
         if last_avg_sell_price > 0.0 and shenxian_buy_price > 0.0 and last_close > 0.0:
             return max(last_avg_sell_price * (1.0 - price_delta), shenxian_buy_price, last_close * (1.0 - price_delta))
                
