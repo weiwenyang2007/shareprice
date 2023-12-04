@@ -9,7 +9,8 @@
     "max_trade_number_per_day": 200,
     "price_delta": 0.022,
     "buy_price_strategy": "HistoryTrade_and_Shenxian",
-    "sell_price_strategy": "HistoryTrade_and_Shenxian"
+    "sell_price_strategy": "HistoryTrade_and_Shenxian",
+    "max_keep_history_trade_number": 1
   },
   {
     "stock_id": "300688",
@@ -21,6 +22,7 @@
     "max_trade_number_per_day": 100,
     "price_delta": 0.032,
     "buy_price_strategy": "HistoryTrade_and_Shenxian_and_PriceDelta",
-    "sell_price_strategy": "HistoryTrade"
+    "sell_price_strategy": "HistoryTrade",
+    "max_keep_history_trade_number": 1
   }
 ]

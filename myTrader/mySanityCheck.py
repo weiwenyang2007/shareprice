@@ -191,19 +191,16 @@ def filter_history_trade_data(history_trade_balance_data, target_stocks):
         # filter and sort the history_trade_balance_data
         # 只保留当前仓位数量对应的条数
         rtn = []
-        # Only keep the latest 3 history trade records (3 = max_hold_number/base_buy_number
-        # in target_stocks.json)
-        max_keep_record_number = 3
         for target_stock in target_stocks:
             # To handle Buy:
             # filter condition: operation==Buy and stock_id is balance_item['stock_id']
             history_trade_balance_buy_data = list(filter(lambda item: ('Buy' in item['operation'] and target_stock['stock_id'] == item['stock_id']), history_trade_balance_data))
-            if len(history_trade_balance_buy_data) <= max_keep_record_number:
+            if len(history_trade_balance_buy_data) <= target_stocks['max_keep_history_trade_number']:
                 log.debug('Keep the current history trade buy record')
             else:
                 log.debug('Filter out the oldest history trade buy record')
                 history_trade_balance_buy_data.sort(key=itemgetter('datetime'), reverse=True)
-                history_trade_balance_buy_data = history_trade_balance_buy_data[:max_keep_record_number]
+                history_trade_balance_buy_data = history_trade_balance_buy_data[:target_stocks['max_keep_history_trade_number']]
 
             rtn.extend(history_trade_balance_buy_data)
 
@@ -211,12 +208,12 @@ def filter_history_trade_data(history_trade_balance_data, target_stocks):
             # filter condition: operation==Sell and stock_id is balance_item['stock_id']
             history_trade_balance_sell_data = list(filter(lambda item: ('Sell' in item['operation'] and target_stock['stock_id'] == item['stock_id']), history_trade_balance_data))
 
-            if len(history_trade_balance_sell_data) <= max_keep_record_number:
+            if len(history_trade_balance_sell_data) <= target_stocks['max_keep_history_trade_number']:
                 log.debug('Keep the current history trade sell record')
             else:
                 log.debug('Filter out the oldest history trade sell record')
                 history_trade_balance_sell_data.sort(key=itemgetter('datetime'), reverse=True)
-                history_trade_balance_sell_data = history_trade_balance_sell_data[:max_keep_record_number]
+                history_trade_balance_sell_data = history_trade_balance_sell_data[:target_stocks['max_keep_history_trade_number']]
 
             rtn.extend(history_trade_balance_sell_data)
 
@@ -406,4 +403,5 @@ if __name__ == "__main__":
         target_stocks = json.load(target_stocks_f)
         target_stocks_f.close()
         sanity_check(target_stocks)
+
 
