@@ -74,6 +74,13 @@ def get_suggested_sell_price(target_stock):
             # select the min price
             return min(last_avg_buy_price * (1.0 + price_delta), shenxian_sell_price)
 
+    if price_strategy == 'HistoryTrade_and_Shenxian_and_PriceDelta':
+        last_avg_buy_price = get_last_price_from_history_trades(target_stock['stock_id'], 'Buy')
+        shenxian_sell_price, last_close = get_indicator_from_easystogu(target_stock['stock_id'], 'Sell')
+        log.debug('last_avg_buy_price {}, shenxian_sell_price {}, last_close {}'.format(last_avg_buy_price, shenxian_sell_price, last_close))
+        if last_avg_buy_price > 0.0 and shenxian_sell_price > 0.0 and last_close > 0.0:
+            return min(last_avg_buy_price * (1.0 + price_delta), shenxian_sell_price, last_close * (1.0 + price_delta))
+
     log.debug('Can not get_suggested_sell_price for ' + target_stock['stock_id'])
     
     return None     
