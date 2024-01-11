@@ -59,6 +59,17 @@ def connect_to_app():
         user.exit()
         return None
 
+def close_hexin_app():
+    try:
+        log.info('Connecting to hexin app and close it')
+        user.connect(r'C:\同花顺软件\同花顺\hexin.exe')
+        user.exit()        
+        
+    except Exception as ex:
+        log.exception(ex)
+        log.error('Connecting to hexin app with exception')
+        user.exit()
+        return None
 
 def sanity_check(target_stocks):
     try:
@@ -79,6 +90,7 @@ def sanity_check(target_stocks):
             log.exception(ex)
             log.error('get user.balance with exception')
             user.exit()
+            close_hexin_app()
             return None
 
         money = {'balance_remain': balance['资金余额'],
@@ -97,6 +109,7 @@ def sanity_check(target_stocks):
             log.exception(ex)
             log.error('get user.position with exception')
             user.exit()
+            close_hexin_app()
             return None
 
         stock_holds = []
@@ -125,6 +138,7 @@ def sanity_check(target_stocks):
             log.exception(ex)
             log.error('get user.today_trades with exception')
             user.exit()
+            close_hexin_app()
             return None
 
         stock_today_trades = []
@@ -164,6 +178,7 @@ def sanity_check(target_stocks):
             log.exception(ex)
             log.error('get user.today_entrusts with exception')
             user.exit()
+            close_hexin_app()
             return None
 
         stock_today_entrusts = []
@@ -202,7 +217,7 @@ def sanity_check(target_stocks):
             with open("Z:/easytrader/data/history_trade.json", "w") as write_file:
                 json.dump(after_filter, write_file, indent=2, sort_keys=True)
             
-        log.info('Sanity success and end')    
+        log.info('Sanity success and end')   
         return balance_data
     except Exception as ex:
         log.exception(ex)
