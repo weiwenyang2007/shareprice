@@ -18,16 +18,20 @@ pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 user = easytrader.use('universal_client')
 user.enable_type_keys_for_editor()
 
+hexin_user = easytrader.use('universal_client')
+
 
 def start_app():
     try:
         log.info('Start hexin and xiadan app')
-        user.start(r'C:\同花顺软件\同花顺\hexin.exe')
+        hexin_user.start(r'C:\同花顺软件\同花顺\hexin.exe')
         user.start(r'C:\同花顺软件\同花顺\xiadan.exe')        
         return True
     except Exception as ex:
         log.exception(ex)
         log.error('Start hexin and xiadan app with exception')
+        hexin_user.exit()
+        user.exit()
         return None
 
 
@@ -59,17 +63,19 @@ def connect_to_app():
         user.exit()
         return None
 
+
 def close_hexin_app():
     try:
         log.info('Connecting to hexin app and close it')
-        user.connect(r'C:\同花顺软件\同花顺\hexin.exe')
-        user.exit()        
+        hexin_user.connect(r'C:\同花顺软件\同花顺\hexin.exe')
+        hexin_user.exit()
         
     except Exception as ex:
         log.exception(ex)
         log.error('Connecting to hexin app with exception')
-        user.exit()
+        hexin_user.exit()
         return None
+
 
 def sanity_check(target_stocks):
     try:
@@ -442,6 +448,7 @@ if __name__ == "__main__":
         target_stocks = json.load(target_stocks_f)
         target_stocks_f.close()
         sanity_check(target_stocks)
+
 
 
 
