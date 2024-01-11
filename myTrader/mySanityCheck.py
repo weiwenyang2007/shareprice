@@ -30,8 +30,8 @@ def start_app():
     except Exception as ex:
         log.exception(ex)
         log.error('Start hexin and xiadan app with exception')
-        hexin_user.exit()
         user.exit()
+        hexin_user.exit()
         return None
 
 
@@ -55,12 +55,14 @@ def connect_to_app():
                 log.exception(ex)
                 log.error('retry start_app and Connecting to xiadan app with exception')
                 user.exit()
+                close_hexin_app()
                 return None
         
     except Exception as ex:
         log.exception(ex)
         log.error('Connecting to xiadan app with exception')
         user.exit()
+        close_hexin_app()
         return None
 
 
@@ -448,7 +450,4 @@ if __name__ == "__main__":
         target_stocks = json.load(target_stocks_f)
         target_stocks_f.close()
         sanity_check(target_stocks)
-
-
-
 
