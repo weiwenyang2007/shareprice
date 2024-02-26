@@ -2,7 +2,6 @@ import sched
 import time
 from datetime import datetime
 import json
-import time
 import mySanityCheck as sanity
 import myLog as myLogger
 log = myLogger.setup_custom_logger(__name__)
@@ -38,8 +37,8 @@ def my_easy_trade():
 scheduler = sched.scheduler(time.time, time.sleep)
 
 def repeat_task():
-    scheduler.enter(120, 1, my_easy_trade, ())
-    scheduler.enter(120, 1, repeat_task, ())
+    scheduler.enter(180, 1, my_easy_trade, ())
+    scheduler.enter(180, 1, repeat_task, ())
 
 repeat_task()
 scheduler.run()
