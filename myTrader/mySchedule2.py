@@ -1,17 +1,19 @@
+import sched
+import time
 from datetime import datetime
 import json
+import time
 import mySanityCheck as sanity
 import myLog as myLogger
 log = myLogger.setup_custom_logger(__name__)
 
-
 def my_easy_trade():
-    try:    
-        log.info('my_easy_trade_start')
+    try:
+        log.info('my_easy_trade start')
         dt = datetime.now()
         week_day = dt.weekday()
         current_time = dt.strftime("%H:%M:%S")
-        if ('09:15:00' <= current_time <= '15:45:00') and (0 <= week_day <= 4):
+        if ('09:15:00' <= current_time <= '20:45:00') and (0 <= week_day <= 4):
             target_stocks_f = open("Z:/easytrader/data/target_stocks.json", "r")
             target_stocks = json.load(target_stocks_f)
             target_stocks_f.close()
@@ -25,14 +27,19 @@ def my_easy_trade():
                 log.warn('connect_to_app return None')
         else:
             log.warn('my_easy_trade not run due to date time is outof trade')
-            
-        log.info('my_easy_trade_end\n\n')    
-            
+
+        log.info('my_easy_trade end')
+
     except Exception as ex:
         log.exception(ex)
-        log.error('my_easy_trade_end with exception\n\n')        
-    
+        log.error('my_easy_trade end with exception')        
 
-if __name__ == "__main__":
-    my_easy_trade()
 
+scheduler = sched.scheduler(time.time, time.sleep)
+
+def repeat_task():
+    scheduler.enter(120, 1, my_easy_trade, ())
+    scheduler.enter(120, 1, repeat_task, ())
+
+repeat_task()
+scheduler.run()

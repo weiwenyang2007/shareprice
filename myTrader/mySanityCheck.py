@@ -30,8 +30,8 @@ def start_app():
     except Exception as ex:
         log.exception(ex)
         log.error('Start hexin and xiadan app with exception')
-        user.exit()
-        hexin_user.exit()
+        ## user.exit()
+        ## hexin_user.exit()
         return None
 
 
@@ -54,15 +54,15 @@ def connect_to_app():
             except Exception as ex:
                 log.exception(ex)
                 log.error('retry start_app and Connecting to xiadan app with exception')
-                user.exit()
-                close_hexin_app()
+                ## user.exit()
+                ## close_hexin_app()
                 return None
         
     except Exception as ex:
         log.exception(ex)
         log.error('Connecting to xiadan app with exception')
-        user.exit()
-        close_hexin_app()
+        ## user.exit()
+        ## close_hexin_app()
         return None
 
 
@@ -70,12 +70,12 @@ def close_hexin_app():
     try:
         log.info('Connecting to hexin app and close it')
         hexin_user.connect(r'C:\同花顺软件\同花顺\hexin.exe')
-        hexin_user.exit()
+        ## hexin_user.exit()
         
     except Exception as ex:
         log.exception(ex)
         log.error('Connecting to hexin app with exception')
-        hexin_user.exit()
+        ## hexin_user.exit()
         return None
 
 
@@ -97,8 +97,8 @@ def sanity_check(target_stocks):
         except Exception as ex:
             log.exception(ex)
             log.error('get user.balance with exception')
-            user.exit()
-            close_hexin_app()
+            ## user.exit()
+            ## close_hexin_app()
             return None
 
         money = {'balance_remain': balance['资金余额'],
@@ -116,8 +116,8 @@ def sanity_check(target_stocks):
         except Exception as ex:
             log.exception(ex)
             log.error('get user.position with exception')
-            user.exit()
-            close_hexin_app()
+            ## user.exit()
+            ## close_hexin_app()
             return None
 
         stock_holds = []
@@ -145,8 +145,8 @@ def sanity_check(target_stocks):
         except Exception as ex:
             log.exception(ex)
             log.error('get user.today_trades with exception')
-            user.exit()
-            close_hexin_app()
+            ## user.exit()
+            ## close_hexin_app()
             return None
 
         stock_today_trades = []
@@ -185,8 +185,8 @@ def sanity_check(target_stocks):
         except Exception as ex:
             log.exception(ex)
             log.error('get user.today_entrusts with exception')
-            user.exit()
-            close_hexin_app()
+            ## user.exit()
+            ## close_hexin_app()
             return None
 
         stock_today_entrusts = []

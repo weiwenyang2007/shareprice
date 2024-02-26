@@ -2,12 +2,16 @@
    Another project is a good reference: easytrader-liudongming
 
 1. install software:
-     Anaconda3-2023.09-0-Windows-x86_64.exe	 
-     which _conda.exe
+   Anaconda3-2023.09-0-Windows-x86_64.exe
+   which _conda.exe
 	 /c/ProgramData/anaconda3/_conda.exe
 	 
 	 Using conda to create python 3.6 env:
-     _conda.exe create -n easytrader-piginzoo python=3.6
+   _conda.exe create -n easytrader-piginzoo python=3.6
+
+   Or install python 3.6 directly in windows, set below path to env:
+   C:\Users\<userName>\AppData\Local\Programs\Python\Python36
+   C:\Users\<userName>\AppData\Local\Programs\Python\Python36\Scripts
 	 
 	 In Anaconda GUI, open terminal to easytrader-piginzoo
 	 cd C:\myFolder\github\easytrader-piginzoo
@@ -16,19 +20,33 @@
 	 Or do not use conda, install python3.6 in Windows 7:
 	 pip install -r requirements.txt
 	 pip install pypiwin32
+	 pip install schedule
 	 
-     同花顺软件版本: 同花顺_THS_freeldy_9.20.50_0916.exe
+   同花顺软件版本: 同花顺_THS_freeldy_9.20.50_0916.exe
 	 tesseract-ocr-w64-setup-v4.1.0.20190314.exe	 
 	 
  2.  Windows 7 path: 
-     C:\Users\Administrator\AppData\Local\Programs\Python\Python36\;
-	 C:\Users\Administrator\AppData\Local\Programs\Python\Python36\Scripts;
+   C:\Users\<userName>\AppData\Local\Programs\Python\Python36\;
+	 C:\Users\<userName>\AppData\Local\Programs\Python\Python36\Scripts;
 	 C:\Program Files\Tesseract-OCR;
 
-3.   Windows 7 scheduler task config: 
+3.   Windows 7 scheduler task config:
+     Windows的计划任务有时候莫名其妙的不能运作，而且定时的时间也难为维护，现在不用它了。
      Z:\easytrader\data\Windows7_Scheduler_Task.xml
+
+     For Win10, config taskschd.msc
 	 
-4.   One Win7 is running the easytrader project, another Win7 is remote control to it.	 
+4.   One Win7 is running the easytrader project, another Win7 is remote control to it.
+     Remote Desktop: 192.168.10.137
+	 远程桌面控制下面的机器，保持登录状态，不要关闭。
+	 当退出Remote Desktop的时候，使用系统管理员执行下面脚本，以便保持被远程控制的机器不至于锁屏lock住，导致出现程序异常:‘There is no active desktop required for moving mouse cursor’ . 
+	 (参考https://support.smartbear.com/testcomplete/docs/testing-with/running/via-rdp/keeping-computer-unlocked.html)
+
+	 nice_close_remote_control_desktop.bat	 
+     
+	 EasyTrader: 192.168.10.205
+	 打开xiadan.exe 保持登录状态，不要关闭
+	 执行脚本 shareprice\myTrader\mySchedule2.py
 
 5.   How to config wsfconfig:
      Using below link to find the page value for the trade stockId
