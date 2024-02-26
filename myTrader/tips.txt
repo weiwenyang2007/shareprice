@@ -38,14 +38,14 @@
 	 
 4.   One Win7 is running the easytrader project, another Win7 is remote control to it.
      Remote Desktop: 192.168.10.137
-	 远程桌面控制下面的机器，保持登录状态，不要关闭。
+	 远程桌面控制下面的机器，不需要全屏，保持登录状态，不要关闭。
 	 当退出Remote Desktop的时候，使用系统管理员执行下面脚本，以便保持被远程控制的机器不至于锁屏lock住，导致出现程序异常:‘There is no active desktop required for moving mouse cursor’ . 
 	 (参考https://support.smartbear.com/testcomplete/docs/testing-with/running/via-rdp/keeping-computer-unlocked.html)
 
 	 nice_close_remote_control_desktop.bat	 
      
 	 EasyTrader: 192.168.10.205
-	 打开xiadan.exe 保持登录状态，不要关闭
+	 打开xiadan.exe 保持登录状态，不要关闭。
 	 执行脚本 shareprice\myTrader\mySchedule2.py
 
 5.   How to config wsfconfig:
