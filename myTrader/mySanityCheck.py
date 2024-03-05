@@ -405,11 +405,12 @@ def deal_with_easy_trade(balance_data, target_stocks):
         if '09:27:00' <= current_time <= '14:59:00':
             log.debug('within trade time, check buy and sell operation')
             for target_stock in target_stocks:
-                if target_stock['enabled']:
-                    # Sell
-                    sell_item = check_sell_condition(balance_data_cur, target_stock)
-                    if sell_item:
-                        log.debug('sell_item is ' + str(sell_item))
+                # Sell
+                sell_item = check_sell_condition(balance_data_cur, target_stock)
+                if sell_item:
+                    log.debug('sell_item is ' + str(sell_item))
+                    if target_stock['enabled']:
+                        log.debug('stockId {} BuySell is enabled'.format(target_stock['stock_id']))
                         entrust_no = user.sell(sell_item['stock_id'], price=sell_item['sell_price'], amount=sell_item['sell_number'])
                         log.debug('sell result: ' + str(entrust_no))
                         sell_item = None
@@ -418,12 +419,16 @@ def deal_with_easy_trade(balance_data, target_stocks):
                         if not balance_data_updated:
                             balance_data_cur = balance_data_updated
                     else:
-                        log.debug('no sell for ' + str(target_stock['stock_id']))
+                        log.debug('stockId {} BuySell is disabled'.format(target_stock['stock_id']))
+                else: 
+                    log.debug('no sell for ' + str(target_stock['stock_id']))
 
-                    # Buy
-                    buy_item = check_buy_condition(balance_data_cur, target_stock)
-                    if buy_item:
-                        log.debug('buy_item is ' + str(buy_item))
+                # Buy
+                buy_item = check_buy_condition(balance_data_cur, target_stock)
+                if buy_item:
+                    log.debug('buy_item is ' + str(buy_item))
+                    if target_stock['enabled']:
+                        log.debug('stockId {} BuySell is enabled'.format(target_stock['stock_id']))
                         entrust_no = user.buy(buy_item['stock_id'], price=buy_item['buy_price'], amount=buy_item['buy_number'])
                         log.debug('buy result: ' + str(entrust_no))
                         buy_item = None
@@ -432,9 +437,9 @@ def deal_with_easy_trade(balance_data, target_stocks):
                         if not balance_data_updated:
                             balance_data_cur = balance_data_updated
                     else:
-                        log.debug('no buy for ' + str(target_stock['stock_id']))
+                        log.debug('stockId {} BuySell is disabled'.format(target_stock['stock_id']))
                 else:
-                    log.debug('stockId {} is disabled, will not check buy and sell condition'.format(target_stock['stock_id']))
+                    log.debug('no buy for ' + str(target_stock['stock_id']))
         else:
             log.debug('Time is out of trade time, no buy or sell operation')        
         
@@ -450,4 +455,5 @@ if __name__ == "__main__":
         target_stocks = json.load(target_stocks_f)
         target_stocks_f.close()
         sanity_check(target_stocks)
+
 
